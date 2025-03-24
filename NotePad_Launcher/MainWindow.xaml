@@ -29,7 +29,7 @@
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
                     <MenuItem Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
                 </MenuItem>
@@ -39,9 +39,9 @@
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
-        <TextBox Grid.Column="1" Grid.Row="2" x:Name="NameTextBox" />
+        <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2"/>
         <!--Текстовой обьект для вывода текста из файла-->
-        <RichTextBox Grid.Column="1" Grid.Row="3" x:Name="TextRichTextBox" />
+        <RichTextBox x:Name="FileText" Grid.Column="1" Grid.Row="3"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />
