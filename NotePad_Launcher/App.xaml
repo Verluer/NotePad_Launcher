@@ -42,7 +42,7 @@
             </Menu>
         </DockPanel>
         <!--Основной цвет для всех окон UI-->
-        <SolidColorBrush x:Key="WindowBackground" Color="Blue"/>
+        <SolidColorBrush x:Key="WindowBackground" Color="WhiteSmoke"/>
         <!--Базовые настройкки для окон UI-->
         <Style x:Key="MyWindowStyle" TargetType="Window">
             <Setter Property="WindowStyle" Value="None"/>
