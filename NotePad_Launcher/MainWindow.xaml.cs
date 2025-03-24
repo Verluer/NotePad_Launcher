@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
+using Application = System.Windows.Application;
 
 namespace NotePad_Launcher
 {
@@ -25,6 +26,7 @@ namespace NotePad_Launcher
         {
             InitializeComponent();
             _fileService = fileService; // Сохраняем зависимость
+            this.Tag = "MainWindow";
         }
         private void OpenFileClick(object sender, RoutedEventArgs e)
         {
@@ -39,6 +41,24 @@ namespace NotePad_Launcher
                 FileText.Document.Blocks.Clear();
                 FileText.AppendText(openFile.FileText);
             }
+        }
+        private void CloseApp_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+        private void MinimizeApp_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeApp_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
+        private void Test(object sender, RoutedEventArgs e)
+        {
+            EncryptionWindow encryptionWindow = new EncryptionWindow();
+            encryptionWindow.Show();
         }
     }
 }

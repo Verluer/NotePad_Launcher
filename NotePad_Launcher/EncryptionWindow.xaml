@@ -21,8 +21,37 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <!--Подгрузка заголовка из App.xaml-->
-        <ContentControl Content="{StaticResource MainHeadLine}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <!--Заголовок программы (Именование и три кнопки функционала)-->
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30">
+            <!-- Текст слева -->
+            <Menu DockPanel.Dock="Left" Background="#004C56">
+                <MenuItem Header="HeaderName" IsEnabled="False">
+                    <MenuItem.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </MenuItem.HeaderTemplate>
+                </MenuItem>
+            </Menu>
+            <!-- Кнопки справа -->
+            <Menu DockPanel.Dock="Right" Background="#004C56">
+                <MenuItem Height="30" Click="MinimizeApp_Click">
+                    <MenuItem.Header>
+                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Height="30" Click="MaximizeApp_Click" >
+                    <MenuItem.Header>
+                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Height="30" Click="CloseApp_Click">
+                    <MenuItem.Header>
+                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
         <TextBlock Grid.Column="1" Grid.Row="1" Text="Methodical Encryption" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
         <StackPanel Grid.Column="0" Grid.Row="2" >
             <TextBlock  Text="Enter value 1:" FontSize="20" HorizontalAlignment="Center"/>

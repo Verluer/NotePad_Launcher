@@ -22,8 +22,38 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
-        <!--Подгрузка заголовка из App.xaml-->
-        <ContentControl Content="{StaticResource MainHeadLine}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <!--Заголовок программы (Именование и три кнопки функционала)-->
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30">
+            <!-- Текст слева -->
+            <Menu DockPanel.Dock="Left" Background="#004C56">
+                <MenuItem Header="HeaderName" IsEnabled="False">
+                    <MenuItem.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </MenuItem.HeaderTemplate>
+                </MenuItem>
+            </Menu>
+            <!-- Кнопки справа -->
+            <Menu DockPanel.Dock="Right" Background="#004C56">
+                <MenuItem Height="30" Click="MinimizeApp_Click">
+                    <MenuItem.Header>
+                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Height="30" Click="MaximizeApp_Click" >
+                    <MenuItem.Header>
+                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Height="30" Click="CloseApp_Click">
+                    <MenuItem.Header>
+                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
         <!--Меню кнопок под заголовком-->
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
@@ -35,7 +65,7 @@
                 </MenuItem>
             </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Click="Test" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->

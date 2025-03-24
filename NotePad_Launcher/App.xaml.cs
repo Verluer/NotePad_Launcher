@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using Domain.IService;
 using Service;
+using System.Windows.Input;
 
 namespace NotePad_Launcher
 {
@@ -37,6 +38,5 @@ namespace NotePad_Launcher
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();
         }
-
     }
 }
