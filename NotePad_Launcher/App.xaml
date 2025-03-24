@@ -1,0 +1,14 @@
+﻿<Application x:Class="NotePad_Launcher.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:NotePad_Launcher"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="WindowBackground" Color="LightBlue"/>
+
+        <!-- Стиль для всех окон -->
+        <Style TargetType="Window">
+            <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
+        </Style>
+    </Application.Resources>
+</Application>
