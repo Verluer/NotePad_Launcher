@@ -60,7 +60,7 @@
                 <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
                     <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="SaveFileClick" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
                 </MenuItem>
             </Menu>

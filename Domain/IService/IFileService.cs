@@ -7,5 +7,6 @@ namespace Domain.IService
         public FileModel OpenFile(string pathFile);
         string ExDirectoryFile();
         public FileModel CreateFile();
+        public FileModel SaveFile(string pathFile, string fileName, string fileText);
     }
 }

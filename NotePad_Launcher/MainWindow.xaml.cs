@@ -105,6 +105,10 @@ namespace NotePad_Launcher
 
         private void CreateFileClick(object sender, RoutedEventArgs e)
         {
+            if (!CheckingSaveFile(checkSaveFile))
+            {
+                return;
+            }
             var nameFile = _fileService.CreateFile();
             FileName.Text = nameFile.FileName;
             Path = nameFile.FilePath;
@@ -113,6 +117,22 @@ namespace NotePad_Launcher
         {
             EncryptionWindow encryptionWindow = new EncryptionWindow();
             encryptionWindow.Show();
+        }
+        private void SaveFileClick(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
+            string fileText = textRange.Text;
+            string fileName = FileName.Text;
+            string filePath = Path;
+            if (!string.IsNullOrEmpty(fileText.Trim()))
+            {
+                var testFile = _fileService.SaveFile(filePath, fileName, fileText);
+                checkSaveFile = true;
+                MessageBox.Show("Текстовой файл успешно сохранен");
+            }
+            else
+                MessageBox.Show("Введите текст для текстового файла");
+
         }
 
     }

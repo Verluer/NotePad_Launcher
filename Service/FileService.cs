@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO.Enumeration;
+using System.Reflection;
 using System.Text;
 using Domain.IService;
 using Domain.Model;
@@ -58,6 +59,32 @@ namespace Service
                 FileName = Path.GetFileNameWithoutExtension(FileName),
                 FilePath = CreateFileInDirectory,
             };
+        }
+
+        public FileModel SaveFile(string pathFile, string fileName, string fileText)
+        {
+            string newFilePath = string.Empty;
+            if (pathFile != null)
+            {
+                newFilePath = Path.Combine(Path.GetDirectoryName(pathFile), fileName + ".txt");
+                if (pathFile != newFilePath)
+                {
+                    // Удаляем старый файл
+                    File.Delete(pathFile);
+                }
+                File.WriteAllText(newFilePath, fileText);
+            }
+            else
+            {
+                newFilePath = Path.Combine(directoryPath, fileName + ".txt");
+                File.WriteAllText(newFilePath, fileText);
+            }
+
+            return new FileModel
+            {
+                FilePath = newFilePath
+            };
+
         }
     }
 }
