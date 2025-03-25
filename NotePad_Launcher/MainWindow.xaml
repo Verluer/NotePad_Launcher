@@ -23,7 +23,7 @@
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
         <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30">
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30" MouseDown="HeadLine_MouseDown">
             <!-- Текст слева -->
             <Menu DockPanel.Dock="Left" Background="#004C56">
                 <MenuItem Header="HeaderName" IsEnabled="False">
@@ -58,7 +58,7 @@
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
@@ -71,7 +71,7 @@
         <!--Текстовой обьект для именования файлов-->
         <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2"/>
         <!--Текстовой обьект для вывода текста из файла-->
-        <RichTextBox x:Name="FileText" Grid.Column="1" Grid.Row="3"/>
+        <RichTextBox x:Name="FileText"  TextChanged="FileText_TextChanged" Grid.Column="1" Grid.Row="3"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />

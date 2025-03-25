@@ -37,6 +37,9 @@ namespace NotePad_Launcher
 
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();
+            services.AddSingleton<EncryptionWindow>();
+            
+            
         }
     }
 }

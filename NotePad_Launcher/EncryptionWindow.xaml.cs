@@ -23,6 +23,13 @@ namespace NotePad_Launcher
         {
             InitializeComponent();
         }
+        private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
+        }
         private void CloseApp_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

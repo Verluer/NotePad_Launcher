@@ -1,6 +1,7 @@
 ﻿using Domain.IService;
 using Microsoft.Win32;
 using Service;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,25 +22,30 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string Path;
         private readonly IFileService _fileService;
+        private bool checkSaveFile = false;
         public MainWindow(IFileService fileService)
         {
             InitializeComponent();
             _fileService = fileService; // Сохраняем зависимость
-            this.Tag = "MainWindow";
-        }
-        private void OpenFileClick(object sender, RoutedEventArgs e)
-        {
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
-            if (openFileDialog.ShowDialog() == true)
+            string testPath = _fileService.ExDirectoryFile();
+            if (Directory.Exists(testPath))
             {
-                string filePath = openFileDialog.FileName;
-                var openFile = _fileService.OpenFile(filePath);
-                FileName.Text = openFile.FileName;
-                FileText.Document.Blocks.Clear();
-                FileText.AppendText(openFile.FileText);
+                MessageBox.Show("Директория найдена: " + testPath, "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Директория не найдена, создаем...", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Directory.CreateDirectory(testPath);
+                MessageBox.Show("Директория создана: " + testPath, "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
             }
         }
         private void CloseApp_Click(object sender, RoutedEventArgs e)
@@ -55,10 +61,46 @@ namespace NotePad_Launcher
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
+        private void FileText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Чтение содержимого файла
+            string checkTextFromFile = File.ReadAllText(Path, Encoding.UTF8);
+            // Сравнение содержимого файла с текстом из RichTextBox
+            if (checkTextFromFile == new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd).Text)
+            {
+                checkSaveFile = true;
+            }
+            else
+            {
+                checkSaveFile = false;
+            }
+        }
+        private void OpenFileClick(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
+                var openFile = _fileService.OpenFile(filePath);
+                Path = openFile.FilePath;
+                FileName.Text = openFile.FileName;
+                FileText.Document.Blocks.Clear();
+                FileText.AppendText(openFile.FileText);
+            }
+        }
+
+        private void CreateFileClick(object sender, RoutedEventArgs e)
+        {
+            var nameFile = _fileService.CreateFile();
+            FileName.Text = nameFile.FileName;
+            Path = nameFile.FilePath;
+        }
         private void Test(object sender, RoutedEventArgs e)
         {
             EncryptionWindow encryptionWindow = new EncryptionWindow();
             encryptionWindow.Show();
         }
+
     }
 }

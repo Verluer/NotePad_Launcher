@@ -22,13 +22,13 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30">
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30" MouseDown="HeadLine_MouseDown">
             <!-- Текст слева -->
             <Menu DockPanel.Dock="Left" Background="#004C56">
                 <MenuItem Header="HeaderName" IsEnabled="False">
                     <MenuItem.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Text="Encryption/Decryption App" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </MenuItem.HeaderTemplate>
                 </MenuItem>
