@@ -96,5 +96,10 @@ namespace Service
                     FilePath = file
                 }).ToList();
         }
+
+        public void DeleteFile(string filePath)
+        {
+            File.Delete(filePath);
+        }
     }
 }

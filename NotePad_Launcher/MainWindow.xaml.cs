@@ -24,16 +24,6 @@ namespace NotePad_Launcher
             InitializeComponent();
             _fileService = fileService; // Сохраняем зависимость
             string testPath = _fileService.ExDirectoryFile();
-            if (Directory.Exists(testPath))
-            {
-                MessageBox.Show("Директория найдена: " + testPath, "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Директория не найдена, создаем...", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Directory.CreateDirectory(testPath);
-                MessageBox.Show("Директория создана: " + testPath, "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
         }
         public bool CheckingSaveFile(bool saveFile)
         {
@@ -146,6 +136,21 @@ namespace NotePad_Launcher
         }
         private void DeleteFileClick(object sender, RoutedEventArgs e)
         {
+            if (File.Exists(Path))
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    "Вы точно хотите удалить этот текстовой файл??",
+                    "Подтверждение",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    FileText.Document.Blocks.Clear();
+                    _fileService.DeleteFile(Path);
+                    FileName.Text = string.Empty;
+                    checkSaveFile = true;
+                }
+            }
         }
     }
 }

@@ -9,5 +9,6 @@ namespace Domain.IService
         public FileModel CreateFile();
         public FileModel SaveFile(FileModel model);
         public List<FileModel> GetTextFiles();
+        public void DeleteFile(string filePath);
     }
 }
