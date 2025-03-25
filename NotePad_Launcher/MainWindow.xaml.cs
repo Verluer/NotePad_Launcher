@@ -24,7 +24,7 @@ namespace NotePad_Launcher
     {
         private string Path;
         private readonly IFileService _fileService;
-        private bool checkSaveFile = false;
+        private bool checkSaveFile = true;
         public MainWindow(IFileService fileService)
         {
             InitializeComponent();
@@ -40,6 +40,15 @@ namespace NotePad_Launcher
                 Directory.CreateDirectory(testPath);
                 MessageBox.Show("Директория создана: " + testPath, "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+        public bool CheckingSaveFile(bool saveFile)
+        {
+            if (!saveFile)
+            {
+                MessageBoxResult Ok = MessageBox.Show("Текстовой файл не был сохранен, вы хотите продолжить?", "", MessageBoxButton.YesNo);
+                return Ok == MessageBoxResult.Yes;
+            }
+            return true;
         }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -77,6 +86,10 @@ namespace NotePad_Launcher
         }
         private void OpenFileClick(object sender, RoutedEventArgs e)
         {
+            if (!CheckingSaveFile(checkSaveFile))
+            {
+                return;
+            }
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
             if (openFileDialog.ShowDialog() == true)
