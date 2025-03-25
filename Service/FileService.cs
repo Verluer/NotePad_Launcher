@@ -69,7 +69,6 @@ namespace Service
                 newFilePath = Path.Combine(Path.GetDirectoryName(pathFile), fileName + ".txt");
                 if (pathFile != newFilePath)
                 {
-                    // Удаляем старый файл
                     File.Delete(pathFile);
                 }
                 File.WriteAllText(newFilePath, fileText);
@@ -79,7 +78,6 @@ namespace Service
                 newFilePath = Path.Combine(directoryPath, fileName + ".txt");
                 File.WriteAllText(newFilePath, fileText);
             }
-
             return new FileModel
             {
                 FilePath = newFilePath

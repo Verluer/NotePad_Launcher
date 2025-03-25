@@ -126,7 +126,8 @@ namespace NotePad_Launcher
             string filePath = Path;
             if (!string.IsNullOrEmpty(fileText.Trim()))
             {
-                var testFile = _fileService.SaveFile(filePath, fileName, fileText);
+                var saveFile = _fileService.SaveFile(filePath, fileName, fileText);
+                Path = saveFile.FilePath;
                 checkSaveFile = true;
                 MessageBox.Show("Текстовой файл успешно сохранен");
             }
