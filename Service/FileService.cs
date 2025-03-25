@@ -1,9 +1,9 @@
-﻿using System.IO.Enumeration;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using Domain.IService;
 using Domain.Model;
-using System.Windows; // Пространство имен WPF
+
+// Пространство имен WPF
 
 namespace Service
 {
@@ -61,28 +61,40 @@ namespace Service
             };
         }
 
-        public FileModel SaveFile(string pathFile, string fileName, string fileText)
+        public FileModel SaveFile(FileModel model)
         {
-            string newFilePath = string.Empty;
-            if (pathFile != null)
+            string newFilePath = null;
+            if (model.FilePath != null)
             {
-                newFilePath = Path.Combine(Path.GetDirectoryName(pathFile), fileName + ".txt");
-                if (pathFile != newFilePath)
+                newFilePath = Path.Combine(Path.GetDirectoryName(model.FilePath), model.FileName + ".txt");
+                if (model.FilePath != newFilePath)
                 {
-                    File.Delete(pathFile);
+                    File.Delete(model.FilePath);
                 }
-                File.WriteAllText(newFilePath, fileText);
+                File.WriteAllText(newFilePath, model.FileName);
             }
             else
             {
-                newFilePath = Path.Combine(directoryPath, fileName + ".txt");
-                File.WriteAllText(newFilePath, fileText);
+                newFilePath = Path.Combine(directoryPath, model.FileName + ".txt");
+                File.WriteAllText(newFilePath, model.FileText);
             }
             return new FileModel
             {
                 FilePath = newFilePath
             };
 
+        }
+        public List<FileModel> GetTextFiles()
+        {
+            if (!Directory.Exists(directoryPath))
+                throw new DirectoryNotFoundException($"Директория не найдена: {directoryPath}");
+
+            return Directory.GetFiles(directoryPath, "*.txt")
+                .Select(file => new FileModel
+                {
+                    FileName = Path.GetFileName(file),
+                    FilePath = file
+                }).ToList();
         }
     }
 }

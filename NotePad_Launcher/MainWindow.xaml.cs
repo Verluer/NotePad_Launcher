@@ -1,18 +1,12 @@
 ﻿using Domain.IService;
+using Domain.Model;
 using Microsoft.Win32;
-using Service;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Application;
 
 namespace NotePad_Launcher
@@ -113,20 +107,23 @@ namespace NotePad_Launcher
             FileName.Text = nameFile.FileName;
             Path = nameFile.FilePath;
         }
-        private void Test(object sender, RoutedEventArgs e)
+        private void OpenFileListClick(object sender, RoutedEventArgs e)
         {
-            EncryptionWindow encryptionWindow = new EncryptionWindow();
+            FileListWindow encryptionWindow = new FileListWindow(_fileService);
             encryptionWindow.Show();
         }
         private void SaveFileClick(object sender, RoutedEventArgs e)
         {
             TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
-            string fileText = textRange.Text;
-            string fileName = FileName.Text;
-            string filePath = Path;
-            if (!string.IsNullOrEmpty(fileText.Trim()))
+            var model = new FileModel
             {
-                var saveFile = _fileService.SaveFile(filePath, fileName, fileText);
+                FileText = textRange.Text,
+                FileName = FileName.Text,
+                FilePath = Path
+            };
+            if (!string.IsNullOrEmpty(model.FileText.Trim()))
+            {
+                var saveFile = _fileService.SaveFile(model);
                 Path = saveFile.FilePath;
                 checkSaveFile = true;
                 MessageBox.Show("Текстовой файл успешно сохранен");
@@ -136,5 +133,19 @@ namespace NotePad_Launcher
 
         }
 
+        public void UpdateFileInfo(FileModel model)
+        {
+            if (!CheckingSaveFile(checkSaveFile))
+            {
+                return;
+            }
+            Path = model.FilePath;
+            TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
+            textRange.Text = model.FileText;
+            FileName.Text = model.FileName;
+        }
+        private void DeleteFileClick(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }

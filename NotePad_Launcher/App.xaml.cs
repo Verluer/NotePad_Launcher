@@ -1,11 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
 using System.Windows;
-using System.Windows.Media;
 using Domain.IService;
 using Service;
-using System.Windows.Input;
 
 namespace NotePad_Launcher
 {
@@ -38,8 +34,8 @@ namespace NotePad_Launcher
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();
             services.AddSingleton<EncryptionWindow>();
-            
-            
+            services.AddSingleton<FileListWindow>();
+
         }
     }
 }

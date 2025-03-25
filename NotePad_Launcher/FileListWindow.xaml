@@ -1,21 +1,18 @@
-﻿<Window x:Class="NotePad_Launcher.MainWindow"
+﻿<Window x:Class="NotePad_Launcher.FileListWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NotePad_Launcher"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="FileListWindow" Height="350" Width="250"
         Style="{StaticResource MyWindowStyle}">
-
-    <Grid x:Name="MainWindowContainer">
-        <!--Разделение программы на ряды и столбцы-->
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="48" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="15" />
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25"/>
@@ -29,7 +26,7 @@
                 <MenuItem Header="HeaderName" IsEnabled="False">
                     <MenuItem.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Text="FileList" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </MenuItem.HeaderTemplate>
                 </MenuItem>
@@ -53,29 +50,17 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-
-        <!--Меню кнопок под заголовком-->
-        <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
-            <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="SaveFileClick" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="OpenFileListClick" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                </MenuItem>
-            </Menu>
-            <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Click="DeleteFileClick" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
-            </Menu>
-        </DockPanel>
-        <!--Текстовой обьект для именования файлов-->
-        <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2"/>
-        <!--Текстовой обьект для вывода текста из файла-->
-        <RichTextBox x:Name="FileText"  TextChanged="FileText_TextChanged" Grid.Column="1" Grid.Row="3"/>
+        <ListView x:Name="FileListView" Grid.Column="1" Grid.Row="2" SelectionChanged="FileListView_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding FileName}" Foreground="Blue" Cursor="Hand"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
-        <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />
-        <Canvas Grid.Column="0" Grid.Row="4"  Grid.ColumnSpan="3" Background="Gray" />
+        <Canvas Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Background="#F0F0F0" />
+        <Canvas Grid.Column="0" Grid.Row="3"  Grid.ColumnSpan="3" Background="Gray" />
         <!--#######################################################################################-->
     </Grid>
 </Window>

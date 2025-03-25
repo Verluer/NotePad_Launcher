@@ -5,8 +5,9 @@ namespace Domain.IService
     public interface IFileService
     {
         public FileModel OpenFile(string pathFile);
-        string ExDirectoryFile();
+        public string ExDirectoryFile();
         public FileModel CreateFile();
-        public FileModel SaveFile(string pathFile, string fileName, string fileText);
+        public FileModel SaveFile(FileModel model);
+        public List<FileModel> GetTextFiles();
     }
 }
