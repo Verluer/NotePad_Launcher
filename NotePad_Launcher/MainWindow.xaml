@@ -61,7 +61,13 @@
                     <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="SaveFileClick" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="SaveFileDialogClick" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="OpenFileListClick" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                </MenuItem>
+                <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
+                    <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
+                        <MenuItem Click="RSAClick" Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
@@ -69,7 +75,7 @@
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
-        <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2"/>
+        <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
         <!--Текстовой обьект для вывода текста из файла-->
         <RichTextBox x:Name="FileText"  TextChanged="FileText_TextChanged" Grid.Column="1" Grid.Row="3"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->

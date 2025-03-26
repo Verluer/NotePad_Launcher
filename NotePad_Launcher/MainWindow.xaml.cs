@@ -7,6 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using Domain.Enum;
+using Domain.IService.IEncryption;
+using Service.Encryption;
 using Application = System.Windows.Application;
 
 namespace NotePad_Launcher
@@ -19,21 +22,26 @@ namespace NotePad_Launcher
         private string Path;
         private readonly IFileService _fileService;
         private bool checkSaveFile = true;
+
         public MainWindow(IFileService fileService)
         {
             InitializeComponent();
             _fileService = fileService; // Сохраняем зависимость
             string testPath = _fileService.ExDirectoryFile();
         }
+
         public bool CheckingSaveFile(bool saveFile)
         {
             if (!saveFile)
             {
-                MessageBoxResult Ok = MessageBox.Show("Текстовой файл не был сохранен, вы хотите продолжить?", "", MessageBoxButton.YesNo);
+                MessageBoxResult Ok = MessageBox.Show("Текстовой файл не был сохранен, вы хотите продолжить?", "",
+                    MessageBoxButton.YesNo);
                 return Ok == MessageBoxResult.Yes;
             }
+
             return true;
         }
+
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -41,10 +49,12 @@ namespace NotePad_Launcher
                 this.DragMove();
             }
         }
+
         private void CloseApp_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
+
         private void MinimizeApp_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
@@ -54,6 +64,7 @@ namespace NotePad_Launcher
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
+
         private void FileText_TextChanged(object sender, TextChangedEventArgs e)
         {
             // Чтение содержимого файла
@@ -68,12 +79,14 @@ namespace NotePad_Launcher
                 checkSaveFile = false;
             }
         }
+
         private void OpenFileClick(object sender, RoutedEventArgs e)
         {
             if (!CheckingSaveFile(checkSaveFile))
             {
                 return;
             }
+
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
             if (openFileDialog.ShowDialog() == true)
@@ -93,15 +106,18 @@ namespace NotePad_Launcher
             {
                 return;
             }
+
             var nameFile = _fileService.CreateFile();
             FileName.Text = nameFile.FileName;
             Path = nameFile.FilePath;
         }
+
         private void OpenFileListClick(object sender, RoutedEventArgs e)
         {
-            FileListWindow encryptionWindow = new FileListWindow(_fileService);
-            encryptionWindow.Show();
+            FileListWindow fileListWindow = new FileListWindow(_fileService);
+            fileListWindow.Show();
         }
+
         private void SaveFileClick(object sender, RoutedEventArgs e)
         {
             TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
@@ -123,17 +139,42 @@ namespace NotePad_Launcher
 
         }
 
+        private void SaveFileDialogClick(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Title = "Сохранить файл как",
+                Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
+                DefaultExt = ".txt",
+                FileName = "Новый файл"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+
+                TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
+                string content = textRange.Text;
+                Path = saveFileDialog.FileName;
+                // Записываем в файл
+                File.WriteAllText(Path, content);
+                checkSaveFile = true;
+                MessageBox.Show($"Файл сохранен:\n{Path}", "Сохранение", MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+
         public void UpdateFileInfo(FileModel model)
         {
             if (!CheckingSaveFile(checkSaveFile))
             {
                 return;
             }
+
             Path = model.FilePath;
             TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
             textRange.Text = model.FileText;
             FileName.Text = model.FileName;
         }
+
         private void DeleteFileClick(object sender, RoutedEventArgs e)
         {
             if (File.Exists(Path))
@@ -152,5 +193,13 @@ namespace NotePad_Launcher
                 }
             }
         }
-    }
+
+        private void RSAClick(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
+            string allText = textRange.Text;
+            var encryptionWindow = new EncryptionWindow(allText, EncryptionMethod.RSA);
+            encryptionWindow.Show();
+        }
+}
 }

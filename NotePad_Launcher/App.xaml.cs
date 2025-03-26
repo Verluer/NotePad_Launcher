@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Domain.IService;
+using Domain.IService.IEncryption;
 using Service;
+using Service.Encryption;
 
 namespace NotePad_Launcher
 {
@@ -30,6 +32,7 @@ namespace NotePad_Launcher
         {
             // Регистрация зависимостей
             services.AddSingleton<IFileService, FileService>();
+            services.AddSingleton<IRSAService, RSAService>();
 
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();
