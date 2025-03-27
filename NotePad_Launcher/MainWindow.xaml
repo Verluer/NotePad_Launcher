@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:local="clr-namespace:NotePad_Launcher"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
@@ -76,8 +77,8 @@
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
         <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
-        <!--Текстовой обьект для вывода текста из файла-->
-        <RichTextBox x:Name="FileText"  TextChanged="FileText_TextChanged" Grid.Column="1" Grid.Row="3"/>
+        <!-- AvalonEdit control -->
+        <avalonEdit:TextEditor Name="FileText" TextChanged="FileText_TextChanged" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />

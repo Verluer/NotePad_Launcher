@@ -9,7 +9,7 @@ namespace Service
 {
     public class FileService : IFileService
     {
-        private string directoryPath;
+        private string directoryPath = string.Empty;
 
 
         public string ExDirectoryFile()
@@ -71,7 +71,7 @@ namespace Service
                 {
                     File.Delete(model.FilePath);
                 }
-                File.WriteAllText(newFilePath, model.FileName);
+                File.WriteAllText(newFilePath, model.FileText);
             }
             else
             {
@@ -84,6 +84,11 @@ namespace Service
             };
 
         }
+        public void LogMessage(string message)
+        {
+            string logFilePath = directoryPath;
+            File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
+        }
         public List<FileModel> GetTextFiles()
         {
             if (!Directory.Exists(directoryPath))
@@ -92,8 +97,8 @@ namespace Service
             return Directory.GetFiles(directoryPath, "*.txt")
                 .Select(file => new FileModel
                 {
-                    FileName = Path.GetFileName(file),
-                    FilePath = file
+                    FileName = Path.GetFileNameWithoutExtension(file),
+                    FilePath = file,
                 }).ToList();
         }
 

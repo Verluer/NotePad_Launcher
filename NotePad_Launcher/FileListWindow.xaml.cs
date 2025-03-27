@@ -47,7 +47,7 @@ namespace NotePad_Launcher
             {
                 var model = new FileModel
                 {
-                    FileName = Path.GetFileNameWithoutExtension(selectedFile.FileName),
+                    FileName = selectedFile.FileName,
                     FilePath = selectedFile.FilePath,
                     FileText = File.ReadAllText(selectedFile.FilePath),
                 };

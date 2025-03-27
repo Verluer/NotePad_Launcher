@@ -65,12 +65,10 @@ namespace NotePad_Launcher
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
 
-        private void FileText_TextChanged(object sender, TextChangedEventArgs e)
+        private void FileText_TextChanged(object sender, EventArgs e)
         {
-            // Чтение содержимого файла
             string checkTextFromFile = File.ReadAllText(Path, Encoding.UTF8);
-            // Сравнение содержимого файла с текстом из RichTextBox
-            if (checkTextFromFile == new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd).Text)
+            if (checkTextFromFile == FileText.Text)
             {
                 checkSaveFile = true;
             }
@@ -95,7 +93,7 @@ namespace NotePad_Launcher
                 var openFile = _fileService.OpenFile(filePath);
                 Path = openFile.FilePath;
                 FileName.Text = openFile.FileName;
-                FileText.Document.Blocks.Clear();
+                FileText.Clear();
                 FileText.AppendText(openFile.FileText);
             }
         }
@@ -109,6 +107,7 @@ namespace NotePad_Launcher
 
             var nameFile = _fileService.CreateFile();
             FileName.Text = nameFile.FileName;
+            FileText.Text = string.Empty;
             Path = nameFile.FilePath;
         }
 
@@ -120,10 +119,10 @@ namespace NotePad_Launcher
 
         private void SaveFileClick(object sender, RoutedEventArgs e)
         {
-            TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
+            MessageBox.Show(FileText.Text);
             var model = new FileModel
             {
-                FileText = textRange.Text,
+                FileText = FileText.Text,
                 FileName = FileName.Text,
                 FilePath = Path
             };
@@ -133,6 +132,7 @@ namespace NotePad_Launcher
                 Path = saveFile.FilePath;
                 checkSaveFile = true;
                 MessageBox.Show("Текстовой файл успешно сохранен");
+                MessageBox.Show("Text: " + FileText.Text);
             }
             else
                 MessageBox.Show("Введите текст для текстового файла");
@@ -150,9 +150,7 @@ namespace NotePad_Launcher
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-
-                TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
-                string content = textRange.Text;
+                string content = FileText.Text;
                 Path = saveFileDialog.FileName;
                 // Записываем в файл
                 File.WriteAllText(Path, content);
@@ -170,9 +168,9 @@ namespace NotePad_Launcher
             }
 
             Path = model.FilePath;
-            TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
-            textRange.Text = model.FileText;
+            FileText.Text = model.FileText;
             FileName.Text = model.FileName;
+            MessageBox.Show(model.FileName);
         }
 
         private void DeleteFileClick(object sender, RoutedEventArgs e)
@@ -186,7 +184,7 @@ namespace NotePad_Launcher
                     MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    FileText.Document.Blocks.Clear();
+                    FileText.Clear();
                     _fileService.DeleteFile(Path);
                     FileName.Text = string.Empty;
                     checkSaveFile = true;
@@ -196,8 +194,7 @@ namespace NotePad_Launcher
 
         private void RSAClick(object sender, RoutedEventArgs e)
         {
-            TextRange textRange = new TextRange(FileText.Document.ContentStart, FileText.Document.ContentEnd);
-            string allText = textRange.Text;
+            string allText = FileText.Text;
             var encryptionWindow = new EncryptionWindow(allText, EncryptionMethod.RSA);
             encryptionWindow.Show();
         }
