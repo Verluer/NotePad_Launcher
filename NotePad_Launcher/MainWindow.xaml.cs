@@ -196,6 +196,10 @@ namespace NotePad_Launcher
         {
             string allText = FileText.Text;
             var encryptionWindow = new EncryptionWindow(allText, EncryptionMethod.RSA);
+            encryptionWindow.EncryptionResultAction = (newText) =>
+            {
+                FileText.Text = newText; // Обновляем TextBox в главном окне
+            };
             encryptionWindow.Show();
         }
 }

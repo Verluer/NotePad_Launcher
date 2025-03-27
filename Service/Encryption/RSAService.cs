@@ -52,6 +52,7 @@ public class RSAService : IRSAService
         return new EncryptionModel
         {
             CloseKeyD = d.ToString(),
+            PrimeE = value_e.ToString(),
             ModulusN = modulus_n.ToString(),
             FileText = resultEncryption
         };
