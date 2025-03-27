@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NotePad_Launcher"
         mc:Ignorable="d"
-        Title="EncryptionWindow" Height="450" Width="800"
+        Title="EncryptionWindow" Height="400" Width="600"
         Style="{StaticResource MyWindowStyle}">
     <Grid>
         <Grid.RowDefinitions>
@@ -64,16 +64,16 @@
         <StackPanel Grid.Column="0" Grid.Row="4" >
             <TextBlock  Text="Enter value 3:" x:Name="LabelText3" FontSize="20" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBox x:Name="TextValue3" Width="100" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
-                <TextBox  x:Name="TextValue4" Width="100" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
+                <TextBox x:Name="TextValue3" Width="60" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
+                <TextBox  x:Name="TextValue4" Width="60" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="3" >
             <TextBlock  Text="Enter close key:" x:Name="LabelEnKey" FontSize="20" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBox x:Name="CloseKey1" Width="60" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
-                <TextBox x:Name="CloseKey2" Width="60" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
-                <TextBox x:Name="CloseKey3" Width="60" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
+                <TextBox x:Name="CloseKey1" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
+                <TextBox x:Name="CloseKey2" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
+                <TextBox x:Name="CloseKey3" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
             </StackPanel>
         </StackPanel>
         <TextBlock  Grid.Column="2" Grid.Row="4" x:Name="LabelCloseKey"  Text="Close key: " FontSize="20" HorizontalAlignment="Center"/>
@@ -84,7 +84,7 @@
         <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
             Digital signature
         </Button>
-        <Button Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
+        <Button Click="DecryptionButton_OnClick" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
             Decryption
         </Button>
     </Grid>

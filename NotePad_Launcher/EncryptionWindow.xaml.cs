@@ -20,6 +20,7 @@ namespace NotePad_Launcher
         public EncryptionWindow(string text, EncryptionMethod method)
         {
             InitializeComponent();
+
             FileText = text;
             SelectedMethod = method;
             _rsaService = new RSAService();
@@ -48,6 +49,7 @@ namespace NotePad_Launcher
             LabelText1.Text = "Enter prime number p:";
             LabelText2.Text = "Enter prime number q:";
             LabelText3.Text = "Enter prime number e or (e,n)";
+            CloseKey3.Visibility = Visibility.Collapsed;
         }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -87,6 +89,35 @@ namespace NotePad_Launcher
                     var result = _rsaService.Encryption(model);
                     LabelCloseKey.Text += $"{result.CloseKeyD},{result.ModulusN}";
                     LabelOpenKey.Text += $"{result.PrimeE},{result.ModulusN}";
+                    EncryptionResultAction?.Invoke(result.FileText);
+                    break;
+                case EncryptionMethod.Elgamal:
+                    // Действие для метода B
+                    break;
+                case EncryptionMethod.Rabina:
+                    // Действие для метода C
+                    break;
+                case EncryptionMethod.ECC:
+                    // Действие для метода D
+                    break;
+                default:
+                    // Действие, если метод не выбран (None)
+                    break;
+            }
+        }
+        private void DecryptionButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            switch (SelectedMethod)
+            {
+                case EncryptionMethod.RSA:
+                    var model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        CloseKeyD = CloseKey1.Text,
+                        ModulusN = CloseKey2.Text
+
+                    };
+                    var result = _rsaService.Decryption(model);
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Elgamal:

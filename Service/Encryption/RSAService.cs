@@ -60,6 +60,21 @@ public class RSAService : IRSAService
 
     public EncryptionModel Decryption(EncryptionModel model)
     {
-        throw new NotImplementedException();
+        var textStringArray = model.FileText.Split('&');
+        int value_d = int.Parse(model.CloseKeyD);
+        int value_n = int.Parse(model.ModulusN);
+        var encryptedNumbers = textStringArray.Select(int.Parse).ToArray();
+        var resultCharArray = new char[encryptedNumbers.Length];
+        for (int i = 0; i < encryptedNumbers.Length; i++)
+        {
+            int encryptedNumber = encryptedNumbers[i];
+            BigInteger result = BigInteger.ModPow(encryptedNumber, value_d, value_n);
+            resultCharArray[i] = Settings.UkrainianAlphabet[(int)result];
+        }
+        string resultEncryption = string.Join("", resultCharArray);
+        return new EncryptionModel
+        {
+            FileText = resultEncryption
+        };
     }
 }
