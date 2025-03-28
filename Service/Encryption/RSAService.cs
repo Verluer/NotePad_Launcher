@@ -8,6 +8,34 @@ namespace Service.Encryption;
 
 public class RSAService : IRSAService
 {
+    #region private
+    private void LogMessage(string message)
+    {
+        string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
+        File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
+    }
+
+    private BigInteger? CalculateCloseKeyD(
+        BigInteger value_p, 
+        BigInteger value_q, 
+        BigInteger value_e, 
+        BigInteger modulus_n)
+    {
+        var fn = (value_p - 1) * (value_q - 1);
+        if (value_e > 0 && value_e < modulus_n)
+        {
+            var k = 0;
+            while (true)
+            {
+                k++;
+                if ((k * fn + 1) % value_e != 0) continue;
+                var d = (k * fn + 1) / value_e;
+                return d;
+            }
+        }
+        return null;
+    }
+    #endregion
     public EncryptionModel Encryption(EncryptionModel model)
     {
         var textCharArray = model.FileText.ToUpper().ToCharArray();
@@ -23,20 +51,8 @@ public class RSAService : IRSAService
             var value_p = BigInteger.Parse(model.PrimeP);
             var value_q = BigInteger.Parse(model.PrimeQ);
             modulus_n = value_p * value_q;
-            var fn = (value_p - 1) * (value_q - 1);
             value_e = BigInteger.Parse(model.PrimeE);
-
-            if (value_e > 0 && value_e < modulus_n)
-            {
-                var k = 0;
-                while (true)
-                {
-                    k++;
-                    if ((k * fn + 1) % value_e != 0) continue;
-                    d = (k * fn + 1) / value_e;
-                    break;
-                }
-            }
+            d = CalculateCloseKeyD(value_p, value_q, value_e, modulus_n)??0;
         }
         for (int i = 0; i < textCharArray.Length; i++)
         {
@@ -82,19 +98,17 @@ public class RSAService : IRSAService
     {
         var textCharArray = model.FileText.ToUpper().ToCharArray();
 
-        string signature;
         BigInteger S = 0;
         if (!string.IsNullOrEmpty(model.ModulusN))
         {
-
             var modulus_n = BigInteger.Parse(model.ModulusN);
             var value_e = BigInteger.Parse(model.PrimeE);
 
-            int Index = model.FileText.IndexOf('#');
-            if (Index != -1)
+            var index = model.FileText.IndexOf('#');
+            if (index != -1)
             {
-                signature = model.FileText.Substring(Index + 1);
-                model.FileText = model.FileText.Substring(0, Index);
+                var signature = model.FileText.Substring(index + 1);
+                model.FileText = model.FileText.Substring(0, index);
                 S = BigInteger.Parse(signature.Replace("Цифровий підпис: ", ""));
             }
             textCharArray = model.FileText.ToUpper().ToCharArray();
@@ -126,19 +140,8 @@ public class RSAService : IRSAService
             var value_q = BigInteger.Parse(model.PrimeQ);
             var value_e = BigInteger.Parse(model.PrimeE);
             BigInteger d = default;
-            var fn = (value_p - 1) * (value_q - 1);
             var modulus_n = value_p * value_q;
-            if (value_e > 0 && value_e < modulus_n)
-            {
-                var k = 0;
-                while (true)
-                {
-                    k++;
-                    if ((k * fn + 1) % value_e != 0) continue;
-                    d = (k * fn + 1) / value_e;
-                    break;
-                }
-            }
+            d = CalculateCloseKeyD(value_p, value_q, value_e, modulus_n) ?? 0;
             BigInteger resultSign = 0;
             for (int i = 0; i < textCharArray.Length; i++)
             {
@@ -153,16 +156,10 @@ public class RSAService : IRSAService
             }
             S = BigInteger.ModPow(resultSign, d, modulus_n);
             var signatureText = $"{model.FileText}#Цифровий підпис: {S.ToString()}";
-            LogMessage(signatureText);
             return new EncryptionModel
             {
                 FileText = signatureText
             };
         }
-    }
-    public void LogMessage(string message)
-    {
-        string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
-        File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
     }
 }
