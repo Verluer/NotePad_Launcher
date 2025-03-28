@@ -17,11 +17,9 @@ namespace NotePad_Launcher
         private string FileText;
         private EncryptionMethod SelectedMethod;
         private readonly IRSAService _rsaService;
-        public EncryptionWindow(string text, EncryptionMethod method)
+        public EncryptionWindow(EncryptionMethod method)
         {
             InitializeComponent();
-
-            FileText = text;
             SelectedMethod = method;
             _rsaService = new RSAService();
             switch (SelectedMethod)
@@ -72,9 +70,18 @@ namespace NotePad_Launcher
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
-
+        private string GetTextFromMainWindow()
+        {
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                return mainWindow.GetFileText(); // Получаем актуальное значение из FileText
+            }
+            return string.Empty;
+        }
         private void EncryptionButton_OnClick(object sender, RoutedEventArgs e)
         {
+            FileText = GetTextFromMainWindow();
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
@@ -83,7 +90,8 @@ namespace NotePad_Launcher
                         FileText = FileText,
                         PrimeP = TextValue1.Text,
                         PrimeQ = TextValue2.Text,
-                        PrimeE = TextValue3.Text
+                        PrimeE = TextValue3.Text,
+                        ModulusN = TextValue4.Text
 
                     };
                     var result = _rsaService.Encryption(model);
@@ -107,6 +115,7 @@ namespace NotePad_Launcher
         }
         private void DecryptionButton_OnClick(object sender, RoutedEventArgs e)
         {
+            FileText = GetTextFromMainWindow();
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
@@ -119,6 +128,53 @@ namespace NotePad_Launcher
                     };
                     var result = _rsaService.Decryption(model);
                     EncryptionResultAction?.Invoke(result.FileText);
+                    break;
+                case EncryptionMethod.Elgamal:
+                    // Действие для метода B
+                    break;
+                case EncryptionMethod.Rabina:
+                    // Действие для метода C
+                    break;
+                case EncryptionMethod.ECC:
+                    // Действие для метода D
+                    break;
+                default:
+                    // Действие, если метод не выбран (None)
+                    break;
+            }
+        }
+
+        private void DigitalSignatureButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            FileText = GetTextFromMainWindow();
+            switch (SelectedMethod)
+            {
+                case EncryptionMethod.RSA:
+                    var model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        PrimeP = TextValue1.Text,
+                        PrimeQ = TextValue2.Text,
+                        PrimeE = TextValue3.Text,
+                        ModulusN = TextValue4.Text
+                    };
+                    var result = _rsaService.Signature(model);
+                    if (string.IsNullOrEmpty(result.FileText))
+                    {
+                        switch (model.Signature)
+                        {
+                            case true:
+                                MessageBox.Show("DigitalSignature valid");
+                                break;
+                            case false:
+                                MessageBox.Show("DigitalSignature invalid");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        EncryptionResultAction?.Invoke(result.FileText);
+                    }
                     break;
                 case EncryptionMethod.Elgamal:
                     // Действие для метода B

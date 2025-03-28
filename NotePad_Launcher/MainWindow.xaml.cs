@@ -191,11 +191,14 @@ namespace NotePad_Launcher
                 }
             }
         }
-
+        public string GetFileText()
+        {
+            return FileText.Text; // Возвращаем актуальное значение TextBox
+        }
         private void RSAClick(object sender, RoutedEventArgs e)
         {
             string allText = FileText.Text;
-            var encryptionWindow = new EncryptionWindow(allText, EncryptionMethod.RSA);
+            var encryptionWindow = new EncryptionWindow(EncryptionMethod.RSA);
             encryptionWindow.EncryptionResultAction = (newText) =>
             {
                 FileText.Text = newText; // Обновляем TextBox в главном окне

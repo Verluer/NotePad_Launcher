@@ -84,11 +84,7 @@ namespace Service
             };
 
         }
-        public void LogMessage(string message)
-        {
-            string logFilePath = directoryPath;
-            File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
-        }
+
         public List<FileModel> GetTextFiles()
         {
             if (!Directory.Exists(directoryPath))

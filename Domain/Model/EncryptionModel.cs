@@ -1,4 +1,6 @@
-﻿namespace Domain.Model;
+﻿using System.Reflection.Metadata;
+
+namespace Domain.Model;
 
 public class EncryptionModel
 {
@@ -8,5 +10,5 @@ public class EncryptionModel
     public string PrimeE { get; set; }
     public string ModulusN { get; set; }
     public string CloseKeyD { get; set; }
-
+    public bool Signature { get; set; }
 }
