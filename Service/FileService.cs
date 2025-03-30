@@ -101,5 +101,26 @@ namespace Service
         {
             File.Delete(filePath);
         }
+
+        public bool CheckTextChange(string pathFile, string fileText)
+        {
+            var checkTextFromFile = File.ReadAllText(pathFile, Encoding.UTF8);
+            return checkTextFromFile == fileText;
+        }
+
+        public void WriteAllText(string pathFile, string fileText)
+        {
+            File.WriteAllText(pathFile, fileText);
+        }
+
+        public string GetFileName(string pathFile)
+        {
+            return Path.GetFileNameWithoutExtension(pathFile);
+        }
+
+        public bool FileExists(string pathFile)
+        {
+            return File.Exists(pathFile);
+        }
     }
 }

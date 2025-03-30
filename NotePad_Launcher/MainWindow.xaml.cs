@@ -67,15 +67,7 @@ namespace NotePad_Launcher
 
         private void FileText_TextChanged(object sender, EventArgs e)
         {
-            string checkTextFromFile = File.ReadAllText(FilePath, Encoding.UTF8);
-            if (checkTextFromFile == FileText.Text)
-            {
-                checkSaveFile = true;
-            }
-            else
-            {
-                checkSaveFile = false;
-            }
+            checkSaveFile = _fileService.CheckTextChange(FilePath, FileText.Text);
         }
 
         private void OpenFileClick(object sender, RoutedEventArgs e)
@@ -85,11 +77,11 @@ namespace NotePad_Launcher
                 return;
             }
 
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
             if (openFileDialog.ShowDialog() == true)
             {
-                string filePath = openFileDialog.FileName;
+                var filePath = openFileDialog.FileName;
                 var openFile = _fileService.OpenFile(filePath);
                 FilePath = openFile.FilePath;
                 FileName.Text = openFile.FileName;
@@ -113,7 +105,7 @@ namespace NotePad_Launcher
 
         private void OpenFileListClick(object sender, RoutedEventArgs e)
         {
-            FileListWindow fileListWindow = new FileListWindow(_fileService);
+            var fileListWindow = new FileListWindow(_fileService);
             fileListWindow.Show();
         }
 
@@ -139,7 +131,7 @@ namespace NotePad_Launcher
 
         private void SaveFileDialogClick(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            var saveFileDialog = new SaveFileDialog
             {
                 Title = "Сохранить файл как",
                 Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
@@ -148,11 +140,9 @@ namespace NotePad_Launcher
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                string content = FileText.Text;
                 FilePath = saveFileDialog.FileName;
-                // Записываем в файл
-                File.WriteAllText(FilePath, content);
-                FileName.Text = Path.GetFileNameWithoutExtension(FilePath);
+                _fileService.WriteAllText(FilePath, FileText.Text);
+                FileName.Text = _fileService.GetFileName(FilePath);
                 checkSaveFile = true;
                 MessageBox.Show($"Файл сохранен:\n{FilePath}", "Сохранение", MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -173,7 +163,7 @@ namespace NotePad_Launcher
 
         private void DeleteFileClick(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(FilePath))
+            if (_fileService.FileExists(FilePath))
             {
                 MessageBoxResult result = MessageBox.Show(
                     "Вы точно хотите удалить этот текстовой файл??",
@@ -207,47 +197,31 @@ namespace NotePad_Launcher
         {
             return FileText.Text; // Возвращаем актуальное значение TextBox
         }
-
-        private void RSAClick(object sender, RoutedEventArgs e)
+        private void OpenEncryptionWindow(EncryptionMethod method)
         {
-            string allText = FileText.Text;
-            var encryptionWindow = new EncryptionWindow(EncryptionMethod.RSA);
+            var encryptionWindow = new EncryptionWindow(method);
             encryptionWindow.EncryptionResultAction = (newText) =>
             {
                 FileText.Text = newText; // Обновляем TextBox в главном окне
             };
             encryptionWindow.Show();
+        }
+        private void RSAClick(object sender, RoutedEventArgs e)
+        {
+            OpenEncryptionWindow(EncryptionMethod.RSA);
         }
 
         private void ElgamalClick(object sender, RoutedEventArgs e)
         {
-            string allText = FileText.Text;
-            var encryptionWindow = new EncryptionWindow(EncryptionMethod.Elgamal);
-            encryptionWindow.EncryptionResultAction = (newText) =>
-            {
-                FileText.Text = newText; // Обновляем TextBox в главном окне
-            };
-            encryptionWindow.Show();
+            OpenEncryptionWindow(EncryptionMethod.Elgamal);
         }
         private void RabinaClick(object sender, RoutedEventArgs e)
         {
-            string allText = FileText.Text;
-            var encryptionWindow = new EncryptionWindow(EncryptionMethod.Rabina);
-            encryptionWindow.EncryptionResultAction = (newText) =>
-            {
-                FileText.Text = newText; // Обновляем TextBox в главном окне
-            };
-            encryptionWindow.Show();
+            OpenEncryptionWindow(EncryptionMethod.Rabina);
         }
         private void ECCClick(object sender, RoutedEventArgs e)
         {
-            string allText = FileText.Text;
-            var encryptionWindow = new EncryptionWindow(EncryptionMethod.ECC);
-            encryptionWindow.EncryptionResultAction = (newText) =>
-            {
-                FileText.Text = newText; // Обновляем TextBox в главном окне
-            };
-            encryptionWindow.Show();
+            OpenEncryptionWindow(EncryptionMethod.ECC);
         }
     }
 }
