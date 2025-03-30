@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:local="clr-namespace:NotePad_Launcher"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
@@ -22,26 +23,66 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
-        <!--Подгрузка заголовка из App.xaml-->
-        <ContentControl Content="{StaticResource MainHeadLine}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
+        <!--Заголовок программы (Именование и три кнопки функционала)-->
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30" MouseDown="HeadLine_MouseDown">
+            <!-- Текст слева -->
+            <Menu DockPanel.Dock="Left" Background="#004C56">
+                <MenuItem Header="HeaderName" IsEnabled="False">
+                    <MenuItem.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </MenuItem.HeaderTemplate>
+                </MenuItem>
+            </Menu>
+            <!-- Кнопки справа -->
+            <Menu DockPanel.Dock="Right" Background="#004C56">
+                <MenuItem Height="30" Click="MinimizeApp_Click">
+                    <MenuItem.Header>
+                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Height="30" Click="MaximizeApp_Click" >
+                    <MenuItem.Header>
+                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+                <MenuItem Height="30" Click="CloseApp_Click">
+                    <MenuItem.Header>
+                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </MenuItem.Header>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
         <!--Меню кнопок под заголовком-->
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="SaveFileClick" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="SaveFileDialogClick" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Click="OpenFileListClick" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
                 </MenuItem>
-            </Menu>
+                <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
+                    <MenuItem x:Name="WordWrap" Header="Перенос по строкам" Click="WordWrapClick"  Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
+                        <MenuItem Click="RSAClick" Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Click="ElgamalClick" Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Click="RabinaClick" Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Click="ECCClick" Header="ECC" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                    </MenuItem>
+                </MenuItem>
+                </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Click="DeleteFileClick" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
-        <TextBox Grid.Column="1" Grid.Row="2" x:Name="NameTextBox" />
-        <!--Текстовой обьект для вывода текста из файла-->
-        <RichTextBox Grid.Column="1" Grid.Row="3" x:Name="TextRichTextBox" />
+        <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
+        <!-- AvalonEdit control -->
+        <avalonEdit:TextEditor Name="FileText" TextChanged="FileText_TextChanged"  ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />

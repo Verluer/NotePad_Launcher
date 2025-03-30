@@ -1,0 +1,159 @@
+﻿using Domain.IService.IEncryption;
+using Domain.Model;
+using System.Numerics;
+using Domain;
+
+namespace Service.Encryption;
+
+public class RSAService : IRSAService
+{
+    #region private
+
+    private BigInteger? CalculateCloseKeyD(
+        BigInteger value_p, 
+        BigInteger value_q, 
+        BigInteger value_e, 
+        BigInteger modulus_n)
+    {
+        var fn = (value_p - 1) * (value_q - 1);
+        if (value_e > 0 && value_e < modulus_n)
+        {
+            var k = 0;
+            while (true)
+            {
+                k++;
+                if ((k * fn + 1) % value_e != 0) continue;
+                var d = (k * fn + 1) / value_e;
+                return d;
+            }
+        }
+        return null;
+    }
+    #endregion
+    public EncryptionModel Encryption(EncryptionModel model)
+    {
+        var textCharArray = model.FileText.ToUpper().ToCharArray();
+        var textIntArray = new int[textCharArray.Length];
+        BigInteger modulus_n, value_e, d = 0;
+        if (!string.IsNullOrEmpty(model.ModulusN))
+        {
+            value_e = int.Parse(model.PrimeE);
+            modulus_n = int.Parse(model.ModulusN);
+        }
+        else
+        {
+            var value_p = BigInteger.Parse(model.PrimeP);
+            var value_q = BigInteger.Parse(model.PrimeQ);
+            modulus_n = value_p * value_q;
+            value_e = BigInteger.Parse(model.PrimeE);
+            d = CalculateCloseKeyD(value_p, value_q, value_e, modulus_n)??0;
+        }
+        for (int i = 0; i < textCharArray.Length; i++)
+        {
+            for (int j = 0; j < Settings.UkrainianAlphabet.Length; j++)
+            {
+                if (textCharArray[i] != Settings.UkrainianAlphabet[j]) continue;
+                var encryptedSymbol = BigInteger.ModPow(j, value_e, modulus_n);
+                textIntArray[i] = (int)encryptedSymbol;
+                break;
+            }
+        }
+        var resultEncryption = string.Join("&", textIntArray);
+        return new EncryptionModel
+        {
+            CloseKeyD = d.ToString(),
+            PrimeE = value_e.ToString(),
+            ModulusN = modulus_n.ToString(),
+            FileText = resultEncryption
+        };
+    }
+
+    public EncryptionModel Decryption(EncryptionModel model)
+    {
+        var textStringArray = model.FileText.Split('&');
+        int value_d = int.Parse(model.CloseKeyD);
+        int value_n = int.Parse(model.ModulusN);
+        var encryptedNumbers = textStringArray.Select(int.Parse).ToArray();
+        var resultCharArray = new char[encryptedNumbers.Length];
+        for (int i = 0; i < encryptedNumbers.Length; i++)
+        {
+            int encryptedNumber = encryptedNumbers[i];
+            BigInteger result = BigInteger.ModPow(encryptedNumber, value_d, value_n);
+            resultCharArray[i] = Settings.UkrainianAlphabet[(int)result];
+        }
+        string resultDecryption = string.Join("", resultCharArray);
+        return new EncryptionModel
+        {
+            FileText = resultDecryption
+        };
+    }
+
+    public EncryptionModel Signature(EncryptionModel model)
+    {
+        var textCharArray = model.FileText.ToUpper().ToCharArray();
+
+        BigInteger S = 0;
+        if (!string.IsNullOrEmpty(model.ModulusN))
+        {
+            var modulus_n = BigInteger.Parse(model.ModulusN);
+            var value_e = BigInteger.Parse(model.PrimeE);
+
+            var index = model.FileText.IndexOf('#');
+            if (index != -1)
+            {
+                var signature = model.FileText.Substring(index + 1);
+                model.FileText = model.FileText.Substring(0, index);
+                S = BigInteger.Parse(signature.Replace("Цифровий підпис: ", ""));
+            }
+            textCharArray = model.FileText.ToUpper().ToCharArray();
+            BigInteger resultSign = 0;
+            for (int i = 0; i < textCharArray.Length; i++)
+            {
+                for (int j = 0; j < Settings.UkrainianAlphabet.Length; j++)
+                {
+                    if (textCharArray[i] == Settings.UkrainianAlphabet[j])
+                    {
+                        resultSign += j;
+                        break;
+                    }
+                }
+            }
+            BigInteger HashM = BigInteger.ModPow(S, value_e, modulus_n);
+            if (HashM == resultSign)
+                model.Signature = true;
+            else
+                model.Signature = false;
+            return new EncryptionModel
+            {
+                Signature = model.Signature,
+            };
+        }
+        else
+        {
+            var value_p = BigInteger.Parse(model.PrimeP);
+            var value_q = BigInteger.Parse(model.PrimeQ);
+            var value_e = BigInteger.Parse(model.PrimeE);
+            BigInteger d = default;
+            var modulus_n = value_p * value_q;
+            d = CalculateCloseKeyD(value_p, value_q, value_e, modulus_n) ?? 0;
+            BigInteger resultSign = 0;
+            for (int i = 0; i < textCharArray.Length; i++)
+            {
+                for (int j = 0; j < Settings.UkrainianAlphabet.Length; j++)
+                {
+                    if (textCharArray[i] == Settings.UkrainianAlphabet[j])
+                    {
+                        resultSign += j;
+                        break;
+                    }
+                }
+            }
+            S = BigInteger.ModPow(resultSign, d, modulus_n);
+            var signatureText = $"{model.FileText}#Цифровий підпис: {S.ToString()}";
+            return new EncryptionModel
+            {
+                FileText = signatureText
+            };
+        }
+    }
+}

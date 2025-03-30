@@ -1,46 +1,8 @@
 ﻿<Application x:Class="NotePad_Launcher.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:NotePad_Launcher"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:NotePad_Launcher">
     <Application.Resources>
-        <!-- Шапка из Canvas, вероятно удалить и заменить на Menu -->
-        <Border x:Key="TopCanvas" Background="#004C56" BorderBrush="Black" BorderThickness="1" Height="30" VerticalAlignment="Top">
-            <Canvas Background="#004C56" Height="30" VerticalAlignment="Top">
-                <TextBlock Text="Header" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Foreground="White"/>
-            </Canvas>
-        </Border>
-        <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel x:Key="MainHeadLine" Background="#004C56" LastChildFill="False" Height="30">
-            <!-- Текст слева -->
-            <Menu DockPanel.Dock="Left" Background="#004C56">
-                <MenuItem Header="HeaderName" IsEnabled="False">
-                    <MenuItem.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </MenuItem.HeaderTemplate>
-                </MenuItem>
-            </Menu>
-            <!-- Кнопки справа -->
-            <Menu DockPanel.Dock="Right" Background="#004C56">
-                <MenuItem Height="30">
-                    <MenuItem.Header>
-                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30">
-                    <MenuItem.Header>
-                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30">
-                    <MenuItem.Header>
-                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-            </Menu>
-        </DockPanel>
         <!--Основной цвет для всех окон UI-->
         <SolidColorBrush x:Key="WindowBackground" Color="WhiteSmoke"/>
         <!--Базовые настройкки для окон UI-->
