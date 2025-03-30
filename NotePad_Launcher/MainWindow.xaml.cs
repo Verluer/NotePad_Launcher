@@ -195,6 +195,7 @@ namespace NotePad_Launcher
             if (WordWrap.IsChecked)
             {
                 FileText.WordWrap = false;
+            
             }
             else
             {
