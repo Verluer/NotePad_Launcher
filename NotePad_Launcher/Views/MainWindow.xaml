@@ -4,10 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-        xmlns:local="clr-namespace:NotePad_Launcher"
+        xmlns:mainWindow="clr-namespace:NotePad_Launcher.ViewModels.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Style="{StaticResource MyWindowStyle}">
+    <Window.DataContext>
+        <mainWindow:MainWindowVM/>
+    </Window.DataContext>
 
     <Grid x:Name="MainWindowContainer">
         <!--Разделение программы на ряды и столбцы-->
@@ -24,30 +27,30 @@
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
         <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30" MouseDown="HeadLine_MouseDown">
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
             <!-- Текст слева -->
             <Menu DockPanel.Dock="Left" Background="#004C56">
-                <MenuItem Header="HeaderName" IsEnabled="False">
+                <MenuItem Header="HeaderName" IsEnabled="False" Height="29">
                     <MenuItem.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" Height="26"/>
                         </DataTemplate>
                     </MenuItem.HeaderTemplate>
                 </MenuItem>
             </Menu>
             <!-- Кнопки справа -->
             <Menu DockPanel.Dock="Right" Background="#004C56">
-                <MenuItem Height="30" Click="MinimizeApp_Click">
+                <MenuItem Height="30" Command="{Binding MinimizeCommand}">
                     <MenuItem.Header>
                         <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem Height="30" Click="MaximizeApp_Click" >
+                <MenuItem Height="30" Command="{Binding MaximizeCommand}">
                     <MenuItem.Header>
                         <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem Height="30" Click="CloseApp_Click">
+                <MenuItem Height="30" Command="{Binding CloseCommand}">
                     <MenuItem.Header>
                         <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </MenuItem.Header>

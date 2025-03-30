@@ -9,15 +9,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using Domain.Enum;
 using Domain.IService.IEncryption;
+using NotePad_Launcher.Contracts;
 using Service.Encryption;
 using Application = System.Windows.Application;
+using NotePad_Launcher.ViewModels;
+using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IWindowService
     {
         private string FilePath;
         private readonly IFileService _fileService;
@@ -27,9 +30,19 @@ namespace NotePad_Launcher
         {
             InitializeComponent();
             _fileService = fileService; // Сохраняем зависимость
-            string testPath = _fileService.ExDirectoryFile();
+            var viewModel = new MainWindowVM();
+            viewModel.WindowService = this;
+            DataContext = viewModel;
+        }
+        public void Minimize()
+        {
+            this.WindowState = WindowState.Minimized;
         }
 
+        public void Maximize()
+        {
+            this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
         public bool CheckingSaveFile(bool saveFile)
         {
             if (!saveFile)
@@ -41,28 +54,12 @@ namespace NotePad_Launcher
 
             return true;
         }
-
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.DragMove();
             }
-        }
-
-        private void CloseApp_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        private void MinimizeApp_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = WindowState.Minimized;
-        }
-
-        private void MaximizeApp_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
 
         private void FileText_TextChanged(object sender, EventArgs e)
