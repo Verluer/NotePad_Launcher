@@ -20,8 +20,8 @@ public class ECCService : IECCService
     }
     public EncryptionModel Encryption(EncryptionModel model)
     {
-       var textCharArray = model.FileText.ToUpper().ToCharArray();
-       var textStringArray = new string[textCharArray.Length];
+        var textCharArray = model.FileText.ToUpper().ToCharArray();
+        var textStringArray = new string[textCharArray.Length];
         Random random = new Random();
         BigInteger Qx;
         if (!string.IsNullOrWhiteSpace(model.PrimeE))
@@ -94,53 +94,59 @@ public class ECCService : IECCService
 
     public EncryptionModel Signature(EncryptionModel model)
     {
-        BigInteger r, s, Q;
-        if (string.IsNullOrWhiteSpace(model.PrimeE))
+        BigInteger r, s, Q, h;
+        byte[] hash;
+        if (!string.IsNullOrWhiteSpace(model.PrimeE))
         {
-            byte[] hash = Settings.HashMessageSHA1(model.FileText);
-            Random random = new Random();
-            BigInteger h = new BigInteger(hash);
-            BigInteger d = BigInteger.Parse(model.CloseKeyD);
-            Q = d * ECCParameters.G.x;
-            BigInteger k = random.Next(1, Int32.MaxValue);
-            BigInteger kInverse = BigInteger.ModPow(k, ECCParameters.n - 2, ECCParameters.n);
-            BigInteger R = k * ECCParameters.G.x;
-            r = R % ECCParameters.n;
-            s = (kInverse * (h + d * r)) % ECCParameters.n;
-            var signature = $"{model.FileText}#Цифровий підпис: {r.ToString()},{s.ToString()}";
-            return new EncryptionModel
+            int Index = model.FileText.IndexOf('#');
+            if (Index != -1)
             {
-                FileText = signature,
-                PrimeE = Q.ToString()
-            };
-        }
-        int Index = model.FileText.IndexOf('#');
-        if (Index != -1)
-        {
-            Q = BigInteger.Parse(model.PrimeE);
-            var signature = model.FileText.Substring(Index + 1);
-            model.FileText = model.FileText.Substring(0, Index);
-            byte[] hash = Settings.HashMessageSHA1(model.FileText);
-            BigInteger h = new BigInteger(hash);
-            string signatureString = signature.Replace("Цифровий підпис: ", "");
-            int IndexKoma = signatureString.IndexOf(',');
-            s = BigInteger.Parse(signatureString.Substring(IndexKoma + 1));
-            r = BigInteger.Parse(signatureString.Substring(0, IndexKoma));
-            BigInteger w = BigInteger.ModPow(s, ECCParameters.n - 2, ECCParameters.n);
-            BigInteger u1 = h * w % ECCParameters.n;
-            BigInteger u2 = r * w % ECCParameters.n;
-            BigInteger P = u1 * ECCParameters.G.x + u2 * Q;
-            BigInteger resultTestSignature = P % ECCParameters.n;
-            if (r == resultTestSignature)
-                return new EncryptionModel
+                Q = BigInteger.Parse(model.PrimeE);
+                var signatureText = model.FileText.Substring(Index + 1);
+                model.FileText = model.FileText.Substring(0, Index);
+                hash = Settings.HashMessageSHA1(model.FileText);
+                h = new BigInteger(hash);
+                string signatureString = signatureText.Replace("Цифровий підпис: ", "");
+                int IndexKoma = signatureString.IndexOf(',');
+                s = BigInteger.Parse(signatureString.Substring(IndexKoma + 1));
+                r = BigInteger.Parse(signatureString.Substring(0, IndexKoma));
+                BigInteger w = BigInteger.ModPow(s, ECCParameters.n - 2, ECCParameters.n);
+                BigInteger u1 = h * w % ECCParameters.n;
+                BigInteger u2 = r * w % ECCParameters.n;
+                BigInteger P = u1 * ECCParameters.G.x + u2 * Q;
+                BigInteger resultTestSignature = P % ECCParameters.n;
+                if (r == resultTestSignature)
                 {
-                    Signature = true
-                };
-            return new EncryptionModel
-            {
-                Signature = false
-            };
+                    return new EncryptionModel
+                    {
+                        Signature = true
+                    };
+                }
+                else
+                {
+                    return new EncryptionModel
+                    {
+                        Signature = false
+                    };
+                }
+
+            }
         }
-        return null;
+        hash = Settings.HashMessageSHA1(model.FileText);
+        Random random = new Random();
+        h = new BigInteger(hash);
+        BigInteger d = BigInteger.Parse(model.CloseKeyD);
+        Q = d * ECCParameters.G.x;
+        BigInteger k = random.Next(1, Int32.MaxValue);
+        BigInteger kInverse = BigInteger.ModPow(k, ECCParameters.n - 2, ECCParameters.n);
+        BigInteger R = k * ECCParameters.G.x;
+        r = R % ECCParameters.n;
+        s = (kInverse * (h + d * r)) % ECCParameters.n;
+        var signatureResult = $"{model.FileText}#Цифровий підпис: {r.ToString()},{s.ToString()}";
+        return new EncryptionModel
+        {
+            FileText = signatureResult,
+            PrimeE = Q.ToString()
+        };
     }
 }

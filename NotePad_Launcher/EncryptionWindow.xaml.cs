@@ -275,7 +275,7 @@ namespace NotePad_Launcher
                     result = _rsaService.Signature(model);
                     if (string.IsNullOrEmpty(result.FileText))
                     {
-                        switch (model.Signature)
+                        switch (result.Signature)
                         {
                             case true:
                                 MessageBox.Show("DigitalSignature valid");
@@ -307,7 +307,7 @@ namespace NotePad_Launcher
                     TextValue3.Text = result.PrimeE;
                     if (string.IsNullOrEmpty(result.FileText))
                     {
-                        switch (model.Signature)
+                        switch (result.Signature)
                         {
                             case true:
                                 MessageBox.Show("DigitalSignature valid");
