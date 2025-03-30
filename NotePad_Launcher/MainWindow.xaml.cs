@@ -227,6 +227,15 @@ namespace NotePad_Launcher
             };
             encryptionWindow.Show();
         }
-
+        private void ECCClick(object sender, RoutedEventArgs e)
+        {
+            string allText = FileText.Text;
+            var encryptionWindow = new EncryptionWindow(EncryptionMethod.ECC);
+            encryptionWindow.EncryptionResultAction = (newText) =>
+            {
+                FileText.Text = newText; // Обновляем TextBox в главном окне
+            };
+            encryptionWindow.Show();
+        }
     }
 }

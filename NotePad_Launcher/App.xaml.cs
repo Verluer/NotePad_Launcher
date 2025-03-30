@@ -35,6 +35,7 @@ namespace NotePad_Launcher
             services.AddSingleton<IRSAService, RSAService>();
             services.AddSingleton<IElgamalService, ElgamalService>();
             services.AddSingleton<IRabinaService, RabinaService>();
+            services.AddSingleton<IECCService, ECCService>();
 
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();

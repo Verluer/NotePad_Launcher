@@ -19,6 +19,7 @@ namespace NotePad_Launcher
         private readonly IRSAService _rsaService;
         private readonly IElgamalService _elgamalService;
         private readonly IRabinaService _rabinaService;
+        private readonly IECCService _eccService;
         public EncryptionWindow(EncryptionMethod method)
         {
             InitializeComponent();
@@ -26,6 +27,7 @@ namespace NotePad_Launcher
             _rsaService = new RSAService();
             _elgamalService = new ElgamalService();
             _rabinaService = new RabinaService();
+            _eccService = new ECCService();
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
@@ -38,7 +40,7 @@ namespace NotePad_Launcher
                     RabinaUI();
                     break;
                 case EncryptionMethod.ECC:
-                    // Действие для метода D
+                    ECCUI();
                     break;
                 default:
                     // Действие, если метод не выбран (None)
@@ -69,6 +71,19 @@ namespace NotePad_Launcher
             CloseKey3.Visibility = Visibility.Collapsed;
             TextValue5.Visibility = Visibility.Collapsed;
             TextValue4.Visibility = Visibility.Collapsed;
+        }
+        private void ECCUI()
+        {
+            LabelText1.Text = "Enter close key d:";
+            LabelText2.Visibility = Visibility.Collapsed;
+            LabelText3.Text = "?Enter open key";
+            CloseKey3.Visibility = Visibility.Collapsed;
+            TextValue2.Visibility = Visibility.Collapsed;
+            TextValue5.Visibility = Visibility.Collapsed;
+            TextValue4.Visibility = Visibility.Collapsed;
+            CloseKey2.Visibility = Visibility.Collapsed;
+            CloseKey3.Visibility = Visibility.Collapsed;
+
         }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -169,7 +184,15 @@ namespace NotePad_Launcher
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.ECC:
-                    // Действие для метода D
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        CloseKeyD = TextValue1.Text,
+                        PrimeE = TextValue3.Text,
+                    };
+                    result = _eccService.Encryption(model);
+                    TextValue3.Text = result.PrimeE;
+                    EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 default:
                     // Действие, если метод не выбран (None)
@@ -218,7 +241,14 @@ namespace NotePad_Launcher
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.ECC:
-                    // Действие для метода D
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        CloseKeyD = CloseKey1.Text
+                        
+                    };
+                    result = _eccService.Decryption(model);
+                    EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 default:
                     // Действие, если метод не выбран (None)
@@ -229,10 +259,12 @@ namespace NotePad_Launcher
         private void DigitalSignatureButton_OnClick(object sender, RoutedEventArgs e)
         {
             FileText = GetTextFromMainWindow();
+            EncryptionModel model;
+            EncryptionModel result;
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
-                    var model = new EncryptionModel
+                    model = new EncryptionModel
                     {
                         FileText = FileText,
                         PrimeP = TextValue1.Text,
@@ -240,7 +272,7 @@ namespace NotePad_Launcher
                         PrimeE = TextValue3.Text,
                         ModulusN = TextValue4.Text
                     };
-                    var result = _rsaService.Signature(model);
+                    result = _rsaService.Signature(model);
                     if (string.IsNullOrEmpty(result.FileText))
                     {
                         switch (model.Signature)
@@ -265,7 +297,30 @@ namespace NotePad_Launcher
                     // Действие для метода C
                     break;
                 case EncryptionMethod.ECC:
-                    // Действие для метода D
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        PrimeE = TextValue3.Text,
+                        CloseKeyD = TextValue1.Text
+                    };
+                    result = _eccService.Signature(model);
+                    TextValue3.Text = result.PrimeE;
+                    if (string.IsNullOrEmpty(result.FileText))
+                    {
+                        switch (model.Signature)
+                        {
+                            case true:
+                                MessageBox.Show("DigitalSignature valid");
+                                break;
+                            case false:
+                                MessageBox.Show("DigitalSignature invalid");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        EncryptionResultAction?.Invoke(result.FileText);
+                    }
                     break;
                 default:
                     // Действие, если метод не выбран (None)

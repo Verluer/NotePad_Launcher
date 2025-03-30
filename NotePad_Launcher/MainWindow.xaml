@@ -70,6 +70,7 @@
                         <MenuItem Click="RSAClick" Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
                         <MenuItem Click="ElgamalClick" Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
                         <MenuItem Click="RabinaClick" Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Click="ECCClick" Header="ECC" Height="18" FontSize="14" VerticalAlignment="Center"/>
                     </MenuItem>
                 </MenuItem>
             </Menu>
