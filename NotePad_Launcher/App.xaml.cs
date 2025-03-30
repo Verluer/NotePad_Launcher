@@ -33,6 +33,7 @@ namespace NotePad_Launcher
             // Регистрация зависимостей
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IRSAService, RSAService>();
+            services.AddSingleton<IElgamalService, ElgamalService>();
 
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();

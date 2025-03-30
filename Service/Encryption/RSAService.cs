@@ -2,18 +2,12 @@
 using Domain.Model;
 using System.Numerics;
 using Domain;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Service.Encryption;
 
 public class RSAService : IRSAService
 {
     #region private
-    private void LogMessage(string message)
-    {
-        string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
-        File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
-    }
 
     private BigInteger? CalculateCloseKeyD(
         BigInteger value_p, 
@@ -87,10 +81,10 @@ public class RSAService : IRSAService
             BigInteger result = BigInteger.ModPow(encryptedNumber, value_d, value_n);
             resultCharArray[i] = Settings.UkrainianAlphabet[(int)result];
         }
-        string resultEncryption = string.Join("", resultCharArray);
+        string resultDecryption = string.Join("", resultCharArray);
         return new EncryptionModel
         {
-            FileText = resultEncryption
+            FileText = resultDecryption
         };
     }
 

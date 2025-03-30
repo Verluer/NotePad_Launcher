@@ -17,18 +17,20 @@ namespace NotePad_Launcher
         private string FileText;
         private EncryptionMethod SelectedMethod;
         private readonly IRSAService _rsaService;
+        private readonly IElgamalService _elgamalService;
         public EncryptionWindow(EncryptionMethod method)
         {
             InitializeComponent();
             SelectedMethod = method;
             _rsaService = new RSAService();
+            _elgamalService = new ElgamalService();
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
                     RSAUI();
                     break;
                 case EncryptionMethod.Elgamal:
-                    // Действие для метода B
+                    ElgamalUI();
                     break;
                 case EncryptionMethod.Rabina:
                     // Действие для метода C
@@ -48,6 +50,14 @@ namespace NotePad_Launcher
             LabelText2.Text = "Enter prime number q:";
             LabelText3.Text = "Enter prime number e or (e,n)";
             CloseKey3.Visibility = Visibility.Collapsed;
+            TextValue5.Visibility = Visibility.Collapsed;
+        }
+
+        private void ElgamalUI()
+        {
+            LabelText1.Text = "Enter prime number p:";
+            LabelText2.Text = "Enter primitive root g:";
+            LabelText3.Text = "Enter open key (y, g, p)";
         }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -81,11 +91,13 @@ namespace NotePad_Launcher
         }
         private void EncryptionButton_OnClick(object sender, RoutedEventArgs e)
         {
+            EncryptionModel model;
+            EncryptionModel result;
             FileText = GetTextFromMainWindow();
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
-                    var model = new EncryptionModel
+                    model = new EncryptionModel
                     {
                         FileText = FileText,
                         PrimeP = TextValue1.Text,
@@ -94,13 +106,36 @@ namespace NotePad_Launcher
                         ModulusN = TextValue4.Text
 
                     };
-                    var result = _rsaService.Encryption(model);
+                    result = _rsaService.Encryption(model);
                     LabelCloseKey.Text += $"{result.CloseKeyD},{result.ModulusN}";
                     LabelOpenKey.Text += $"{result.PrimeE},{result.ModulusN}";
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Elgamal:
-                    // Действие для метода B
+                    if (string.IsNullOrEmpty(TextValue1.Text) && string.IsNullOrEmpty(TextValue2.Text))
+                    {
+                        model = new EncryptionModel
+                        {
+                            FileText = FileText,
+                            PrimeP = TextValue5.Text,
+                            PrimeQ = TextValue4.Text,
+                            PrimeE = TextValue3.Text,
+                        };
+                    }
+                    else
+                    {
+                        model = new EncryptionModel
+                        {
+                            FileText = FileText,
+                            PrimeP = TextValue1.Text,
+                            PrimeQ = TextValue2.Text,
+                            PrimeE = TextValue3.Text,
+                        };
+                    }
+                    result = _elgamalService.Encryption(model);
+                    LabelCloseKey.Text += $"{result.CloseKeyD},{result.PrimeP},{result.PrimeQ}";
+                    LabelOpenKey.Text += $"{result.PrimeE},{result.PrimeQ},{result.PrimeP}";
+                    EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Rabina:
                     // Действие для метода C
@@ -116,21 +151,32 @@ namespace NotePad_Launcher
         private void DecryptionButton_OnClick(object sender, RoutedEventArgs e)
         {
             FileText = GetTextFromMainWindow();
+            EncryptionModel model;
+            EncryptionModel result;
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
-                    var model = new EncryptionModel
+                    model = new EncryptionModel
                     {
                         FileText = FileText,
                         CloseKeyD = CloseKey1.Text,
                         ModulusN = CloseKey2.Text
 
                     };
-                    var result = _rsaService.Decryption(model);
+                    result = _rsaService.Decryption(model);
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Elgamal:
-                    // Действие для метода B
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        CloseKeyD = CloseKey1.Text,
+                        PrimeP = CloseKey2.Text,
+                        PrimeQ = CloseKey3.Text
+
+                    };
+                    result = _elgamalService.Decryption(model);
+                    EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Rabina:
                     // Действие для метода C

@@ -195,10 +195,22 @@ namespace NotePad_Launcher
         {
             return FileText.Text; // Возвращаем актуальное значение TextBox
         }
+
         private void RSAClick(object sender, RoutedEventArgs e)
         {
             string allText = FileText.Text;
             var encryptionWindow = new EncryptionWindow(EncryptionMethod.RSA);
+            encryptionWindow.EncryptionResultAction = (newText) =>
+            {
+                FileText.Text = newText; // Обновляем TextBox в главном окне
+            };
+            encryptionWindow.Show();
+        }
+
+        private void ElgamalClick(object sender, RoutedEventArgs e)
+        {
+            string allText = FileText.Text;
+            var encryptionWindow = new EncryptionWindow(EncryptionMethod.Elgamal);
             encryptionWindow.EncryptionResultAction = (newText) =>
             {
                 FileText.Text = newText; // Обновляем TextBox в главном окне

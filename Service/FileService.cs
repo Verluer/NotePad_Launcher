@@ -84,7 +84,6 @@ namespace Service
             };
 
         }
-
         public List<FileModel> GetTextFiles()
         {
             if (!Directory.Exists(directoryPath))

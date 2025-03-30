@@ -9,9 +9,4 @@ public class Settings
         'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ',
         'Ь', 'Ю', 'Я', '.', '_', '-', ' ', '#'
     };
-    public void LogMessage(string message)
-    {
-        string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents";
-        File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
-    }
 }
