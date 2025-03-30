@@ -18,12 +18,14 @@ namespace NotePad_Launcher
         private EncryptionMethod SelectedMethod;
         private readonly IRSAService _rsaService;
         private readonly IElgamalService _elgamalService;
+        private readonly IRabinaService _rabinaService;
         public EncryptionWindow(EncryptionMethod method)
         {
             InitializeComponent();
             SelectedMethod = method;
             _rsaService = new RSAService();
             _elgamalService = new ElgamalService();
+            _rabinaService = new RabinaService();
             switch (SelectedMethod)
             {
                 case EncryptionMethod.RSA:
@@ -33,7 +35,7 @@ namespace NotePad_Launcher
                     ElgamalUI();
                     break;
                 case EncryptionMethod.Rabina:
-                    // Действие для метода C
+                    RabinaUI();
                     break;
                 case EncryptionMethod.ECC:
                     // Действие для метода D
@@ -58,6 +60,15 @@ namespace NotePad_Launcher
             LabelText1.Text = "Enter prime number p:";
             LabelText2.Text = "Enter primitive root g:";
             LabelText3.Text = "Enter open key (y, g, p)";
+        }
+        private void RabinaUI()
+        {
+            LabelText1.Text = "Enter prime number p:";
+            LabelText2.Text = "Enter prime number q:";
+            LabelText3.Text = "?Enter open key n";
+            CloseKey3.Visibility = Visibility.Collapsed;
+            TextValue5.Visibility = Visibility.Collapsed;
+            TextValue4.Visibility = Visibility.Collapsed;
         }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -138,7 +149,24 @@ namespace NotePad_Launcher
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Rabina:
-                    // Действие для метода C
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        PrimeP = TextValue1.Text,
+                        PrimeQ = TextValue2.Text,
+                        ModulusN = TextValue3.Text
+
+                    };
+                    result = _rabinaService.Encryption(model);
+                    if (result.Signature == false)
+                    {
+                        MessageBox.Show("Одно из чисел не удовлетворяет условия 3 mod4, введите другое");
+                        return;
+                    }
+
+                    LabelCloseKey.Text += $"{result.PrimeP},{result.PrimeQ}";
+                    LabelOpenKey.Text += $"{result.ModulusN}";
+                    EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.ECC:
                     // Действие для метода D
@@ -179,7 +207,15 @@ namespace NotePad_Launcher
                     EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.Rabina:
-                    // Действие для метода C
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        PrimeP = CloseKey1.Text,
+                        PrimeQ = CloseKey2.Text
+
+                    };
+                    result = _rabinaService.Decryption(model);
+                    EncryptionResultAction?.Invoke(result.FileText);
                     break;
                 case EncryptionMethod.ECC:
                     // Действие для метода D

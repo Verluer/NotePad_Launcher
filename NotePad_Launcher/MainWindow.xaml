@@ -68,7 +68,8 @@
                 <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
                     <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
                         <MenuItem Click="RSAClick" Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Click="ElgamalClick" Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Click="ElgamalClick" Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Click="RabinaClick" Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
                     </MenuItem>
                 </MenuItem>
             </Menu>
