@@ -54,6 +54,7 @@ namespace NotePad_Launcher
 
             return true;
         }
+
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
