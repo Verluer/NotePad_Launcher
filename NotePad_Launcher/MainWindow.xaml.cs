@@ -19,7 +19,7 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string Path;
+        private string FilePath;
         private readonly IFileService _fileService;
         private bool checkSaveFile = true;
 
@@ -67,7 +67,7 @@ namespace NotePad_Launcher
 
         private void FileText_TextChanged(object sender, EventArgs e)
         {
-            string checkTextFromFile = File.ReadAllText(Path, Encoding.UTF8);
+            string checkTextFromFile = File.ReadAllText(FilePath, Encoding.UTF8);
             if (checkTextFromFile == FileText.Text)
             {
                 checkSaveFile = true;
@@ -91,7 +91,7 @@ namespace NotePad_Launcher
             {
                 string filePath = openFileDialog.FileName;
                 var openFile = _fileService.OpenFile(filePath);
-                Path = openFile.FilePath;
+                FilePath = openFile.FilePath;
                 FileName.Text = openFile.FileName;
                 FileText.Clear();
                 FileText.AppendText(openFile.FileText);
@@ -108,7 +108,7 @@ namespace NotePad_Launcher
             var nameFile = _fileService.CreateFile();
             FileName.Text = nameFile.FileName;
             FileText.Text = string.Empty;
-            Path = nameFile.FilePath;
+            FilePath = nameFile.FilePath;
         }
 
         private void OpenFileListClick(object sender, RoutedEventArgs e)
@@ -119,20 +119,18 @@ namespace NotePad_Launcher
 
         private void SaveFileClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(FileText.Text);
             var model = new FileModel
             {
                 FileText = FileText.Text,
                 FileName = FileName.Text,
-                FilePath = Path
+                FilePath = FilePath
             };
             if (!string.IsNullOrEmpty(model.FileText.Trim()))
             {
                 var saveFile = _fileService.SaveFile(model);
-                Path = saveFile.FilePath;
+                FilePath = saveFile.FilePath;
                 checkSaveFile = true;
                 MessageBox.Show("Текстовой файл успешно сохранен");
-                MessageBox.Show("Text: " + FileText.Text);
             }
             else
                 MessageBox.Show("Введите текст для текстового файла");
@@ -151,11 +149,12 @@ namespace NotePad_Launcher
             if (saveFileDialog.ShowDialog() == true)
             {
                 string content = FileText.Text;
-                Path = saveFileDialog.FileName;
+                FilePath = saveFileDialog.FileName;
                 // Записываем в файл
-                File.WriteAllText(Path, content);
+                File.WriteAllText(FilePath, content);
+                FileName.Text = Path.GetFileNameWithoutExtension(FilePath);
                 checkSaveFile = true;
-                MessageBox.Show($"Файл сохранен:\n{Path}", "Сохранение", MessageBoxButton.OK,
+                MessageBox.Show($"Файл сохранен:\n{FilePath}", "Сохранение", MessageBoxButton.OK,
                     MessageBoxImage.Information);
             }
         }
@@ -167,15 +166,14 @@ namespace NotePad_Launcher
                 return;
             }
 
-            Path = model.FilePath;
+            FilePath = model.FilePath;
             FileText.Text = model.FileText;
             FileName.Text = model.FileName;
-            MessageBox.Show(model.FileName);
         }
 
         private void DeleteFileClick(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(Path))
+            if (File.Exists(FilePath))
             {
                 MessageBoxResult result = MessageBox.Show(
                     "Вы точно хотите удалить этот текстовой файл??",
@@ -185,11 +183,24 @@ namespace NotePad_Launcher
                 if (result == MessageBoxResult.Yes)
                 {
                     FileText.Clear();
-                    _fileService.DeleteFile(Path);
+                    _fileService.DeleteFile(FilePath);
                     FileName.Text = string.Empty;
                     checkSaveFile = true;
                 }
             }
+        }
+
+        private void WordWarpClick(object sender, RoutedEventArgs e)
+        {
+            if (WordWrap.IsChecked)
+            {
+                FileText.WordWrap = false;
+            }
+            else
+            {
+                FileText.WordWrap = true;
+            }
+            WordWrap.IsChecked = !WordWrap.IsChecked;
         }
         public string GetFileText()
         {
