@@ -190,7 +190,7 @@ namespace NotePad_Launcher
             }
         }
 
-        private void WordWarpClick(object sender, RoutedEventArgs e)
+        private void WordWrapClick(object sender, RoutedEventArgs e)
         {
             if (WordWrap.IsChecked)
             {

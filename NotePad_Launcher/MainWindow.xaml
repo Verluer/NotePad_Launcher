@@ -66,7 +66,7 @@
                     <MenuItem Click="OpenFileListClick" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
                 </MenuItem>
                 <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem x:Name="WordWrap" Header="Перенос по строкам" Click="WordWarpClick"  Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem x:Name="WordWrap" Header="Перенос по строкам" Click="WordWrapClick"  Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
                         <MenuItem Click="RSAClick" Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
                         <MenuItem Click="ElgamalClick" Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
