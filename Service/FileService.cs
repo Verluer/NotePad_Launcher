@@ -24,12 +24,11 @@ namespace Service
         public FileModel OpenFile(string pathFile)
         {
             return new FileModel
-            {
-                FileName = Path.GetFileNameWithoutExtension(pathFile),
-                FileText = File.ReadAllText(pathFile, Encoding.UTF8),
-                FilePath = pathFile
-            };
-
+                {
+                    FileName = Path.GetFileNameWithoutExtension(pathFile),
+                    FileText = File.ReadAllText(pathFile, Encoding.UTF8),
+                    FilePath = pathFile
+                };
         }
 
         public FileModel CreateFile()

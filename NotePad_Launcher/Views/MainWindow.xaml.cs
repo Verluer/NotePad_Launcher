@@ -19,6 +19,7 @@ using static System.Net.WebRequestMethods;
 using System.Windows.Threading;
 using NotePad_Launcher.Services;
 using FileDialog = Microsoft.Win32.FileDialog;
+using System.ComponentModel;
 
 namespace NotePad_Launcher
 {
@@ -38,10 +39,9 @@ namespace NotePad_Launcher
             InitializeComponent();
             _fileService = fileService;
             var viewModel = new MainWindowVM();
-
             // Устанавливаем DataContext
             this.DataContext = viewModel;
-
+            FileText.Document = viewModel.FileTextDocument;
             // Подписываемся на события
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
@@ -75,25 +75,7 @@ namespace NotePad_Launcher
                 this.DragMove();
             }
         }
-        private void OpenFileClick(object sender, RoutedEventArgs e)
-        {
-            if (!CheckingSaveFile(checkSaveFile))
-            {
-                return;
-            }
 
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
-            if (openFileDialog.ShowDialog() == true)
-            {
-                var filePath = openFileDialog.FileName;
-                var openFile = _fileService.OpenFile(filePath);
-                FilePath = openFile.FilePath;
-                FileName.Text = openFile.FileName;
-                FileText.Clear();
-                FileText.AppendText(openFile.FileText);
-            }
-        }
 
         private void CreateFileClick(object sender, RoutedEventArgs e)
         {
