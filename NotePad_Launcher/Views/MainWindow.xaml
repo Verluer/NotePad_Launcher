@@ -61,14 +61,14 @@
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Command="{Binding CreateFileCommand}"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="SaveFileClick" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="SaveFileDialogClick" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="OpenFileListClick" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Command="{Binding SaveFileCommand}" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
                 </MenuItem>
                 <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem x:Name="WordWrap" Header="Перенос по строкам" Click="WordWrapClick"  Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem x:Name="WordWrap" Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
                         <MenuItem Click="RSAClick" Command="{Binding RSACommand}"  Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
                         <MenuItem Click="ElgamalClick" Command="{Binding ElgamalCommand}" Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
@@ -79,7 +79,7 @@
                 </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Command="{Binding  LogCommand}" Header="Log" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                <MenuItem Click="DeleteFileClick" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->

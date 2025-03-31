@@ -8,7 +8,7 @@ public class FileDialog : IFileDialog
 {
     public string OpenTextFileDialog(string pathToClose)
     {
-        OpenFileDialog openFileDialog = new OpenFileDialog
+        var openFileDialog = new OpenFileDialog
         {
             Filter = "Текстовые файлы (*.txt)|*.txt"
         };
@@ -20,10 +20,27 @@ public class FileDialog : IFileDialog
 
         return pathToClose;
     }
-
-    public void ShowMessage(string message)
+    public string SaveFileDialog(string pathToClose)
     {
-        MessageBox.Show(message, "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+        var saveFileDialog = new SaveFileDialog
+        {
+            Title = "Сохранить файл как",
+            Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
+            DefaultExt = ".txt",
+            FileName = "Новый файл"
+        };
+
+        if (saveFileDialog.ShowDialog() == true)
+        {
+            return saveFileDialog.FileName;
+        }
+
+        return pathToClose;
+    }
+
+    public void ShowMessage(string message, string title)
+    {
+        MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     public bool ShowConfirmation(string message)

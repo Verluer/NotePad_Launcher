@@ -45,6 +45,11 @@ namespace NotePad_Launcher
             // Подписываемся на события
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
+            viewModel.UpdateWordWrapAction = () =>
+            {
+                // Обновляем свойство FileText.WordWrap в View
+                FileText.WordWrap = viewModel.IsWordWrapEnabled;
+            };
             _fileService.ExDirectoryFile();
         }
         public void OnMinimizeRequested()
@@ -77,63 +82,10 @@ namespace NotePad_Launcher
         }
 
 
-        private void CreateFileClick(object sender, RoutedEventArgs e)
-        {
-            if (!CheckingSaveFile(checkSaveFile))
-            {
-                return;
-            }
-
-            var nameFile = _fileService.CreateFile();
-            FileName.Text = nameFile.FileName;
-            FileText.Document.Text = string.Empty;
-            FilePath = nameFile.FilePath;
-        }
-
         private void OpenFileListClick(object sender, RoutedEventArgs e)
         {
             var fileListWindow = new FileListWindow(_fileService);
             fileListWindow.Show();
-        }
-
-        private void SaveFileClick(object sender, RoutedEventArgs e)
-        {
-            var model = new FileModel
-            {
-                FileText = FileText.Document.Text,
-                FileName = FileName.Text,
-                FilePath = FilePath
-            };
-            if (!string.IsNullOrEmpty(model.FileText.Trim()))
-            {
-                var saveFile = _fileService.SaveFile(model);
-                FilePath = saveFile.FilePath;
-                checkSaveFile = true;
-                MessageBox.Show("Текстовой файл успешно сохранен");
-            }
-            else
-                MessageBox.Show("Введите текст для текстового файла");
-
-        }
-
-        private void SaveFileDialogClick(object sender, RoutedEventArgs e)
-        {
-            var saveFileDialog = new SaveFileDialog
-            {
-                Title = "Сохранить файл как",
-                Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
-                DefaultExt = ".txt",
-                FileName = "Новый файл"
-            };
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                FilePath = saveFileDialog.FileName;
-                _fileService.WriteAllText(FilePath, FileText.Document.Text);
-                FileName.Text = _fileService.GetFileName(FilePath);
-                checkSaveFile = true;
-                MessageBox.Show($"Файл сохранен:\n{FilePath}", "Сохранение", MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-            }
         }
 
         public void UpdateFileInfo(FileModel model)
@@ -146,39 +98,6 @@ namespace NotePad_Launcher
             FilePath = model.FilePath;
             FileText.Document.Text = model.FileText;
             FileName.Text = model.FileName;
-        }
-
-        private void DeleteFileClick(object sender, RoutedEventArgs e)
-        {
-            if (_fileService.FileExists(FilePath))
-            {
-                MessageBoxResult result = MessageBox.Show(
-                    "Вы точно хотите удалить этот текстовой файл??",
-                    "Подтверждение",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    FileText.Clear();
-                    _fileService.DeleteFile(FilePath);
-                    FileName.Text = string.Empty;
-                    checkSaveFile = true;
-                }
-            }
-        }
-
-        private void WordWrapClick(object sender, RoutedEventArgs e)
-        {
-            if (WordWrap.IsChecked)
-            {
-                FileText.WordWrap = false;
-            
-            }
-            else
-            {
-                FileText.WordWrap = true;
-            }
-            WordWrap.IsChecked = !WordWrap.IsChecked;
         }
         public string GetFileText()
         {
