@@ -9,37 +9,50 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using Domain.Enum;
 using Domain.IService.IEncryption;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.Contracts;
 using Service.Encryption;
 using Application = System.Windows.Application;
 using NotePad_Launcher.ViewModels;
 using NotePad_Launcher.ViewModels.MainWindow;
+using static System.Net.WebRequestMethods;
+using System.Windows.Threading;
+using NotePad_Launcher.Services;
+using FileDialog = Microsoft.Win32.FileDialog;
 
 namespace NotePad_Launcher
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IWindowService
+    public partial class MainWindow : Window
     {
         private string FilePath;
         private readonly IFileService _fileService;
+        private readonly MainWindowVM _viewModel;
         private bool checkSaveFile = true;
+
 
         public MainWindow(IFileService fileService)
         {
             InitializeComponent();
-            _fileService = fileService; // Сохраняем зависимость
+            _fileService = fileService;
             var viewModel = new MainWindowVM();
-            viewModel.WindowService = this;
-            DataContext = viewModel;
+
+            // Устанавливаем DataContext
+            this.DataContext = viewModel;
+
+            // Подписываемся на события
+            viewModel.MaximizeRequested += OnMaximizeRequested;
+            viewModel.MinimizeRequested += OnMinimizeRequested;
+            _fileService.ExDirectoryFile();
         }
-        public void Minimize()
+        public void OnMinimizeRequested()
         {
             this.WindowState = WindowState.Minimized;
         }
 
-        public void Maximize()
+        public void OnMaximizeRequested()
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
@@ -62,12 +75,6 @@ namespace NotePad_Launcher
                 this.DragMove();
             }
         }
-
-        private void FileText_TextChanged(object sender, EventArgs e)
-        {
-            checkSaveFile = _fileService.CheckTextChange(FilePath, FileText.Text);
-        }
-
         private void OpenFileClick(object sender, RoutedEventArgs e)
         {
             if (!CheckingSaveFile(checkSaveFile))
@@ -97,7 +104,7 @@ namespace NotePad_Launcher
 
             var nameFile = _fileService.CreateFile();
             FileName.Text = nameFile.FileName;
-            FileText.Text = string.Empty;
+            FileText.Document.Text = string.Empty;
             FilePath = nameFile.FilePath;
         }
 
@@ -111,7 +118,7 @@ namespace NotePad_Launcher
         {
             var model = new FileModel
             {
-                FileText = FileText.Text,
+                FileText = FileText.Document.Text,
                 FileName = FileName.Text,
                 FilePath = FilePath
             };
@@ -139,7 +146,7 @@ namespace NotePad_Launcher
             if (saveFileDialog.ShowDialog() == true)
             {
                 FilePath = saveFileDialog.FileName;
-                _fileService.WriteAllText(FilePath, FileText.Text);
+                _fileService.WriteAllText(FilePath, FileText.Document.Text);
                 FileName.Text = _fileService.GetFileName(FilePath);
                 checkSaveFile = true;
                 MessageBox.Show($"Файл сохранен:\n{FilePath}", "Сохранение", MessageBoxButton.OK,
@@ -155,7 +162,7 @@ namespace NotePad_Launcher
             }
 
             FilePath = model.FilePath;
-            FileText.Text = model.FileText;
+            FileText.Document.Text = model.FileText;
             FileName.Text = model.FileName;
         }
 
@@ -193,14 +200,14 @@ namespace NotePad_Launcher
         }
         public string GetFileText()
         {
-            return FileText.Text; // Возвращаем актуальное значение TextBox
+            return FileText.Document.Text; // Возвращаем актуальное значение TextBox
         }
         private void OpenEncryptionWindow(EncryptionMethod method)
         {
             var encryptionWindow = new EncryptionWindow(method);
             encryptionWindow.EncryptionResultAction = (newText) =>
             {
-                FileText.Text = newText; // Обновляем TextBox в главном окне
+                FileText.Document.Text = newText; // Обновляем TextBox в главном окне
             };
             encryptionWindow.Show();
         }

@@ -1,16 +1,15 @@
-﻿<Window x:Class="NotePad_Launcher.MainWindow"
+﻿    <Window x:Class="NotePad_Launcher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:mainWindow="clr-namespace:NotePad_Launcher.ViewModels.MainWindow"
+        xmlns:services="clr-namespace:NotePad_Launcher.Services"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Style="{StaticResource MyWindowStyle}">
-    <Window.DataContext>
-        <mainWindow:MainWindowVM/>
-    </Window.DataContext>
+
 
     <Grid x:Name="MainWindowContainer">
         <!--Разделение программы на ряды и столбцы-->
@@ -63,7 +62,7 @@
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
                     <MenuItem Click="CreateFileClick"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Click="OpenFileClick" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                    <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="SaveFileClick" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="SaveFileDialogClick" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Click="OpenFileListClick" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
@@ -83,9 +82,9 @@
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
-        <TextBox x:Name="FileName"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
+        <TextBox x:Name="FileName" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
         <!-- AvalonEdit control -->
-        <avalonEdit:TextEditor Name="FileText" Text="{Binding FileText}"  TextChanged="FileText_TextChanged"  ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <avalonEdit:TextEditor Name="FileText"  Document="{Binding FileTextDocument, UpdateSourceTrigger=PropertyChanged}"  ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />

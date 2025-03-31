@@ -2,8 +2,11 @@
 using System.Windows;
 using Domain.IService;
 using Domain.IService.IEncryption;
+using NotePad_Launcher.Contracts;
+using NotePad_Launcher.Services;
 using Service;
 using Service.Encryption;
+using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
 {
@@ -12,7 +15,7 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class App : Application
     {
-        private static ServiceProvider ServiceProvider { get; set; }
+        public static ServiceProvider ServiceProvider { get; set; }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -23,7 +26,6 @@ namespace NotePad_Launcher
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
-
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
@@ -36,7 +38,10 @@ namespace NotePad_Launcher
             services.AddSingleton<IElgamalService, ElgamalService>();
             services.AddSingleton<IRabinaService, RabinaService>();
             services.AddSingleton<IECCService, ECCService>();
-
+            //
+            services.AddSingleton<IFileDialog, FileDialog>();
+            // Регистрация ViewModels как Transient, если нужно создавать новый экземпляр для каждого окна
+            services.AddTransient<MainWindowVM>();
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();
             services.AddSingleton<EncryptionWindow>();
@@ -44,4 +49,5 @@ namespace NotePad_Launcher
 
         }
     }
+
 }
