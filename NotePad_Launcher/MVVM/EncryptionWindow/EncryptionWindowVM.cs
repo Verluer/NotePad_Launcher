@@ -7,6 +7,9 @@ using Service.Encryption;
 using NotePad_Launcher.Contracts;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
+using Domain.Model;
+using FileDialog = NotePad_Launcher.Services.FileDialog;
 
 namespace NotePad_Launcher.ViewModels.EncryptionWindow;
 
@@ -17,8 +20,12 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly IElgamalService _elgamalService;
     private readonly IRabinaService _rabinaService;
     private readonly IECCService _eccService;
+    private readonly IFileDialog _fileDialog;
     public event PropertyChangedEventHandler? PropertyChanged;
     private readonly IStringService _stringService;
+    private ICommand? _encryptionCommand;
+    private ICommand? _digitalSignatureCommand;
+    private ICommand? _decryptionCommand;
     private string _methodName;
     public string MethodName
     {
@@ -77,6 +84,76 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         {
             _textBlockValue1 = value;
             OnPropertyChanged(nameof(TextBlockValue5));
+        }
+    }
+    private string _textBlockCloseKey;
+    public string TextBlockCloseKey
+    {
+        get => _textBlockCloseKey;
+        set
+        {
+            _textBlockCloseKey = value;
+            OnPropertyChanged(nameof(TextBlockCloseKey));
+        }
+    }
+    private string _textBlockOpenKey;
+    public string TextBlockOpenKey
+    {
+        get => _textBlockOpenKey;
+        set
+        {
+            _textBlockOpenKey = value;
+            OnPropertyChanged(nameof(TextBlockOpenKey));
+        }
+    }
+    private string _textBoxValue1;
+    public string TextBoxValue1
+    {
+        get => _textBoxValue1;
+        set
+        {
+            _textBoxValue1 = value;
+            OnPropertyChanged(nameof(TextBoxValue1));
+        }
+    }
+    private string _textBoxValue2;
+    public string TextBoxValue2
+    {
+        get => _textBoxValue2;
+        set
+        {
+            _textBoxValue2 = value;
+            OnPropertyChanged(nameof(TextBoxValue2));
+        }
+    }
+    private string _textBoxValue3;
+    public string TextBoxValue3
+    {
+        get => _textBoxValue3;
+        set
+        {
+            _textBoxValue3 = value;
+            OnPropertyChanged(nameof(TextBoxValue3));
+        }
+    }
+    private string _textBoxValue4;
+    public string TextBoxValue4
+    {
+        get => _textBoxValue4;
+        set
+        {
+            _textBoxValue4 = value;
+            OnPropertyChanged(nameof(TextBoxValue4));
+        }
+    }
+    private string _textBoxValue5;
+    public string TextBoxValue5
+    {
+        get => _textBoxValue5;
+        set
+        {
+            _textBoxValue5 = value;
+            OnPropertyChanged(nameof(TextBoxValue5));
         }
     }
     private bool _isElement2Visible = true;
@@ -149,6 +226,36 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             }
         }
     }
+    private string _textBoxCloseKey1;
+    public string TextBoxCloseKey1
+    {
+        get => _textBoxCloseKey1;
+        set
+        {
+            _textBoxCloseKey1 = value;
+            OnPropertyChanged(nameof(TextBoxCloseKey1));
+        }
+    }
+    private string _textBoxCloseKey2;
+    public string TextBoxCloseKey2
+    {
+        get => _textBoxCloseKey2;
+        set
+        {
+            _textBoxCloseKey2 = value;
+            OnPropertyChanged(nameof(TextBoxCloseKey2));
+        }
+    }
+    private string _textBoxCloseKey3;
+    public string TextBoxCloseKey3
+    {
+        get => _textBoxCloseKey3;
+        set
+        {
+            _textBoxCloseKey3 = value;
+            OnPropertyChanged(nameof(TextBoxCloseKey3));
+        }
+    }
     private bool _isTextBoxCloseKey2Visible = true;
 
     public bool IsTextBoxCloseKey2Visible
@@ -184,6 +291,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _elgamalService = new ElgamalService();
         _rabinaService = new RabinaService();
         _eccService = new ECCService();
+        _fileDialog = new FileDialog();
         switch (SelectedMethod)
         {
             case EncryptionMethod.RSA:
@@ -254,4 +362,213 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
+    public ICommand EncryptionCommand => _encryptionCommand ??= new OtherRelayCommands(ExecuteEncryptionCommand, CanExecute);
+    public ICommand DigitalSignatureCommand => _digitalSignatureCommand ??= new OtherRelayCommands(ExecuteDigitalSignatureCommand, CanExecute);
+    public ICommand DecryptionCommand => _decryptionCommand ??= new OtherRelayCommands(ExecuteDecryptionCommand, CanExecute);
+    private string FileText;
+    private void ExecuteEncryptionCommand(object? parameter)
+    {
+        EncryptionModel model;
+        EncryptionModel result;
+        FileText = "тест";
+        switch (SelectedMethod)
+        {
+            case EncryptionMethod.RSA:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1,
+                    PrimeQ = TextBoxValue2,
+                    PrimeE = TextBoxValue3,
+                    ModulusN = TextBoxValue4
+
+                };
+                result = _rsaService.Encryption(model);
+                TextBlockCloseKey = $"Close key: {result.CloseKeyD},{result.ModulusN}";
+                TextBlockOpenKey = $"Open key: {result.PrimeE},{result.ModulusN}";
+                break;
+            case EncryptionMethod.Elgamal:
+                if (string.IsNullOrEmpty(TextBoxValue1) && string.IsNullOrEmpty(TextBoxValue2))
+                {
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        PrimeP = TextBoxValue5,
+                        PrimeQ = TextBoxValue4,
+                        PrimeE = TextBoxValue3,
+                    };
+                }
+                else
+                {
+                    model = new EncryptionModel
+                    {
+                        FileText = FileText,
+                        PrimeP = TextBoxValue1,
+                        PrimeQ = TextBoxValue2,
+                        PrimeE = TextBoxValue3,
+                    };
+                }
+                result = _elgamalService.Encryption(model);
+                TextBlockCloseKey = $"{result.CloseKeyD},{result.PrimeP},{result.PrimeQ}";
+                TextBlockOpenKey = $"{result.PrimeE},{result.PrimeQ},{result.PrimeP}";
+                break;
+            case EncryptionMethod.Rabina:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1,
+                    PrimeQ = TextBoxValue2,
+                    ModulusN = TextBoxValue3
+
+                };
+                result = _rabinaService.Encryption(model);
+                if (result.Signature == false)
+                {
+                    _fileDialog.ShowMessage("Одно из чисел не удовлетворяет условия 3 mod4, введите другое", "Warning");
+                    return;
+                }
+
+                TextBlockCloseKey = $"Close key: {result.PrimeP},{result.PrimeQ}";
+                TextBlockOpenKey = $"Open key: {result.ModulusN}";
+                break;
+            case EncryptionMethod.ECC:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    CloseKeyD = TextBoxValue1,
+                    PrimeE = TextBoxValue3,
+                };
+                result = _eccService.Encryption(model);
+                TextBoxValue3 = result.PrimeE;
+                break;
+            default:
+                // Действие, если метод не выбран (None)
+                break;
+        }
+    }
+    private void ExecuteDigitalSignatureCommand(object? parameter)
+    {
+        FileText = "";
+        EncryptionModel model;
+        EncryptionModel result;
+        switch (SelectedMethod)
+        {
+            case EncryptionMethod.RSA:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1,
+                    PrimeQ = TextBoxValue2,
+                    PrimeE = TextBoxValue3,
+                    ModulusN = TextBoxValue4
+                };
+                result = _rsaService.Signature(model);
+                if (string.IsNullOrEmpty(result.FileText))
+                {
+                    switch (result.Signature)
+                    {
+                        case true:
+                            _fileDialog.ShowMessage("DigitalSignature valid", "Result Signature");  
+                            break;
+                        case false:
+                            _fileDialog.ShowMessage("DigitalSignature invalid", "Result Signature");
+                            break;
+                    }
+                }
+                else
+                {
+                    //Вернуть текст
+                }
+                break;
+            case EncryptionMethod.Elgamal:
+                // Действие для метода B
+                break;
+            case EncryptionMethod.Rabina:
+                // Действие для метода C
+                break;
+            case EncryptionMethod.ECC:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeE = TextBoxValue3,
+                    CloseKeyD = TextBoxValue1
+                };
+                result = _eccService.Signature(model);
+                TextBoxValue3 = result.PrimeE;
+                if (string.IsNullOrEmpty(result.FileText))
+                {
+                    switch (result.Signature)
+                    {
+                        case true:
+                            _fileDialog.ShowMessage("DigitalSignature valid", "Result Signature");
+                            break;
+                        case false:
+                            _fileDialog.ShowMessage("DigitalSignature invalid", "Result Signature");
+                            break;
+                    }
+                }
+                else
+                {
+                    //Вернуть текст
+                }
+                break;
+            default:
+                // Действие, если метод не выбран (None)
+                break;
+        }
+    }
+    private void ExecuteDecryptionCommand(object? parameter)
+    {
+        FileText = "29&41&21&29";
+        EncryptionModel model;
+        EncryptionModel result;
+        switch (SelectedMethod)
+        {
+            case EncryptionMethod.RSA:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    CloseKeyD = TextBoxCloseKey1,
+                    ModulusN = TextBoxCloseKey2
+
+                };
+                result = _rsaService.Decryption(model);
+                break;
+            case EncryptionMethod.Elgamal:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    CloseKeyD = TextBoxCloseKey1,
+                    PrimeP = TextBoxCloseKey2,
+                    PrimeQ = TextBoxCloseKey3
+
+                };
+                result = _elgamalService.Decryption(model);
+                break;
+            case EncryptionMethod.Rabina:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxCloseKey1,
+                    PrimeQ = TextBoxCloseKey2
+
+                };
+                result = _rabinaService.Decryption(model);
+                break;
+            case EncryptionMethod.ECC:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    CloseKeyD = TextBoxCloseKey1
+
+                };
+                result = _eccService.Decryption(model);
+                break;
+            default:
+                // Действие, если метод не выбран (None)
+                break;
+        }
+    }
+    private bool CanExecute(object? parameter) => true;
+
 }

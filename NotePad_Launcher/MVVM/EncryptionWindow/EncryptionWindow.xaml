@@ -107,22 +107,22 @@
                         <Binding Path="IsTextBoxCloseKey2Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
                     </TextBox.Visibility>
                 </TextBox>
-                <TextBox Text="{Binding CloseKey3}" x:Name="CloseKey3" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5">
+                <TextBox Text="{Binding TextBoxCloseKey3}" x:Name="CloseKey3" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5">
                     <TextBox.Visibility>
                         <Binding Path="IsTextBoxCloseKey3Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
                     </TextBox.Visibility>
                 </TextBox>
             </StackPanel>
         </StackPanel>
-        <TextBlock  Grid.Column="2" Grid.Row="4" x:Name="LabelCloseKey"  Text="Close key: " FontSize="20" HorizontalAlignment="Center"/>
-        <TextBlock  Grid.Column="2" Grid.Row="4" x:Name="LabelOpenKey"  Text="Open key: " FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-        <Button x:Name="EncryptionButton" Click="EncryptionButton_OnClick " Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
+        <TextBlock  Grid.Column="2" Grid.Row="4" x:Name="LabelCloseKey"  Text="{Binding TextBlockCloseKey}" FontSize="20" HorizontalAlignment="Center"/>
+        <TextBlock  Grid.Column="2" Grid.Row="4" x:Name="LabelOpenKey"  Text="{Binding TextBlockOpenKey}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+        <Button x:Name="EncryptionButton" Command="{Binding EncryptionCommand}"  Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
             Encryption
         </Button>
-        <Button Click="DigitalSignatureButton_OnClick" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
+        <Button Command="{Binding DigitalSignatureCommand}" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
             Digital signature
         </Button>
-        <Button Click="DecryptionButton_OnClick" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
+        <Button Command="{Binding DecryptionCommand}" Grid.Row="5" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" Height="50" FontSize="20">
             Decryption
         </Button>
     </Grid>
