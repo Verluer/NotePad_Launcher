@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Domain.IService;
 using Domain.Model;
+using NotePad_Launcher.ViewModels.FileListWindow;
+using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
 {
@@ -12,13 +14,14 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class FileListWindow : Window
     {
-        private readonly IFileService _fileService;
-            
-        public FileListWindow(IFileService fileService)
+        public FileListWindow()
         {
             InitializeComponent();
-            _fileService = fileService; // Сохраняем зависимость
-            LoadFileList();
+            var viewModel = new FileListWindowVM();
+            this.DataContext = viewModel;
+            viewModel.MaximizeRequested += OnMaximizeRequested;
+            viewModel.MinimizeRequested += OnMinimizeRequested;
+            viewModel.CloseRequested += OnCloseRequested;
         }
 
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
@@ -28,16 +31,16 @@ namespace NotePad_Launcher
                 this.DragMove();
             }
         }
-        private void CloseApp_Click(object sender, RoutedEventArgs e)
+        private void OnCloseRequested()
         {
             this.Close();
         }
-        private void MinimizeApp_Click(object sender, RoutedEventArgs e)
+        private void OnMinimizeRequested()
         {
             this.WindowState = WindowState.Minimized;
         }
 
-        private void MaximizeApp_Click(object sender, RoutedEventArgs e)
+        private void OnMaximizeRequested()
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
@@ -45,34 +48,23 @@ namespace NotePad_Launcher
         {
             if (FileListView.SelectedItem is FileModel selectedFile)
             {
-                var model = new FileModel
-                {
-                    FileName = selectedFile.FileName,
-                    FilePath = selectedFile.FilePath,
-                    FileText = File.ReadAllText(selectedFile.FilePath),
-                };
-                // Получаем ссылку на уже открытое окно MainWindow
+                // Получаем ссылку на уже открытое основное окно (MainWindow)
                 var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
 
                 if (mainWindow != null)
                 {
-                    // Обновляем свойства или вызываем методы в MainWindow
-                    mainWindow.UpdateFileInfo(model);
+                    // Получаем ViewModel первого окна (MainWindow)
+                    var mainWindowVM = mainWindow.DataContext as MainWindowVM;
+                    if (mainWindowVM != null)
+                    {
+                        mainWindowVM.UpdateFileInfo(selectedFile);
+                    }
                 }
-            }
-            this.Close();
-        }
-        private void LoadFileList()
-        {
-            try
-            {
-                var files = _fileService.GetTextFiles();
-                FileListView.ItemsSource = files; // Привязываем список файлов
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка: " + ex.Message);
+
+                // Закрываем SecondWindow после передачи данных
+                this.Close();
             }
         }
+
     }
 }

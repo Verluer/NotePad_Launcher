@@ -4,6 +4,7 @@ using Domain.IService;
 using Domain.IService.IEncryption;
 using NotePad_Launcher.Contracts;
 using NotePad_Launcher.Services;
+using NotePad_Launcher.ViewModels.FileListWindow;
 using Service;
 using Service.Encryption;
 using NotePad_Launcher.ViewModels.MainWindow;
@@ -42,6 +43,7 @@ namespace NotePad_Launcher
             services.AddSingleton<IFileDialog, FileDialog>();
             // Регистрация ViewModels как Transient, если нужно создавать новый экземпляр для каждого окна
             services.AddTransient<MainWindowVM>();
+            services.AddTransient<FileListWindowVM>();
             // Регистрация главного окна
             services.AddSingleton<MainWindow>();
             services.AddSingleton<EncryptionWindow>();

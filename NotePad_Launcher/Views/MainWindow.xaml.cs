@@ -28,16 +28,13 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string FilePath;
-        private readonly IFileService _fileService;
         private readonly MainWindowVM _viewModel;
         private bool checkSaveFile = true;
 
 
-        public MainWindow(IFileService fileService)
+        public MainWindow()
         {
             InitializeComponent();
-            _fileService = fileService;
             var viewModel = new MainWindowVM();
             // Устанавливаем DataContext
             this.DataContext = viewModel;
@@ -50,27 +47,21 @@ namespace NotePad_Launcher
                 // Обновляем свойство FileText.WordWrap в View
                 FileText.WordWrap = viewModel.IsWordWrapEnabled;
             };
-            _fileService.ExDirectoryFile();
+            viewModel.OpenFileListWindowRequested += () =>
+            {
+                var fileListWindow = new FileListWindow();
+                fileListWindow.Show();
+            };
         }
-        public void OnMinimizeRequested()
+
+        private void OnMinimizeRequested()
         {
             this.WindowState = WindowState.Minimized;
         }
 
-        public void OnMaximizeRequested()
+        private void OnMaximizeRequested()
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
-        }
-        public bool CheckingSaveFile(bool saveFile)
-        {
-            if (!saveFile)
-            {
-                MessageBoxResult Ok = MessageBox.Show("Текстовой файл не был сохранен, вы хотите продолжить?", "",
-                    MessageBoxButton.YesNo);
-                return Ok == MessageBoxResult.Yes;
-            }
-
-            return true;
         }
 
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
@@ -82,23 +73,6 @@ namespace NotePad_Launcher
         }
 
 
-        private void OpenFileListClick(object sender, RoutedEventArgs e)
-        {
-            var fileListWindow = new FileListWindow(_fileService);
-            fileListWindow.Show();
-        }
-
-        public void UpdateFileInfo(FileModel model)
-        {
-            if (!CheckingSaveFile(checkSaveFile))
-            {
-                return;
-            }
-
-            FilePath = model.FilePath;
-            FileText.Document.Text = model.FileText;
-            FileName.Text = model.FileName;
-        }
         public string GetFileText()
         {
             return FileText.Document.Text; // Возвращаем актуальное значение TextBox

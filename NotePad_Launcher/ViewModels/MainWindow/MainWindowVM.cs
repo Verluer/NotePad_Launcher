@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -38,6 +39,7 @@ public class MainWindowVM : INotifyPropertyChanged
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
+    public event Action OpenFileListWindowRequested;
     public Action UpdateWordWrapAction;
     private string FilePath;
 
@@ -60,8 +62,8 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         _fileService = new FileService();
         _fileDialog = new FileDialog();
-        FileTextDocument = new TextDocument();
         _fileService.ExDirectoryFile();
+        FileTextDocument = new TextDocument();
     }
     private TextDocument _fileTextDocument;
     public TextDocument FileTextDocument
@@ -115,7 +117,13 @@ public class MainWindowVM : INotifyPropertyChanged
             }
         }
     }
+    private FileModel _currentFile;
 
+    public FileModel CurrentFile
+    {
+        get => _currentFile;
+        set => SetField(ref _currentFile, value);
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -123,6 +131,18 @@ public class MainWindowVM : INotifyPropertyChanged
     #endregion
 
     #region Functions
+    public void UpdateFileInfo(FileModel fileModel)
+    {
+        if (!CheckingSaveFile(CheckSaveFile))
+        {
+            return;
+        }
+
+        CurrentFile = fileModel;
+        FilePath = CurrentFile.FilePath;
+        FileTextDocument.Text = CurrentFile.FileText;
+        FileName = CurrentFile.FileName;
+    }
     private void OnDocumentChanged(object? sender, EventArgs e)
     {
         CheckSaveFile = _fileService.CheckTextChange(FilePath, FileTextDocument.Text);
@@ -270,8 +290,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteFileList(object? parameter)
     {
-        var fileListWindow = new FileListWindow(_fileService);
-        fileListWindow.Show();
+        OpenFileListWindowRequested?.Invoke();
     }
     private void ExecuteDeleteFile(object? parameter)
     {

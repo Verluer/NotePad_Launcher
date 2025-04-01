@@ -9,7 +9,7 @@ namespace Service
 {
     public class FileService : IFileService
     {
-        private string directoryPath = string.Empty;
+        private static string directoryPath;
 
 
         public string ExDirectoryFile()
@@ -20,15 +20,22 @@ namespace Service
             directoryPath = Path.GetFullPath(dataFilePath); //Директория текстовых файлов
             return directoryPath;
         }
+        public void LogMessage(string message)
+        {
+            string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
+            File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
+        }
 
         public FileModel OpenFile(string pathFile)
         {
+            LogMessage(directoryPath);
             return new FileModel
                 {
                     FileName = Path.GetFileNameWithoutExtension(pathFile),
                     FileText = File.ReadAllText(pathFile, Encoding.UTF8),
                     FilePath = pathFile
                 };
+
         }
 
         public FileModel CreateFile()
@@ -85,6 +92,7 @@ namespace Service
         }
         public List<FileModel> GetTextFiles()
         {
+            LogMessage($"List: {directoryPath}");
             if (!Directory.Exists(directoryPath))
                 throw new DirectoryNotFoundException($"Директория не найдена: {directoryPath}");
 
@@ -92,6 +100,7 @@ namespace Service
                 .Select(file => new FileModel
                 {
                     FileName = Path.GetFileNameWithoutExtension(file),
+                    FileText = File.ReadAllText(file),
                     FilePath = file,
                 }).ToList();
         }
@@ -103,6 +112,9 @@ namespace Service
 
         public bool CheckTextChange(string pathFile, string fileText)
         {
+            if (string.IsNullOrEmpty(pathFile))
+                throw new ArgumentException("Путь к файлу не может быть пустым или null.", nameof(pathFile));
+
             var checkTextFromFile = File.ReadAllText(pathFile, Encoding.UTF8);
             return checkTextFromFile == fileText;
         }
