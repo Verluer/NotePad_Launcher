@@ -39,17 +39,17 @@
             </Menu>
             <!-- Кнопки справа -->
             <Menu DockPanel.Dock="Right" Background="#004C56">
-                <MenuItem Height="30" Click="MinimizeApp_Click">
+                <MenuItem Height="30" Command="{Binding MinimizeCommand}">
                     <MenuItem.Header>
                         <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem Height="30" Click="MaximizeApp_Click" >
+                <MenuItem Height="30" Command="{Binding MaximizeCommand}">
                     <MenuItem.Header>
                         <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </MenuItem.Header>
                 </MenuItem>
-                <MenuItem Height="30" Click="CloseApp_Click">
+                <MenuItem Height="30" Command="{Binding CloseCommand}">
                     <MenuItem.Header>
                         <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </MenuItem.Header>

@@ -2,6 +2,8 @@
 
 public interface IStringService
 {
-    string MyFileText { get; set; }
-    event Action<string> StringUpdated;
+    Func<string> GetTextCallback { get; set; }
+    event Action<string> TextUpdated;
+
+    void PushUpdatedText(string updatedText);
 }

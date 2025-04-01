@@ -3,6 +3,8 @@ using System.Windows.Input;
 using Domain.Enum;
 using Domain.IService.IEncryption;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.Contracts;
 using NotePad_Launcher.ViewModels.EncryptionWindow;
 using NotePad_Launcher.ViewModels.MainWindow;
 using Service.Encryption;
@@ -15,11 +17,14 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class EncryptionWindow : Window
     {
-        public EncryptionWindow(EncryptionMethod method)
+        public EncryptionWindow()
         {
             InitializeComponent();
-            var viewModel = new EncryptionWindowVM(method);
+            var viewModel = App.ServiceProvider.GetRequiredService<EncryptionWindowVM>();
             this.DataContext = viewModel;
+            viewModel.MaximizeRequested += OnMaximizeRequested;
+            viewModel.MinimizeRequested += OnMinimizeRequested;
+            viewModel.CloseRequested += OnCloseRequested;
         }
 
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
@@ -29,20 +34,19 @@ namespace NotePad_Launcher
                 this.DragMove();
             }
         }
-        private void CloseApp_Click(object sender, RoutedEventArgs e)
+        private void OnCloseRequested()
         {
             this.Close();
         }
-
-        private void MinimizeApp_Click(object sender, RoutedEventArgs e)
+        private void OnMinimizeRequested()
         {
             this.WindowState = WindowState.Minimized;
         }
 
-        private void MaximizeApp_Click(object sender, RoutedEventArgs e)
+        private void OnMaximizeRequested()
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
- 
+
     }
 }

@@ -8,104 +8,152 @@ using NotePad_Launcher.Contracts;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Domain.IService;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
+using Service;
 using FileDialog = NotePad_Launcher.Services.FileDialog;
 
 namespace NotePad_Launcher.ViewModels.EncryptionWindow;
 
 public class EncryptionWindowVM : INotifyPropertyChanged
 {
-    private EncryptionMethod SelectedMethod;
     private readonly IRSAService _rsaService;
     private readonly IElgamalService _elgamalService;
     private readonly IRabinaService _rabinaService;
     private readonly IECCService _eccService;
     private readonly IFileDialog _fileDialog;
-    public event PropertyChangedEventHandler? PropertyChanged;
+    private readonly IServiceFunctions _serviceFunctions;
     private readonly IStringService _stringService;
+    public event PropertyChangedEventHandler? PropertyChanged;
+    public event Action? MaximizeRequested;
+    public event Action? MinimizeRequested;
+    public event Action? CloseRequested;
+
+    private ICommand? _closeCommand;
+    private ICommand? _minimizeCommand;
+    private ICommand? _maximizeCommand;
     private ICommand? _encryptionCommand;
     private ICommand? _digitalSignatureCommand;
     private ICommand? _decryptionCommand;
     private string _methodName;
-    public string MethodName
+    private EncryptionMethod _selectedMethod;
+    public EncryptionMethod SelectedMethod { get; } // Только для чтения
+    private readonly IEncryptionMethodStorage _encryptionMethodStorage;
+    public EncryptionWindowVM(IEncryptionMethodStorage encryptionMethodStorage)
     {
-        get => _methodName;
-        set
+        _encryptionMethodStorage = encryptionMethodStorage;
+        SelectedMethod = _encryptionMethodStorage.CurrentMethod;
+        _serviceFunctions = new ServiceFunctions();
+        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
+        _rsaService = new RSAService();
+        _elgamalService = new ElgamalService();
+        _rabinaService = new RabinaService();
+        _eccService = new ECCService();
+        _fileDialog = new FileDialog();
+        TextBlockCloseKey = "Enter Close key";
+        switch (SelectedMethod)
         {
-            _methodName = value;
-            OnPropertyChanged(nameof(MethodName));
+            case EncryptionMethod.RSA:
+                RSAUI();
+                break;
+            case EncryptionMethod.Elgamal:
+                ElgamalUI();
+                break;
+            case EncryptionMethod.Rabina:
+                RabinaUI();
+                break;
+            case EncryptionMethod.ECC:
+                ECCUI();
+                break;
+            default:
+                // Действие, если метод не выбран (None)
+                break;
         }
     }
-    private string _textBlockValue1;
-    public string TextBlockValue1
-    {
-        get => _textBlockValue1;
-        set
+    #region TextBlock
+        public string MethodName
         {
-            _textBlockValue1 = value;
-            OnPropertyChanged(nameof(TextBlockValue1));
+            get => _methodName;
+            set
+            {
+                _methodName = value;
+                OnPropertyChanged(nameof(MethodName));
+            }
         }
-    }
-    private string _textBlockValue2;
-    public string TextBlockValue2
-    {
-        get => _textBlockValue2;
-        set
+        private string _textBlockValue1;
+        public string TextBlockValue1
         {
-            _textBlockValue2 = value;
-            OnPropertyChanged(nameof(TextBlockValue2));
+            get => _textBlockValue1;
+            set
+            {
+                _textBlockValue1 = value;
+                OnPropertyChanged(nameof(TextBlockValue1));
+            }
         }
-    }
-    private string _textBlockValue3;
-    public string TextBlockValue3
-    {
-        get => _textBlockValue3;
-        set
+        private string _textBlockValue2;
+        public string TextBlockValue2
         {
-            _textBlockValue3 = value;
-            OnPropertyChanged(nameof(TextBlockValue3));
+            get => _textBlockValue2;
+            set
+            {
+                _textBlockValue2 = value;
+                OnPropertyChanged(nameof(TextBlockValue2));
+            }
         }
-    }
-    private string _textBlockValue4;
-    public string TextBlockValue4
-    {
-        get => _textBlockValue4;
-        set
+        private string _textBlockValue3;
+        public string TextBlockValue3
         {
-            _textBlockValue4 = value;
-            OnPropertyChanged(nameof(TextBlockValue4));
+            get => _textBlockValue3;
+            set
+            {
+                _textBlockValue3 = value;
+                OnPropertyChanged(nameof(TextBlockValue3));
+            }
         }
-    }
-    private string _textBlockValue5;
-    public string TextBlockValue5
-    {
-        get => _textBlockValue5;
-        set
+        private string _textBlockValue4;
+        public string TextBlockValue4
         {
-            _textBlockValue1 = value;
-            OnPropertyChanged(nameof(TextBlockValue5));
+            get => _textBlockValue4;
+            set
+            {
+                _textBlockValue4 = value;
+                OnPropertyChanged(nameof(TextBlockValue4));
+            }
         }
-    }
-    private string _textBlockCloseKey;
-    public string TextBlockCloseKey
-    {
-        get => _textBlockCloseKey;
-        set
+        private string _textBlockValue5;
+        public string TextBlockValue5
         {
-            _textBlockCloseKey = value;
-            OnPropertyChanged(nameof(TextBlockCloseKey));
+            get => _textBlockValue5;
+            set
+            {
+                _textBlockValue1 = value;
+                OnPropertyChanged(nameof(TextBlockValue5));
+            }
         }
-    }
-    private string _textBlockOpenKey;
-    public string TextBlockOpenKey
-    {
-        get => _textBlockOpenKey;
-        set
+        private string _textBlockCloseKey;
+        public string TextBlockCloseKey
         {
-            _textBlockOpenKey = value;
-            OnPropertyChanged(nameof(TextBlockOpenKey));
+            get => _textBlockCloseKey;
+            set
+            {
+                _textBlockCloseKey = value;
+                OnPropertyChanged(nameof(TextBlockCloseKey));
+            }
         }
-    }
+        private string _textBlockOpenKey;
+        public string TextBlockOpenKey
+        {
+            get => _textBlockOpenKey;
+            set
+            {
+                _textBlockOpenKey = value;
+                OnPropertyChanged(nameof(TextBlockOpenKey));
+            }
+        }
+        #endregion
+    #region TextBox
+
     private string _textBoxValue1;
     public string TextBoxValue1
     {
@@ -156,6 +204,38 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             OnPropertyChanged(nameof(TextBoxValue5));
         }
     }
+    private string _textBoxCloseKey1;
+    public string TextBoxCloseKey1
+    {
+        get => _textBoxCloseKey1;
+        set
+        {
+            _textBoxCloseKey1 = value;
+            OnPropertyChanged(nameof(TextBoxCloseKey1));
+        }
+    }
+    private string _textBoxCloseKey2;
+    public string TextBoxCloseKey2
+    {
+        get => _textBoxCloseKey2;
+        set
+        {
+            _textBoxCloseKey2 = value;
+            OnPropertyChanged(nameof(TextBoxCloseKey2));
+        }
+    }
+    private string _textBoxCloseKey3;
+    public string TextBoxCloseKey3
+    {
+        get => _textBoxCloseKey3;
+        set
+        {
+            _textBoxCloseKey3 = value;
+            OnPropertyChanged(nameof(TextBoxCloseKey3));
+        }
+    }
+    #endregion
+    #region BoolElement
     private bool _isElement2Visible = true;
 
     public bool IsElement2Visible
@@ -226,36 +306,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             }
         }
     }
-    private string _textBoxCloseKey1;
-    public string TextBoxCloseKey1
-    {
-        get => _textBoxCloseKey1;
-        set
-        {
-            _textBoxCloseKey1 = value;
-            OnPropertyChanged(nameof(TextBoxCloseKey1));
-        }
-    }
-    private string _textBoxCloseKey2;
-    public string TextBoxCloseKey2
-    {
-        get => _textBoxCloseKey2;
-        set
-        {
-            _textBoxCloseKey2 = value;
-            OnPropertyChanged(nameof(TextBoxCloseKey2));
-        }
-    }
-    private string _textBoxCloseKey3;
-    public string TextBoxCloseKey3
-    {
-        get => _textBoxCloseKey3;
-        set
-        {
-            _textBoxCloseKey3 = value;
-            OnPropertyChanged(nameof(TextBoxCloseKey3));
-        }
-    }
     private bool _isTextBoxCloseKey2Visible = true;
 
     public bool IsTextBoxCloseKey2Visible
@@ -284,33 +334,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             }
         }
     }
-    public EncryptionWindowVM(EncryptionMethod method)
-    {
-        SelectedMethod = method;
-        _rsaService = new RSAService();
-        _elgamalService = new ElgamalService();
-        _rabinaService = new RabinaService();
-        _eccService = new ECCService();
-        _fileDialog = new FileDialog();
-        switch (SelectedMethod)
-        {
-            case EncryptionMethod.RSA:
-                RSAUI();
-                break;
-            case EncryptionMethod.Elgamal:
-                ElgamalUI();
-                break;
-            case EncryptionMethod.Rabina:
-                RabinaUI();
-                break;
-            case EncryptionMethod.ECC:
-                ECCUI();
-                break;
-            default:
-                // Действие, если метод не выбран (None)
-                break;
-        }
-    }
+#endregion
     private void RSAUI()
     {
         MethodName = "RSA Encryption";
@@ -362,15 +386,29 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
+    public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
+    public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
+    public ICommand MaximizeCommand => _maximizeCommand ??= new OtherRelayCommands(ExecuteMaximizeCommand, CanExecute);
     public ICommand EncryptionCommand => _encryptionCommand ??= new OtherRelayCommands(ExecuteEncryptionCommand, CanExecute);
     public ICommand DigitalSignatureCommand => _digitalSignatureCommand ??= new OtherRelayCommands(ExecuteDigitalSignatureCommand, CanExecute);
     public ICommand DecryptionCommand => _decryptionCommand ??= new OtherRelayCommands(ExecuteDecryptionCommand, CanExecute);
-    private string FileText;
+    private void ExecuteCloseCommand(object? parameter)
+    {
+        CloseRequested?.Invoke();
+    }
+    private void ExecuteMinimizeCommand(object? parameter)
+    {
+        MinimizeRequested?.Invoke();
+    }
+    private void ExecuteMaximizeCommand(object? parameter)
+    {
+        MaximizeRequested?.Invoke();
+    }
     private void ExecuteEncryptionCommand(object? parameter)
     {
+        var FileText = _stringService.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
-        FileText = "тест";
         switch (SelectedMethod)
         {
             case EncryptionMethod.RSA:
@@ -386,6 +424,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 result = _rsaService.Encryption(model);
                 TextBlockCloseKey = $"Close key: {result.CloseKeyD},{result.ModulusN}";
                 TextBlockOpenKey = $"Open key: {result.PrimeE},{result.ModulusN}";
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Elgamal:
                 if (string.IsNullOrEmpty(TextBoxValue1) && string.IsNullOrEmpty(TextBoxValue2))
@@ -411,6 +450,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 result = _elgamalService.Encryption(model);
                 TextBlockCloseKey = $"{result.CloseKeyD},{result.PrimeP},{result.PrimeQ}";
                 TextBlockOpenKey = $"{result.PrimeE},{result.PrimeQ},{result.PrimeP}";
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Rabina:
                 model = new EncryptionModel
@@ -430,6 +470,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 TextBlockCloseKey = $"Close key: {result.PrimeP},{result.PrimeQ}";
                 TextBlockOpenKey = $"Open key: {result.ModulusN}";
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.ECC:
                 model = new EncryptionModel
@@ -440,6 +481,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 };
                 result = _eccService.Encryption(model);
                 TextBoxValue3 = result.PrimeE;
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             default:
                 // Действие, если метод не выбран (None)
@@ -448,7 +490,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     }
     private void ExecuteDigitalSignatureCommand(object? parameter)
     {
-        FileText = "";
+        var FileText = _stringService.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
         switch (SelectedMethod)
@@ -477,7 +519,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    //Вернуть текст
+                    _stringService.PushUpdatedText(result.FileText);
                 }
                 break;
             case EncryptionMethod.Elgamal:
@@ -509,7 +551,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    //Вернуть текст
+                    _stringService.PushUpdatedText(result.FileText);
                 }
                 break;
             default:
@@ -519,7 +561,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     }
     private void ExecuteDecryptionCommand(object? parameter)
     {
-        FileText = "29&41&21&29";
+        var FileText = _stringService.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
         switch (SelectedMethod)
@@ -533,6 +575,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _rsaService.Decryption(model);
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Elgamal:
                 model = new EncryptionModel
@@ -544,6 +587,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _elgamalService.Decryption(model);
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Rabina:
                 model = new EncryptionModel
@@ -554,6 +598,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _rabinaService.Decryption(model);
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.ECC:
                 model = new EncryptionModel
@@ -563,6 +608,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _eccService.Decryption(model);
+                _stringService.PushUpdatedText(result.FileText);
                 break;
             default:
                 // Действие, если метод не выбран (None)

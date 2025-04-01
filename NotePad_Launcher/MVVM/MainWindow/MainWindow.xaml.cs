@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Domain.Enum;
+using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.Contracts;
 using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
@@ -10,12 +12,10 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MainWindowVM _viewModel;
-
         public MainWindow()
         {
             InitializeComponent();
-            var viewModel = new MainWindowVM();
+            var viewModel = App.ServiceProvider.GetRequiredService<MainWindowVM>();
             // Устанавливаем DataContext
             this.DataContext = viewModel;
             FileText.Document = viewModel.FileTextDocument;
@@ -59,26 +59,22 @@ namespace NotePad_Launcher
             switch (method)
             {
                 case EncryptionMethod.RSA:
-                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
                     encryptionWindow.Show();
                     break;
                 case EncryptionMethod.Elgamal:
-                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
                     encryptionWindow.Show();
                     break;
                 case EncryptionMethod.Rabina:
-                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
                     encryptionWindow.Show();
                     break;
                 case EncryptionMethod.ECC:
-                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
                     encryptionWindow.Show();
                     break;
             }
-        }
-        public string GetFileText()
-        {
-            return FileText.Document.Text; // Возвращаем актуальное значение TextBox
         }
     }
 }

@@ -4,19 +4,12 @@ namespace NotePad_Launcher.Services;
 
 public class StringService : IStringService
 {
-    private string _myFileText;
+    public Func<string> GetTextCallback { get; set; }
 
-    public string MyFileText
+    public event Action<string> TextUpdated;
+
+    public void PushUpdatedText(string updatedText)
     {
-        get => _myFileText;
-        set
-        {
-            if (_myFileText != value)
-            {
-                _myFileText = value;
-                StringUpdated?.Invoke(_myFileText);
-            }
-        }
+        TextUpdated?.Invoke(updatedText);
     }
-    public event Action<string>? StringUpdated;
 }

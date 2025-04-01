@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.Contracts;
 using NotePad_Launcher.Services;
 using Service;
@@ -37,9 +38,8 @@ public class FileListWindowVM : INotifyPropertyChanged
 
     public FileListWindowVM()
     {
-        _fileService = new FileService();
+        _fileService = App.ServiceProvider.GetRequiredService<FileService>();
         _fileDialog = new FileDialog();
-        _fileService.ExDirectoryFile();
         LoadFileList();
     }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

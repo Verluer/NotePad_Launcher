@@ -7,6 +7,7 @@ using Domain.Enum;
 using Domain.IService;
 using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.Contracts;
 using NotePad_Launcher.Services;
 using Service;
@@ -40,8 +41,9 @@ public class MainWindowVM : INotifyPropertyChanged
 
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
-    public IStringService StringService { get; }
-
+    private readonly IEncryptionMethodStorage _encryptionMethodStorage;
+    private readonly IServiceFunctions _serviceFunctions;
+    private readonly IStringService _stringService;
     private bool _checkSaveFile = true;
     public bool CheckSaveFile
     {
@@ -57,10 +59,14 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     public MainWindowVM()
     {
-        _fileService = new FileService();
+        _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
         _fileDialog = new FileDialog();
-        StringService = new StringService();
+        _serviceFunctions = new ServiceFunctions();
+        _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
         _fileService.ExDirectoryFile();
+        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
+        _stringService.GetTextCallback = () => FileTextDocument.Text;
+        _stringService.TextUpdated += OnTextUpdated;
         FileTextDocument = new TextDocument();
     }
     private TextDocument _fileTextDocument;
@@ -80,7 +86,7 @@ public class MainWindowVM : INotifyPropertyChanged
 
                 if (_fileTextDocument != null)
                 {
-                    _fileTextDocument.Changed += OnDocumentChanged;
+                    _fileTextDocument.Changed += OnDocumentChanged; 
                 }
 
                 OnPropertyChanged();
@@ -129,6 +135,10 @@ public class MainWindowVM : INotifyPropertyChanged
     #endregion
 
     #region Functions
+    private void OnTextUpdated(string newText)
+    {
+        FileTextDocument.Text = newText;
+    }
     public void UpdateFileInfo(FileModel fileModel)
     {
         if (!CheckingSaveFile(CheckSaveFile))
@@ -162,11 +172,6 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    public void LogMessage(string message)
-    {
-        string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
-        File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
-    }
     protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
         if (EqualityComparer<T>.Default.Equals(field, value)) return false;
@@ -198,7 +203,7 @@ public class MainWindowVM : INotifyPropertyChanged
     // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
-        LogMessage(CheckSaveFile.ToString());
+        _serviceFunctions.LogMessage(CheckSaveFile.ToString());
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -298,6 +303,8 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         if (parameter is EncryptionMethod method)
         {
+            _encryptionMethodStorage.CurrentMethod = method;
+            _serviceFunctions.LogMessage($"Method: {_encryptionMethodStorage.CurrentMethod}");
             EncryptedMethodExecuted?.Invoke(method);
         }
     }
