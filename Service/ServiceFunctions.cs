@@ -1,6 +1,8 @@
-﻿namespace Service;
+﻿using Domain.IService;
 
-public class ServiceFunctions
+namespace Service;
+
+public class ServiceFunctions : IServiceFunctions
 {
     public void LogMessage(string message)
     {
