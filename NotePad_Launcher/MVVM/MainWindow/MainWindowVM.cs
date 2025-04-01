@@ -167,7 +167,7 @@ public class MainWindowVM : INotifyPropertyChanged
 
     private void OpenEncryptionWindow(EncryptionMethod method)
     {
-        var encryptionWindow = new EncryptionWindow(method);
+        var encryptionWindow = new NotePad_Launcher.EncryptionWindow(method);
         encryptionWindow.EncryptionResultAction = (newText) =>
         {
             FileTextDocument.Text = newText;
