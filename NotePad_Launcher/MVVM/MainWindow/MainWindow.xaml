@@ -6,6 +6,7 @@
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:mainWindow="clr-namespace:NotePad_Launcher.ViewModels.MainWindow"
         xmlns:services="clr-namespace:NotePad_Launcher.Services"
+        xmlns:local="clr-namespace:Domain.Enum;assembly=Domain"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Style="{StaticResource MyWindowStyle}">
@@ -70,10 +71,10 @@
                 <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
                     <MenuItem x:Name="WordWrap" Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Height="25" FontSize="14" VerticalAlignment="Center"/>
                     <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
-                        <MenuItem Click="RSAClick" Command="{Binding RSACommand}"  Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Click="ElgamalClick" Command="{Binding ElgamalCommand}" Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Click="RabinaClick" Command="{Binding RabinaCommand}" Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Click="ECCClick" Command="{Binding  ECCCommand}" Header="ECC" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Height="18" FontSize="14" VerticalAlignment="Center"/>
                     </MenuItem>
                 </MenuItem>
                 </Menu>

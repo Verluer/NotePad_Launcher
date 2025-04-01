@@ -1,25 +1,7 @@
-﻿using Domain.IService;
-using Domain.Model;
-using Microsoft.Win32;
-using System.IO;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
 using Domain.Enum;
-using Domain.IService.IEncryption;
-using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
-using Service.Encryption;
-using Application = System.Windows.Application;
-using NotePad_Launcher.ViewModels;
 using NotePad_Launcher.ViewModels.MainWindow;
-using static System.Net.WebRequestMethods;
-using System.Windows.Threading;
-using NotePad_Launcher.Services;
-using FileDialog = Microsoft.Win32.FileDialog;
-using System.ComponentModel;
 
 namespace NotePad_Launcher
 {
@@ -29,8 +11,6 @@ namespace NotePad_Launcher
     public partial class MainWindow : Window
     {
         private readonly MainWindowVM _viewModel;
-        private bool checkSaveFile = true;
-
 
         public MainWindow()
         {
@@ -52,6 +32,7 @@ namespace NotePad_Launcher
                 var fileListWindow = new FileListWindow();
                 fileListWindow.Show();
             };
+            viewModel.EncryptedMethodExecuted += OpenEncryptionWindow;
         }
 
         private void OnMinimizeRequested()
@@ -72,36 +53,32 @@ namespace NotePad_Launcher
             }
         }
 
-
+        private void OpenEncryptionWindow(EncryptionMethod method)
+        {
+            EncryptionWindow encryptionWindow;
+            switch (method)
+            {
+                case EncryptionMethod.RSA:
+                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow.Show();
+                    break;
+                case EncryptionMethod.Elgamal:
+                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow.Show();
+                    break;
+                case EncryptionMethod.Rabina:
+                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow.Show();
+                    break;
+                case EncryptionMethod.ECC:
+                    encryptionWindow = new EncryptionWindow(method);
+                    encryptionWindow.Show();
+                    break;
+            }
+        }
         public string GetFileText()
         {
             return FileText.Document.Text; // Возвращаем актуальное значение TextBox
-        }
-        private void OpenEncryptionWindow(EncryptionMethod method)
-        {
-            var encryptionWindow = new EncryptionWindow(method);
-            encryptionWindow.EncryptionResultAction = (newText) =>
-            {
-                FileText.Document.Text = newText; // Обновляем TextBox в главном окне
-            };
-            encryptionWindow.Show();
-        }
-        private void RSAClick(object sender, RoutedEventArgs e)
-        {
-            OpenEncryptionWindow(EncryptionMethod.RSA);
-        }
-
-        private void ElgamalClick(object sender, RoutedEventArgs e)
-        {
-            OpenEncryptionWindow(EncryptionMethod.Elgamal);
-        }
-        private void RabinaClick(object sender, RoutedEventArgs e)
-        {
-            OpenEncryptionWindow(EncryptionMethod.Rabina);
-        }
-        private void ECCClick(object sender, RoutedEventArgs e)
-        {
-            OpenEncryptionWindow(EncryptionMethod.ECC);
         }
     }
 }

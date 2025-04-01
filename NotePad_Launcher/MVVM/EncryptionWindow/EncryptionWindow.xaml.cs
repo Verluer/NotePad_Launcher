@@ -3,6 +3,8 @@ using System.Windows.Input;
 using Domain.Enum;
 using Domain.IService.IEncryption;
 using Domain.Model;
+using NotePad_Launcher.ViewModels.EncryptionWindow;
+using NotePad_Launcher.ViewModels.MainWindow;
 using Service.Encryption;
 using static ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager;
 
@@ -23,68 +25,14 @@ namespace NotePad_Launcher
         public EncryptionWindow(EncryptionMethod method)
         {
             InitializeComponent();
-            SelectedMethod = method;
+            var viewModel = new EncryptionWindowVM(method);
+            this.DataContext = viewModel;
             _rsaService = new RSAService();
             _elgamalService = new ElgamalService();
             _rabinaService = new RabinaService();
             _eccService = new ECCService();
-            switch (SelectedMethod)
-            {
-                case EncryptionMethod.RSA:
-                    RSAUI();
-                    break;
-                case EncryptionMethod.Elgamal:
-                    ElgamalUI();
-                    break;
-                case EncryptionMethod.Rabina:
-                    RabinaUI();
-                    break;
-                case EncryptionMethod.ECC:
-                    ECCUI();
-                    break;
-                default:
-                    // Действие, если метод не выбран (None)
-                    break;
-            }
         }
 
-        private void RSAUI()
-        {
-            LabelText1.Text = "Enter prime number p:";
-            LabelText2.Text = "Enter prime number q:";
-            LabelText3.Text = "Enter prime number e or (e,n)";
-            CloseKey3.Visibility = Visibility.Collapsed;
-            TextValue5.Visibility = Visibility.Collapsed;
-        }
-
-        private void ElgamalUI()
-        {
-            LabelText1.Text = "Enter prime number p:";
-            LabelText2.Text = "Enter primitive root g:";
-            LabelText3.Text = "Enter open key (y, g, p)";
-        }
-        private void RabinaUI()
-        {
-            LabelText1.Text = "Enter prime number p:";
-            LabelText2.Text = "Enter prime number q:";
-            LabelText3.Text = "?Enter open key n";
-            CloseKey3.Visibility = Visibility.Collapsed;
-            TextValue5.Visibility = Visibility.Collapsed;
-            TextValue4.Visibility = Visibility.Collapsed;
-        }
-        private void ECCUI()
-        {
-            LabelText1.Text = "Enter close key d:";
-            LabelText2.Visibility = Visibility.Collapsed;
-            LabelText3.Text = "?Enter open key";
-            CloseKey3.Visibility = Visibility.Collapsed;
-            TextValue2.Visibility = Visibility.Collapsed;
-            TextValue5.Visibility = Visibility.Collapsed;
-            TextValue4.Visibility = Visibility.Collapsed;
-            CloseKey2.Visibility = Visibility.Collapsed;
-            CloseKey3.Visibility = Visibility.Collapsed;
-
-        }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)

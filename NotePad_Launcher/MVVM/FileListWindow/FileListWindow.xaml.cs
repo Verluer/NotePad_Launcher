@@ -1,8 +1,6 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Domain.IService;
 using Domain.Model;
 using NotePad_Launcher.ViewModels.FileListWindow;
 using NotePad_Launcher.ViewModels.MainWindow;

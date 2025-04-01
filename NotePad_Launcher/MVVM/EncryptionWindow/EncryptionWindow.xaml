@@ -4,9 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NotePad_Launcher"
+        xmlns:viewModels="clr-namespace:NotePad_Launcher.ViewModels"
         mc:Ignorable="d"
         Title="EncryptionWindow" Height="400" Width="600"
         Style="{StaticResource MyWindowStyle}">
+    <Window.Resources>
+        <viewModels:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -52,29 +56,62 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <TextBlock Grid.Column="1" Grid.Row="1" Text="Methodical Encryption" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+        <TextBlock Text="{Binding MethodName}" Grid.Column="1" Grid.Row="1" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
         <StackPanel Grid.Column="0" Grid.Row="2" >
-            <TextBlock  Text="Enter value 1:" x:Name="LabelText1" FontSize="20" HorizontalAlignment="Center"/>
-            <TextBox x:Name="TextValue1"  Width="100" Height="30"  FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            <TextBlock  Text="{Binding TextBlockValue1}" x:Name="LabelText1" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBox Text="{Binding TextBoxValue1}" x:Name="TextValue1"  Width="100" Height="30"  FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
         </StackPanel>
+
         <StackPanel Grid.Column="0" Grid.Row="3" >
-            <TextBlock  Text="Enter value 2:" x:Name="LabelText2" FontSize="20" HorizontalAlignment="Center"/>
-            <TextBox x:Name="TextValue2" Width="100" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            <TextBlock  Text="{Binding TextBlockValue2}" x:Name="LabelText2" FontSize="20" HorizontalAlignment="Center">
+                <TextBlock.Visibility>
+                    <Binding Path="IsElement2Visible" Converter="{StaticResource BoolToVisibilityConverter}" />
+                </TextBlock.Visibility>
+            </TextBlock>
+            <TextBox Text="{Binding TextBoxValue2}" x:Name="TextValue2" Width="100" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                <TextBox.Visibility>
+                    <Binding Path="IsElement2Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                </TextBox.Visibility>
+            </TextBox>
         </StackPanel>
         <StackPanel Grid.Column="0" Grid.Row="4" >
-            <TextBlock  Text="Enter value 3:" x:Name="LabelText3" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBlock  Text="{Binding TextBlockValue3}" x:Name="LabelText3" FontSize="20" HorizontalAlignment="Center">
+                <TextBlock.Visibility>
+                    <Binding Path="IsTextBlock3Visible" Converter="{StaticResource BoolToVisibilityConverter}" />
+                </TextBlock.Visibility>
+            </TextBlock>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBox x:Name="TextValue3" Width="50" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
-                <TextBox  x:Name="TextValue4" Width="50" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
-                <TextBox  x:Name="TextValue5" Width="50" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
+                <TextBox Text="{Binding TextBoxValue3}" x:Name="TextValue3" Width="50" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5">
+                    <TextBox.Visibility>
+                        <Binding Path="IsTextBoxValue3Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                    </TextBox.Visibility>
+                </TextBox>
+                <TextBox Text="{Binding TextBoxValue4}" x:Name="TextValue4" Width="50" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5">
+                    <TextBox.Visibility>
+                        <Binding Path="IsTextBoxValue4Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                    </TextBox.Visibility>
+                </TextBox>
+                <TextBox Text="{Binding TextBoxValue5}" x:Name="TextValue5" Width="50" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5">
+                    <TextBox.Visibility>
+                        <Binding Path="IsTextBoxValue5Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                    </TextBox.Visibility>
+                </TextBox>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="3" >
-            <TextBlock  Text="Enter close key:" x:Name="LabelEnKey" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBlock  Text="{Binding TextBlockCloseKey}" x:Name="LabelEnKey" FontSize="20" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBox x:Name="CloseKey1" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
-                <TextBox x:Name="CloseKey2" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
-                <TextBox x:Name="CloseKey3" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Text="{Binding TextBoxCloseKey1}" x:Name="CloseKey1" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Text="{Binding TextBoxCloseKey2}" x:Name="CloseKey2" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5">
+                    <TextBox.Visibility>
+                        <Binding Path="IsTextBoxCloseKey2Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                    </TextBox.Visibility>
+                </TextBox>
+                <TextBox Text="{Binding CloseKey3}" x:Name="CloseKey3" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5">
+                    <TextBox.Visibility>
+                        <Binding Path="IsTextBoxCloseKey3Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                    </TextBox.Visibility>
+                </TextBox>
             </StackPanel>
         </StackPanel>
         <TextBlock  Grid.Column="2" Grid.Row="4" x:Name="LabelCloseKey"  Text="Close key: " FontSize="20" HorizontalAlignment="Center"/>

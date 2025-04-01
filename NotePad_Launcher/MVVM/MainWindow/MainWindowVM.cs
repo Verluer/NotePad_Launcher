@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -9,10 +7,8 @@ using Domain.Enum;
 using Domain.IService;
 using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
-using Microsoft.VisualBasic.Logging;
 using NotePad_Launcher.Contracts;
 using NotePad_Launcher.Services;
-using NotePad_Launcher.ViewModels;
 using Service;
 
 
@@ -32,19 +28,20 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _deleteFileCommand;
     private ICommand? _toggleWordWrapCommand;
     private ICommand? _logCommand;
-    private ICommand? _rsaCommand;
-    private ICommand? _elgamalCommand;
-    private ICommand? _rabinaCommand;
-    private ICommand? _eccCommand;
+    private ICommand? _encryptedMethodCommand;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
     public event Action OpenFileListWindowRequested;
+    public event Action<EncryptionMethod> EncryptedMethodExecuted;
+
     public Action UpdateWordWrapAction;
     private string FilePath;
 
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
+    public IStringService StringService { get; }
+
     private bool _checkSaveFile = true;
     public bool CheckSaveFile
     {
@@ -62,6 +59,7 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         _fileService = new FileService();
         _fileDialog = new FileDialog();
+        StringService = new StringService();
         _fileService.ExDirectoryFile();
         FileTextDocument = new TextDocument();
     }
@@ -164,16 +162,6 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-
-    private void OpenEncryptionWindow(EncryptionMethod method)
-    {
-        var encryptionWindow = new NotePad_Launcher.EncryptionWindow(method);
-        encryptionWindow.EncryptionResultAction = (newText) =>
-        {
-            FileTextDocument.Text = newText;
-        };
-        encryptionWindow.Show();
-    }
     public void LogMessage(string message)
     {
         string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
@@ -195,7 +183,6 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
     public ICommand MaximizeCommand => _maximizeCommand ??= new OtherRelayCommands(ExecuteMaximizeCommand, CanExecute);
     #endregion
-        #region File
     public ICommand OpenFileCommand => _openFileCommand ??= new OtherRelayCommands(ExecuteOpenFileDialog, CanExecute);
     public ICommand CreateFileCommand => _createFileCommand ??= new OtherRelayCommands(ExecuteCreateFile, CanExecute);
     public ICommand SaveFileCommand => _saveFileCommand ??= new OtherRelayCommands(ExecuteSaveFile, CanExecute);
@@ -203,14 +190,8 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand FileListCommand => _fileListCommand ??= new OtherRelayCommands(ExecuteFileList, CanExecute);
     public ICommand DeleteFileCommand => _deleteFileCommand ??= new OtherRelayCommands(ExecuteDeleteFile, CanExecute);
     public ICommand ToggleWordWrapCommand => _toggleWordWrapCommand ??= new OtherRelayCommands(ExecuteWordWrap, CanExecute);
-        #endregion
-        #region Encryption
-    public ICommand RSACommand => _rsaCommand ??= new OtherRelayCommands(ExecuteRSACommand, CanExecute);
-    public ICommand ElgamalCommand => _elgamalCommand ??= new OtherRelayCommands(ExecuteElgamalCommand, CanExecute);
-    public ICommand RabinaCommand => _rabinaCommand ??= new OtherRelayCommands(ExecuteRabinaCommand, CanExecute);
-    public ICommand ECCCommand => _eccCommand ??= new OtherRelayCommands(ExecuteECCCommand, CanExecute);
-
-    #endregion
+    public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
+        
     #endregion
 
     #region Execute Button Parameter
@@ -313,24 +294,12 @@ public class MainWindowVM : INotifyPropertyChanged
         IsWordWrapEnabled = !IsWordWrapEnabled;
     }
 
-    private void ExecuteRSACommand(object? parameter)
+    private void ExecuteEncryptedMethod(object? parameter)
     {
-        OpenEncryptionWindow(EncryptionMethod.RSA);
-    }
-
-    private void ExecuteElgamalCommand(object? parameter)
-    {
-        OpenEncryptionWindow(EncryptionMethod.Elgamal);
-    }
-
-    private void ExecuteRabinaCommand(object? parameter)
-    {
-        OpenEncryptionWindow(EncryptionMethod.Rabina);
-    }
-
-    private void ExecuteECCCommand(object? parameter)
-    {
-        OpenEncryptionWindow(EncryptionMethod.ECC);
+        if (parameter is EncryptionMethod method)
+        {
+            EncryptedMethodExecuted?.Invoke(method);
+        }
     }
 
     #endregion
