@@ -11,7 +11,6 @@ namespace Service
     {
         private static string directoryPath;
 
-
         public string ExDirectoryFile()
         {
             string exePath = Assembly.GetExecutingAssembly().Location; //Полный путь к исполняемому файлу
@@ -20,15 +19,8 @@ namespace Service
             directoryPath = Path.GetFullPath(dataFilePath); //Директория текстовых файлов
             return directoryPath;
         }
-        public void LogMessage(string message)
-        {
-            string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
-            File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
-        }
-
         public FileModel OpenFile(string pathFile)
         {
-            LogMessage(directoryPath);
             return new FileModel
                 {
                     FileName = Path.GetFileNameWithoutExtension(pathFile),
@@ -92,7 +84,6 @@ namespace Service
         }
         public List<FileModel> GetTextFiles()
         {
-            LogMessage($"List: {directoryPath}");
             if (!Directory.Exists(directoryPath))
                 throw new DirectoryNotFoundException($"Директория не найдена: {directoryPath}");
 

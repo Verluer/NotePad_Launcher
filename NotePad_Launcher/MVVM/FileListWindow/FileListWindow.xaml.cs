@@ -1,7 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Domain.IService;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.ViewModels.FileListWindow;
 using NotePad_Launcher.ViewModels.MainWindow;
 
@@ -15,7 +17,7 @@ namespace NotePad_Launcher
         public FileListWindow()
         {
             InitializeComponent();
-            var viewModel = new FileListWindowVM();
+            var viewModel = App.ServiceProvider.GetRequiredService<FileListWindowVM>(); ;
             this.DataContext = viewModel;
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;

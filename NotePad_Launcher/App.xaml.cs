@@ -34,18 +34,18 @@ namespace NotePad_Launcher
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            // Регистрация зависимостей
+            // Регистрация сервайс-логики
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IRSAService, RSAService>();
             services.AddSingleton<IElgamalService, ElgamalService>();
             services.AddSingleton<IRabinaService, RabinaService>();
             services.AddSingleton<IECCService, ECCService>();
-            //
+            // Регистрация UI-логики
             services.AddSingleton<IStringService, StringService>();
             services.AddSingleton<IFileDialog, FileDialog>();
             services.AddSingleton<IEncryptionMethodStorage, EncryptionMethodStorage>();
             services.AddSingleton<IStringService, StringService>();
-            // Регистрация ViewModels как Transient, если нужно создавать новый экземпляр для каждого окна
+            // Регистрация ViewModels
             services.AddSingleton<MainWindowVM>();
             services.AddSingleton<FileListWindowVM>();
             services.AddSingleton<EncryptionWindowVM>();

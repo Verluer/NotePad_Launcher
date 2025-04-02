@@ -203,7 +203,7 @@ public class MainWindowVM : INotifyPropertyChanged
     // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
-        _serviceFunctions.LogMessage(CheckSaveFile.ToString());
+        _serviceFunctions.LogMessage(null);
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -304,7 +304,6 @@ public class MainWindowVM : INotifyPropertyChanged
         if (parameter is EncryptionMethod method)
         {
             _encryptionMethodStorage.CurrentMethod = method;
-            _serviceFunctions.LogMessage($"Method: {_encryptionMethodStorage.CurrentMethod}");
             EncryptedMethodExecuted?.Invoke(method);
         }
     }
