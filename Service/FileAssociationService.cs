@@ -18,39 +18,42 @@ public class FileAssociationService : IFileAssociationService
 
         const string extension = ".txt";
         const string fileType = "NotePad_Launcher.txtfile";
-
-        try
+        var existingFileType = Registry.GetValue($"HKEY_CLASSES_ROOT\\{extension}", "", null);
+        if (existingFileType == null || !existingFileType.ToString().Equals(fileType))
         {
-            using (var key = Registry.ClassesRoot.CreateSubKey(extension))
+            try
             {
-                if (key == null) return;
-                key.SetValue("", fileType);
-                key.SetValue("Content Type", "text/plain");
-            }
-
-            using (var classKey = Registry.ClassesRoot.CreateSubKey(fileType))
-            {
-                if (classKey == null) return;
-                classKey.SetValue("", "Text Document for NotePad_Launcher");
-
-                using (var iconKey = classKey.CreateSubKey("DefaultIcon"))
+                using (var key = Registry.ClassesRoot.CreateSubKey(extension))
                 {
-                    if (iconKey == null) return;
-                    iconKey.SetValue("", iconPath);
+                    if (key == null) return;
+                    key.SetValue("", fileType);
+                    key.SetValue("Content Type", "text/plain");
                 }
 
-                using (var commandKey = classKey.CreateSubKey(@"shell\open\command"))
+                using (var classKey = Registry.ClassesRoot.CreateSubKey(fileType))
                 {
-                    if (commandKey == null) return;
-                    commandKey.SetValue("", $"\"{exePath}\" \"%1\"");
-                }
-            }
+                    if (classKey == null) return;
+                    classKey.SetValue("", "Text Document for NotePad_Launcher");
 
-            SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
-        }
-        catch
-        {
-            //
+                    using (var iconKey = classKey.CreateSubKey("DefaultIcon"))
+                    {
+                        if (iconKey == null) return;
+                        iconKey.SetValue("", iconPath);
+                    }
+
+                    using (var commandKey = classKey.CreateSubKey(@"shell\open\command"))
+                    {
+                        if (commandKey == null) return;
+                        commandKey.SetValue("", $"\"{exePath}\" \"%1\"");
+                    }
+                }
+
+                SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
+            }
+            catch
+            {
+                //
+            }
         }
     }
     public static string FindIcon(string baseDirectory, string iconFileName)

@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resources\app.ico" />
+    <None Remove="Resources\app.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\app.ico" />
+    <Content Include="Resources\app.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +25,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\app.ico" />
   </ItemGroup>
 
 </Project>

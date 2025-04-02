@@ -9,7 +9,7 @@
         <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
         <Setter Property="AllowsTransparency" Value="True"/>
         <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
-        <Setter Property="Icon" Value="App.ico"/>
+        <Setter Property="Icon" Value="app.ico"/>
     </Style>
     <!-- Настраиваю тут градиент для объектов через свойства -->
     <Style x:Key="TestGradient" TargetType="DockPanel">
