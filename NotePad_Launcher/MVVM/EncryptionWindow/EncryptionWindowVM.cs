@@ -51,7 +51,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _rabinaService = new RabinaService();
         _eccService = new ECCService();
         _fileDialog = new FileDialog();
-        TextBlockCloseKey = "Enter Close key";
+        TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
         {
             case EncryptionMethod.RSA:
@@ -151,7 +151,17 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 OnPropertyChanged(nameof(TextBlockOpenKey));
             }
         }
-        #endregion
+        private string _textBlockCloseKey1;
+        public string TextBlockCloseKey1
+        {
+            get => _textBlockCloseKey1;
+            set
+            {
+                _textBlockCloseKey1 = value;
+                OnPropertyChanged(nameof(TextBlockCloseKey1));
+            }
+        }
+    #endregion
     #region TextBox
 
     private string _textBoxValue1;

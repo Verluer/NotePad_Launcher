@@ -38,8 +38,9 @@ public class FileListWindowVM : INotifyPropertyChanged
 
     public FileListWindowVM()
     {
-        _fileService = App.ServiceProvider.GetRequiredService<FileService>();
+        _fileService = new FileService();
         _fileDialog = new FileDialog();
+        _fileService.ExDirectoryFile();
         LoadFileList();
     }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

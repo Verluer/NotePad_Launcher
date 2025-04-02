@@ -3,16 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:NotePad_Launcher">
     <Application.Resources>
-        <!--Основной цвет для всех окон UI-->
-        <SolidColorBrush x:Key="WindowBackground" Color="WhiteSmoke"/>
-        <!--Базовые настройкки для окон UI-->
-        <Style x:Key="MyWindowStyle" TargetType="Window">
-            <Setter Property="WindowStyle" Value="None"/>
-            <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
-            <Setter Property="AllowsTransparency" Value="True"/>
-            <!-- Прозрачность для окна -->
-            <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
-        </Style>
-        <!--#######################################################################################-->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,4 +1,4 @@
-﻿    <Window x:Class="NotePad_Launcher.MainWindow"
+﻿<Window x:Class="NotePad_Launcher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,7 +9,8 @@
         xmlns:local="clr-namespace:Domain.Enum;assembly=Domain"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        Style="{StaticResource MyWindowStyle}">
+        MinWidth="300" MinHeight="200"
+        Style="{StaticResource WindowStyle}">
 
 
     <Grid x:Name="MainWindowContainer">
@@ -61,26 +62,26 @@
         <!--Меню кнопок под заголовком-->
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem Command="{Binding CreateFileCommand}"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding SaveFileCommand}" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Header="Файл" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding CreateFileCommand}"  Header="Создать" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SaveFileCommand}" Header="Сохранить" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="Сохранить как" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
-                <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem x:Name="WordWrap" Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Header="Формат" Style="{StaticResource MainWindowMenuItemStyle}" >
+                    <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Header="Encryption" Style="{StaticResource MainWindowMenuItemStyle}">
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
                     </MenuItem>
                 </MenuItem>
                 </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Command="{Binding  LogCommand}" Header="Log" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Command="{Binding  LogCommand}" Header="Log" Style="{StaticResource MainWindowMenuItemStyle}"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->

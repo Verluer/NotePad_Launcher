@@ -7,7 +7,8 @@
         xmlns:viewModels="clr-namespace:NotePad_Launcher.ViewModels"
         mc:Ignorable="d"
         Title="EncryptionWindow" Height="400" Width="600"
-        Style="{StaticResource MyWindowStyle}">
+        MinWidth="600" MinHeight="400"
+        Style="{StaticResource WindowStyle}">
     <Window.Resources>
         <viewModels:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
@@ -58,17 +59,17 @@
         </DockPanel>
         <TextBlock Text="{Binding MethodName}" Grid.Column="1" Grid.Row="1" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
         <StackPanel Grid.Column="0" Grid.Row="2" >
-            <TextBlock  Text="{Binding TextBlockValue1}" x:Name="LabelText1" FontSize="20" HorizontalAlignment="Center"/>
-            <TextBox Text="{Binding TextBoxValue1}" x:Name="TextValue1"  Width="100" Height="30"  FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            <TextBlock  Text="{Binding TextBlockValue1}" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBox Text="{Binding TextBoxValue1}"  Width="100" Height="30"  FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
         </StackPanel>
 
         <StackPanel Grid.Column="0" Grid.Row="3" >
-            <TextBlock  Text="{Binding TextBlockValue2}" x:Name="LabelText2" FontSize="20" HorizontalAlignment="Center">
+            <TextBlock  Text="{Binding TextBlockValue2}" FontSize="20" HorizontalAlignment="Center">
                 <TextBlock.Visibility>
                     <Binding Path="IsElement2Visible" Converter="{StaticResource BoolToVisibilityConverter}" />
                 </TextBlock.Visibility>
             </TextBlock>
-            <TextBox Text="{Binding TextBoxValue2}" x:Name="TextValue2" Width="100" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <TextBox Text="{Binding TextBoxValue2}" Width="100" Height="30" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Bottom">
                 <TextBox.Visibility>
                     <Binding Path="IsElement2Visible"  Converter="{StaticResource BoolToVisibilityConverter}" />
                 </TextBox.Visibility>
@@ -99,7 +100,7 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="3" >
-            <TextBlock  Text="{Binding TextBlockCloseKey}" x:Name="LabelEnKey" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBlock  Text="{Binding TextBlockCloseKey1}" x:Name="LabelEnKey" FontSize="20" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBox Text="{Binding TextBoxCloseKey1}" x:Name="CloseKey1" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5"/>
                 <TextBox Text="{Binding TextBoxCloseKey2}" x:Name="CloseKey2" Width="50" Height="30" FontSize="20" VerticalAlignment="Center" Margin="5">

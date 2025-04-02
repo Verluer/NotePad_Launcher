@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:NotePad_Launcher"
         mc:Ignorable="d"
         Title="FileListWindow" Height="350" Width="250"
-        Style="{StaticResource MyWindowStyle}">
+        MinWidth="250" MinHeight="350"
+        Style="{StaticResource WindowStyle}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
