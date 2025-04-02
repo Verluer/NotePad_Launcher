@@ -27,36 +27,21 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
-        <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <!-- Текст слева -->
-            <Menu DockPanel.Dock="Left" Background="#004C56">
-                <MenuItem Header="HeaderName" IsEnabled="False" Height="29">
-                    <MenuItem.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" Height="26"/>
-                        </DataTemplate>
-                    </MenuItem.HeaderTemplate>
-                </MenuItem>
-            </Menu>
-            <!-- Кнопки справа -->
-            <Menu DockPanel.Dock="Right" Background="#004C56">
-                <MenuItem Height="30" Command="{Binding MinimizeCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30" Command="{Binding MaximizeCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30" Command="{Binding CloseCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-            </Menu>
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
+            <TextBlock Text=" NotePad Launcher" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
+            <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ButtonHeadStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Red"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button DockPanel.Dock="Right" Command="{Binding MaximizeCommand}" Content="⛶" Style="{StaticResource ButtonHeadStyle}"/>
+            <Button DockPanel.Dock="Right" Command="{Binding MinimizeCommand}" Content="━" Style="{StaticResource ButtonHeadStyle}"/>
         </DockPanel>
 
         <!--Меню кнопок под заголовком-->
@@ -81,7 +66,7 @@
                 </MenuItem>
                 </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Command="{Binding  LogCommand}" Header="Log" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                <MenuItem Command="{Binding  LogCommand}" Header="Log-отладка" Style="{StaticResource MainWindowMenuItemStyle}"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->

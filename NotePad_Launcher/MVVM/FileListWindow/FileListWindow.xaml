@@ -20,36 +20,21 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
-        <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="False" Height="30" MouseDown="HeadLine_MouseDown">
-            <!-- Текст слева -->
-            <Menu DockPanel.Dock="Left" Background="#004C56">
-                <MenuItem Header="HeaderName" IsEnabled="False">
-                    <MenuItem.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="FileList" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </MenuItem.HeaderTemplate>
-                </MenuItem>
-            </Menu>
-            <!-- Кнопки справа -->
-            <Menu DockPanel.Dock="Right" Background="#004C56">
-                <MenuItem Height="30" Command="{Binding MinimizeCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30" Command="{Binding MaximizeCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30" Command="{Binding CloseCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-            </Menu>
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
+            <TextBlock Text=" FileList" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
+            <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ButtonHeadStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Red"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button DockPanel.Dock="Right" Command="{Binding MaximizeCommand}" Content="⛶" Style="{StaticResource ButtonHeadStyle}"/>
+            <Button DockPanel.Dock="Right" Command="{Binding MinimizeCommand}" Content="━" Style="{StaticResource ButtonHeadStyle}"/>
         </DockPanel>
         <ListView x:Name="FileListView" Grid.Column="1" Grid.Row="2" ItemsSource="{Binding FileListItem}" SelectionChanged="FileListView_SelectionChanged">
             <ListView.ItemTemplate>
