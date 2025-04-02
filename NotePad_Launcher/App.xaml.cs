@@ -2,8 +2,7 @@
 using System.Windows;
 using Domain.IService;
 using Domain.IService.IEncryption;
-using NotePad_Launcher.Contracts;
-using NotePad_Launcher.Services;
+using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.ViewModels.EncryptionWindow;
 using NotePad_Launcher.ViewModels.FileListWindow;
 using Service;
@@ -47,12 +46,14 @@ namespace NotePad_Launcher
             services.AddSingleton<IStringService, StringService>();
             // Регистрация ViewModels
             services.AddSingleton<MainWindowVM>();
-            services.AddSingleton<FileListWindowVM>();
-            services.AddSingleton<EncryptionWindowVM>();
-            // Регистрация главного окна
+            services.AddTransient<FileListWindowVM>();
+            services.AddTransient<EncryptionWindowVM>();
+            services.AddTransient<ProgramInfDialogVM>();
+            // Регистрация окон
             services.AddSingleton<MainWindow>();
             services.AddTransient<EncryptionWindow>();
-            services.AddSingleton<FileListWindow>();
+            services.AddTransient<FileListWindow>();
+            services.AddTransient<ProgramInfDialog>();
 
         }
     }

@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using Microsoft.Win32;
-using NotePad_Launcher.Contracts;
 
-namespace NotePad_Launcher.Services;
+namespace NotePad_Launcher;
 
 public class FileDialog : IFileDialog
 {

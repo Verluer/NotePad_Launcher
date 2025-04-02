@@ -104,7 +104,7 @@ namespace Service
         public bool CheckTextChange(string pathFile, string fileText)
         {
             if (string.IsNullOrEmpty(pathFile))
-                throw new ArgumentException("Путь к файлу не может быть пустым или null.", nameof(pathFile));
+                return true;
 
             var checkTextFromFile = File.ReadAllText(pathFile, Encoding.UTF8);
             return checkTextFromFile == fileText;

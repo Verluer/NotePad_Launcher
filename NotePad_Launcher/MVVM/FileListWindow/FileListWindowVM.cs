@@ -4,9 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
-using NotePad_Launcher.Services;
 using Service;
 
 namespace NotePad_Launcher.ViewModels.FileListWindow;

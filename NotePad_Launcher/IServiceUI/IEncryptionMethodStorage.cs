@@ -1,6 +1,6 @@
 ﻿using Domain.Enum;
 
-namespace NotePad_Launcher.Contracts;
+namespace NotePad_Launcher;
 
 public interface IEncryptionMethodStorage
 {

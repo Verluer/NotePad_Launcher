@@ -4,7 +4,6 @@ using Domain.Enum;
 using Domain.IService.IEncryption;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
 using NotePad_Launcher.ViewModels.EncryptionWindow;
 using NotePad_Launcher.ViewModels.MainWindow;
 using Service.Encryption;

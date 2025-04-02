@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:mainWindow="clr-namespace:NotePad_Launcher.ViewModels.MainWindow"
-        xmlns:services="clr-namespace:NotePad_Launcher.Services"
+        xmlns:services="clr-namespace:NotePad_Launcher"
         xmlns:local="clr-namespace:Domain.Enum;assembly=Domain"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
@@ -43,7 +43,6 @@
             <Button DockPanel.Dock="Right" Command="{Binding MaximizeCommand}" Content="⛶" Style="{StaticResource ButtonHeadStyle}"/>
             <Button DockPanel.Dock="Right" Command="{Binding MinimizeCommand}" Content="━" Style="{StaticResource ButtonHeadStyle}"/>
         </DockPanel>
-
         <!--Меню кнопок под заголовком-->
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
@@ -58,20 +57,24 @@
                 <MenuItem Header="Формат" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Header="Encryption" Style="{StaticResource MainWindowMenuItemStyle}">
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowSubMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     </MenuItem>
                 </MenuItem>
-                </Menu>
+                <MenuItem Header="Справка" Style="{StaticResource MainWindowMenuItemStyle}" >
+                    <MenuItem Header="Github" Command="{Binding MovingGithubCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Header="О программе" Command="{Binding ProgramInfCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                </MenuItem>
+            </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
                 <MenuItem Command="{Binding  LogCommand}" Header="Log-отладка" Style="{StaticResource MainWindowMenuItemStyle}"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
         <TextBox x:Name="FileName" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
-        <!-- AvalonEdit control -->
+        <!-- AvalonEdit -->
         <avalonEdit:TextEditor Name="FileText" ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />

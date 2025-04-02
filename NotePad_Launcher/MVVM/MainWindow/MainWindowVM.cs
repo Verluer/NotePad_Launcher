@@ -8,8 +8,6 @@ using Domain.IService;
 using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
-using NotePad_Launcher.Services;
 using Service;
 
 
@@ -30,10 +28,13 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _toggleWordWrapCommand;
     private ICommand? _logCommand;
     private ICommand? _encryptedMethodCommand;
+    private ICommand? _movingGithubCommand;
+    private ICommand? _programInfCommand;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
     public event Action OpenFileListWindowRequested;
+    public event Action OpenProgramInfDialogRequested;
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
 
     public Action UpdateWordWrapAction;
@@ -56,18 +57,6 @@ public class MainWindowVM : INotifyPropertyChanged
                 OnPropertyChanged();
             }
         }
-    }
-    public MainWindowVM()
-    {
-        _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
-        _fileDialog = new FileDialog();
-        _serviceFunctions = new ServiceFunctions();
-        _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
-        _fileService.ExDirectoryFile();
-        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
-        _stringService.GetTextCallback = () => FileTextDocument.Text;
-        _stringService.TextUpdated += OnTextUpdated;
-        FileTextDocument = new TextDocument();
     }
     private TextDocument _fileTextDocument;
     public TextDocument FileTextDocument
@@ -133,7 +122,18 @@ public class MainWindowVM : INotifyPropertyChanged
 
 
     #endregion
-
+    public MainWindowVM()
+    {
+        _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
+        _fileDialog = new FileDialog();
+        _serviceFunctions = new ServiceFunctions();
+        _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
+        _fileService.ExDirectoryFile();
+        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
+        _stringService.GetTextCallback = () => FileTextDocument.Text;
+        _stringService.TextUpdated += OnTextUpdated;
+        FileTextDocument = new TextDocument();
+    }
     #region Functions
     private void OnTextUpdated(string newText)
     {
@@ -196,6 +196,8 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand DeleteFileCommand => _deleteFileCommand ??= new OtherRelayCommands(ExecuteDeleteFile, CanExecute);
     public ICommand ToggleWordWrapCommand => _toggleWordWrapCommand ??= new OtherRelayCommands(ExecuteWordWrap, CanExecute);
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
+    public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
+    public ICommand ProgramInfCommand => _programInfCommand ??= new OtherRelayCommands(ExecuteProgramInf, CanExecute);
         
     #endregion
 
@@ -204,6 +206,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteLogCommand(object? parameter)
     {
         _serviceFunctions.LogMessage(null);
+
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -306,6 +309,15 @@ public class MainWindowVM : INotifyPropertyChanged
             _encryptionMethodStorage.CurrentMethod = method;
             EncryptedMethodExecuted?.Invoke(method);
         }
+    }
+    private void ExecuteMovingGitHub(object? parameter)
+    {
+        string url = "https://github.com/Verluer/NotePad_Launcher"; 
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+    }
+    private void ExecuteProgramInf(object? parameter)
+    {
+        OpenProgramInfDialogRequested?.Invoke();
     }
 
     #endregion

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Domain.Enum;
 using Service.Encryption;
-using NotePad_Launcher.Contracts;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -12,7 +11,6 @@ using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Service;
-using FileDialog = NotePad_Launcher.Services.FileDialog;
 
 namespace NotePad_Launcher.ViewModels.EncryptionWindow;
 

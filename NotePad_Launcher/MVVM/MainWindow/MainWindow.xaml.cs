@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using Domain.Enum;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
+using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
@@ -16,10 +16,8 @@ namespace NotePad_Launcher
         {
             InitializeComponent();
             var viewModel = App.ServiceProvider.GetRequiredService<MainWindowVM>();
-            // Устанавливаем DataContext
             this.DataContext = viewModel;
             FileText.Document = viewModel.FileTextDocument;
-            // Подписываемся на события
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
             viewModel.UpdateWordWrapAction = () =>
@@ -29,8 +27,13 @@ namespace NotePad_Launcher
             };
             viewModel.OpenFileListWindowRequested += () =>
             {
-                var fileListWindow = new FileListWindow();
+                var fileListWindow = App.ServiceProvider.GetRequiredService<FileListWindow>();
                 fileListWindow.Show();
+            };
+            viewModel.OpenProgramInfDialogRequested += () =>
+            {
+                var programInfDialog = App.ServiceProvider.GetRequiredService<ProgramInfDialog>();
+                programInfDialog.ShowDialog();
             };
             viewModel.EncryptedMethodExecuted += OpenEncryptionWindow;
         }
