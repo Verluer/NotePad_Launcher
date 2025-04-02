@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Domain.Enum;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.ViewModels.MainWindow;
 
@@ -35,9 +36,13 @@ namespace NotePad_Launcher
                 var programInfDialog = App.ServiceProvider.GetRequiredService<ProgramInfDialog>();
                 programInfDialog.ShowDialog();
             };
+            viewModel.OpenFontPickerDialogRequested += () =>
+            {
+                var fontPickerDialog = App.ServiceProvider.GetRequiredService<FontPickerDialog>();
+                fontPickerDialog.ShowDialog();
+            };
             viewModel.EncryptedMethodExecuted += OpenEncryptionWindow;
         }
-
         private void OnMinimizeRequested()
         {
             this.WindowState = WindowState.Minimized;

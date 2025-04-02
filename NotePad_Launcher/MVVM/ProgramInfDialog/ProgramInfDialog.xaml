@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:NotePad_Launcher.MVVM.ProgramInfDialog"
         mc:Ignorable="d"
         Title="ProgramInfDialog" Height="400" Width="450"
+        MaxWidth="450" MaxHeight="400" MinHeight="400" MinWidth="450"
         Style="{StaticResource WindowStyle}">
     <Grid>
         <Grid.RowDefinitions>

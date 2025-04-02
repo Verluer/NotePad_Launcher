@@ -115,9 +115,13 @@ namespace Service
             File.WriteAllText(pathFile, fileText);
         }
 
-        public string GetFileName(string pathFile)
+        public string GetFileNameWithout(string pathFile)
         {
             return Path.GetFileNameWithoutExtension(pathFile);
+        }
+        public string GetFileName(string pathFile)
+        {
+            return Path.GetFileName(pathFile);
         }
 
         public bool FileExists(string pathFile)

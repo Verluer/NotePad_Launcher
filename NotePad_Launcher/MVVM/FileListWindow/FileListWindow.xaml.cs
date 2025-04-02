@@ -48,20 +48,16 @@ namespace NotePad_Launcher
         {
             if (FileListView.SelectedItem is FileModel selectedFile)
             {
-                // Получаем ссылку на уже открытое основное окно (MainWindow)
                 var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
 
                 if (mainWindow != null)
                 {
-                    // Получаем ViewModel первого окна (MainWindow)
                     var mainWindowVM = mainWindow.DataContext as MainWindowVM;
                     if (mainWindowVM != null)
                     {
                         mainWindowVM.UpdateFileInfo(selectedFile);
                     }
                 }
-
-                // Закрываем SecondWindow после передачи данных
                 this.Close();
             }
         }

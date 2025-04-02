@@ -35,17 +35,19 @@ public class MainWindowVM : INotifyPropertyChanged
     public event Action? MinimizeRequested;
     public event Action OpenFileListWindowRequested;
     public event Action OpenProgramInfDialogRequested;
+    public event Action OpenFontPickerDialogRequested;
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
 
     public Action UpdateWordWrapAction;
-    private string FilePath;
 
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
     private readonly IEncryptionMethodStorage _encryptionMethodStorage;
     private readonly IServiceFunctions _serviceFunctions;
     private readonly IStringService _stringService;
+    private readonly IFileAssociationService _fileAssociationService;
     private bool _checkSaveFile = true;
+    public string FilePath;
     public bool CheckSaveFile
     {
         get => _checkSaveFile;
@@ -75,9 +77,8 @@ public class MainWindowVM : INotifyPropertyChanged
 
                 if (_fileTextDocument != null)
                 {
-                    _fileTextDocument.Changed += OnDocumentChanged; 
+                    _fileTextDocument.Changed += OnDocumentChanged;
                 }
-
                 OnPropertyChanged();
             }
         }
@@ -94,6 +95,25 @@ public class MainWindowVM : INotifyPropertyChanged
                 OnPropertyChanged();
             }
         }
+    }
+    private double _selectedFontSize = 14;
+    public double SelectedFontSize
+    {
+        get => _selectedFontSize;
+        set { _selectedFontSize = value; OnPropertyChanged(); }
+    }
+
+    private string _selectedFontFamily = "Arial";
+    public string SelectedFontFamily
+    {
+        get => _selectedFontFamily;
+        set { _selectedFontFamily = value; OnPropertyChanged(); }
+    }
+    private FontStyle _selectedFontStyle = FontStyles.Normal;
+    public FontStyle SelectedFontStyle
+    {
+        get => _selectedFontStyle;
+        set { _selectedFontStyle = value; OnPropertyChanged(); }
     }
     private bool _isWordWrapEnabled;
     public bool IsWordWrapEnabled
@@ -128,11 +148,13 @@ public class MainWindowVM : INotifyPropertyChanged
         _fileDialog = new FileDialog();
         _serviceFunctions = new ServiceFunctions();
         _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
+        _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
         _fileService.ExDirectoryFile();
         _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
         _stringService.GetTextCallback = () => FileTextDocument.Text;
         _stringService.TextUpdated += OnTextUpdated;
         FileTextDocument = new TextDocument();
+        _fileAssociationService.RegisterTxtFileAssociation();
     }
     #region Functions
     private void OnTextUpdated(string newText)
@@ -158,7 +180,7 @@ public class MainWindowVM : INotifyPropertyChanged
 
     public bool CheckingSaveFile(bool saveFile)
     {
-        if (!saveFile) 
+        if (!saveFile)
         {
             var result = _fileDialog.ShowYesNoDialog(
                 "Текстовой файл не был сохранен, вы хотите продолжить?", "");
@@ -198,7 +220,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
     public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
     public ICommand ProgramInfCommand => _programInfCommand ??= new OtherRelayCommands(ExecuteProgramInf, CanExecute);
-        
+
     #endregion
 
     #region Execute Button Parameter
@@ -206,6 +228,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteLogCommand(object? parameter)
     {
         _serviceFunctions.LogMessage(null);
+        OpenFontPickerDialogRequested?.Invoke();
 
     }
     private void ExecuteCloseCommand(object? parameter)
@@ -228,13 +251,13 @@ public class MainWindowVM : INotifyPropertyChanged
             return;
         }
         FilePath = _fileDialog.OpenTextFileDialog(FilePath);
-        if (string.IsNullOrEmpty(FilePath)) return; 
+        if (string.IsNullOrEmpty(FilePath)) return;
         var filePath = FilePath;
         var openFile = _fileService.OpenFile(filePath);
-            FilePath = openFile.FilePath;
-            FileName = openFile.FileName;
-            FileTextDocument.Text = string.Empty;
-            FileTextDocument.Text = openFile.FileText;
+        FilePath = openFile.FilePath;
+        FileName = openFile.FileName;
+        FileTextDocument.Text = string.Empty;
+        FileTextDocument.Text = openFile.FileText;
     }
 
     private void ExecuteCreateFile(object? parameter)
@@ -271,11 +294,11 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteSaveFileDialog(object? parameter)
     {
 
-            FilePath = _fileDialog.SaveFileDialog(FilePath);
-            _fileService.WriteAllText(FilePath, FileTextDocument.Text);
-            FileName = _fileService.GetFileName(FilePath);
-            CheckSaveFile = true;
-            _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
+        FilePath = _fileDialog.SaveFileDialog(FilePath);
+        _fileService.WriteAllText(FilePath, FileTextDocument.Text);
+        FileName = _fileService.GetFileNameWithout(FilePath);
+        CheckSaveFile = true;
+        _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
     }
     private void ExecuteFileList(object? parameter)
     {
@@ -312,7 +335,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteMovingGitHub(object? parameter)
     {
-        string url = "https://github.com/Verluer/NotePad_Launcher"; 
+        string url = "https://github.com/Verluer/NotePad_Launcher";
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
     private void ExecuteProgramInf(object? parameter)
