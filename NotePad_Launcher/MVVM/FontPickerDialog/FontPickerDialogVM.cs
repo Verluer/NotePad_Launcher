@@ -12,10 +12,12 @@ public class FontPickerDialogVM : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     private ICommand? _closeCommand;
+    private ICommand? _confirmCommand;
     public event Action? CloseRequested;
+    private readonly IStringService _stringService;
     public ObservableCollection<FontFamily> Fonts { get; }
     public ObservableCollection<string> FontStyles { get; }
-    public ObservableCollection<int> FontSizes { get; }
+    public ObservableCollection<double> FontSizes { get; }
 
     private FontFamily _selectedFont;
     public FontFamily SelectedFont
@@ -45,8 +47,8 @@ public class FontPickerDialogVM : INotifyPropertyChanged
             }
         }
     }
-    private int _selectedFontSize;
-    public int SelectedFontSize
+    private double _selectedFontSize;
+    public double SelectedFontSize
     {
         get => _selectedFontSize;
         set
@@ -58,27 +60,30 @@ public class FontPickerDialogVM : INotifyPropertyChanged
             }
         }
     }
-    public FontPickerDialogVM()
+    public FontPickerDialogVM(IStringService stringSerivce)
     {
+        _stringService = stringSerivce;
         Fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies.OrderBy(f => f.Source));
         FontStyles = new ObservableCollection<string>();
-        FontSizes = new ObservableCollection<int> { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72 };
+        FontSizes = new ObservableCollection<double> { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72 };
+        var (fontSize, fontFamily) = _stringService.GetFontFamilySizeCallback();
 
         if (Fonts.Any())
         {
-            SelectedFont = Fonts.First();
-            SelectedFontSize = FontSizes[4];
+            SelectedFontSize = fontSize;
+            SelectedFont = fontFamily;
         }
     }
     private void LoadFontStyles()
     {
         FontStyles.Clear();
+        FontStyles.Add("Mot Working");
         FontStyles.Add("Regular");
         FontStyles.Add("Bold");
         FontStyles.Add("Italic");
         FontStyles.Add("Bold Italic");
 
-        SelectedFontStyle = "Regular";
+        SelectedFontStyle = "Not Working";
     }
 
 
@@ -95,8 +100,14 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         return true;
     }
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
+    public ICommand ConfirmCommand => _confirmCommand ??= new OtherRelayCommands(ExecuteConfirmCommand, CanExecute);
     private void ExecuteCloseCommand(object? parameter)
     {
+        CloseRequested?.Invoke();
+    }
+    private void ExecuteConfirmCommand(object? parameter)
+    {
+        _stringService.PushUpdatedFamilySize(SelectedFontSize, SelectedFont);
         CloseRequested?.Invoke();
     }
     private bool CanExecute(object? parameter) => true;

@@ -1,4 +1,6 @@
-﻿namespace NotePad_Launcher;
+﻿using System.Windows.Media;
+
+namespace NotePad_Launcher;
 
 public interface IStringService
 {
@@ -6,4 +8,14 @@ public interface IStringService
     event Action<string> TextUpdated;
 
     void PushUpdatedText(string updatedText);
+
+    /// <summary>
+    /// ///////////////////////////////////////
+    /// </summary>
+    Func<(double fontSize, FontFamily fontFamily)> GetFontFamilySizeCallback { get; set; }
+
+    event Action<double, FontFamily> FamilySizeUpdated;
+
+    void PushUpdatedFamilySize(double updatedFontSize, FontFamily updatedFontFamily);
+
 }

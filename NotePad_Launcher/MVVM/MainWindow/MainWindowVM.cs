@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel;
+
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Domain.Enum;
 using Domain.IService;
 using Domain.Model;
@@ -30,6 +32,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _encryptedMethodCommand;
     private ICommand? _movingGithubCommand;
     private ICommand? _programInfCommand;
+    private ICommand? _fontPickerCommand;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -96,25 +99,34 @@ public class MainWindowVM : INotifyPropertyChanged
             }
         }
     }
-    private double _selectedFontSize = 14;
+    private double _selectedFontSize = 14; 
     public double SelectedFontSize
     {
         get => _selectedFontSize;
-        set { _selectedFontSize = value; OnPropertyChanged(); }
+        set
+        {
+            if (_selectedFontSize != value)
+            {
+                _selectedFontSize = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
-    private string _selectedFontFamily = "Arial";
-    public string SelectedFontFamily
+    private FontFamily _selectedFontFamily;
+    public FontFamily SelectedFontFamily
     {
         get => _selectedFontFamily;
-        set { _selectedFontFamily = value; OnPropertyChanged(); }
+        set
+        {
+            if (_selectedFontFamily != value)
+            {
+                _selectedFontFamily = value;
+                OnPropertyChanged();
+            }
+        }
     }
-    private FontStyle _selectedFontStyle = FontStyles.Normal;
-    public FontStyle SelectedFontStyle
-    {
-        get => _selectedFontStyle;
-        set { _selectedFontStyle = value; OnPropertyChanged(); }
-    }
+
     private bool _isWordWrapEnabled;
     public bool IsWordWrapEnabled
     {
@@ -153,10 +165,18 @@ public class MainWindowVM : INotifyPropertyChanged
         _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
         _stringService.GetTextCallback = () => FileTextDocument.Text;
         _stringService.TextUpdated += OnTextUpdated;
+        _stringService.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily);
+        _stringService.FamilySizeUpdated += OnFamilySizeUpdated;
         FileTextDocument = new TextDocument();
         _fileAssociationService.RegisterTxtFileAssociation();
     }
     #region Functions
+
+    private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily)
+    {
+        SelectedFontFamily = fontFamily;
+        SelectedFontSize = fontSize;
+    }
     private void OnTextUpdated(string newText)
     {
         FileTextDocument.Text = newText;
@@ -220,6 +240,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
     public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
     public ICommand ProgramInfCommand => _programInfCommand ??= new OtherRelayCommands(ExecuteProgramInf, CanExecute);
+    public ICommand FontPickerCommand => _fontPickerCommand ??= new OtherRelayCommands(ExecutePickerCommand, CanExecute);
 
     #endregion
 
@@ -228,8 +249,6 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteLogCommand(object? parameter)
     {
         _serviceFunctions.LogMessage(null);
-        OpenFontPickerDialogRequested?.Invoke();
-
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -341,6 +360,10 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteProgramInf(object? parameter)
     {
         OpenProgramInfDialogRequested?.Invoke();
+    }
+    private void ExecutePickerCommand(object? parameter)
+    {
+        OpenFontPickerDialogRequested?.Invoke();
     }
 
     #endregion
