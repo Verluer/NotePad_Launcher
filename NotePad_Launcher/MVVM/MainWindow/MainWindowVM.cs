@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -11,6 +11,8 @@ using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
 using Service;
+using FontFamily = System.Windows.Media.FontFamily;
+using FontStyle = System.Windows.FontStyle;
 
 
 namespace NotePad_Launcher.ViewModels.MainWindow;
@@ -114,6 +116,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
 
     private FontFamily _selectedFontFamily;
+
     public FontFamily SelectedFontFamily
     {
         get => _selectedFontFamily;
@@ -122,6 +125,32 @@ public class MainWindowVM : INotifyPropertyChanged
             if (_selectedFontFamily != value)
             {
                 _selectedFontFamily = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    private FontStyle _selectedFontStyle;
+    public FontStyle SelectedFontStyle
+    {
+        get => _selectedFontStyle;
+        set
+        {
+            if (_selectedFontStyle != value)
+            {
+                _selectedFontStyle = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    private FontWeight _selectedFontWeight;
+    public FontWeight SelectedFontWeight
+    {
+        get => _selectedFontWeight;
+        set
+        {
+            if (_selectedFontWeight != value)
+            {
+                _selectedFontWeight = value;
                 OnPropertyChanged();
             }
         }
@@ -165,17 +194,20 @@ public class MainWindowVM : INotifyPropertyChanged
         _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
         _stringService.GetTextCallback = () => FileTextDocument.Text;
         _stringService.TextUpdated += OnTextUpdated;
-        _stringService.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily);
+        SelectedFontFamily = new FontFamily("Arial");
+        _stringService.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
         _stringService.FamilySizeUpdated += OnFamilySizeUpdated;
         FileTextDocument = new TextDocument();
         _fileAssociationService.RegisterTxtFileAssociation();
     }
     #region Functions
 
-    private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily)
+    private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)
     {
         SelectedFontFamily = fontFamily;
         SelectedFontSize = fontSize;
+        SelectedFontStyle = fontStyle;
+        SelectedFontWeight = fontWeight;
     }
     private void OnTextUpdated(string newText)
     {

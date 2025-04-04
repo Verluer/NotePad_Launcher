@@ -1,4 +1,5 @@
 ﻿
+using System.Windows;
 using System.Windows.Media;
 
 namespace NotePad_Launcher;
@@ -13,12 +14,12 @@ public class StringService : IStringService
     {
         TextUpdated?.Invoke(updatedText);
     }
-    public Func<(double fontSize, FontFamily fontFamily)> GetFontFamilySizeCallback { get; set; }
+    public Func<(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)> GetFontFamilySizeCallback { get; set; }
 
-    public event Action<double, FontFamily> FamilySizeUpdated;
-    public void PushUpdatedFamilySize(double updatedFontSize, FontFamily updatedFontFamily)
+    public event Action<double, FontFamily, FontStyle, FontWeight> FamilySizeUpdated;
+    public void PushUpdatedFamilySize(double updatedFontSize, FontFamily updatedFontFamily, FontStyle updatedFontStyle, FontWeight updatedFontWeight)
     {
-        FamilySizeUpdated?.Invoke(updatedFontSize, updatedFontFamily);
+        FamilySizeUpdated?.Invoke(updatedFontSize, updatedFontFamily, updatedFontStyle, updatedFontWeight);
     }
 
 }

@@ -41,15 +41,32 @@
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom">
             <TextBlock Text="Font Style" Height="20" Width="120"/>
-            <TextBox Text="{Binding SelectedFontStyle, Mode=TwoWay}"  Height="20" Width="120"/>
-            <ListBox VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="80" Width="120" ItemsSource="{Binding FontStyles}" SelectedItem="{Binding SelectedFontStyle, Mode=TwoWay}"/>
+            <TextBox Text="{Binding SelectedFontStyle.Text, Mode=TwoWay}"  Height="20" Width="120"/>
+            <ListBox VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="80" Width="120" ItemsSource="{Binding FontStyles}" SelectedItem="{Binding SelectedFontStyle, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}" FontStyle="{Binding FontStyle}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        <StackPanel Grid.Column="0" Grid.Row="2" VerticalAlignment="Bottom">
+            <TextBlock Text="Font Weight" Height="20" Width="120"/>
+            <TextBox Text="{Binding SelectedFontWeight.Text, Mode=TwoWay}"  Height="20" Width="120"/>
+            <ListBox VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="80" Width="120" ItemsSource="{Binding FontWeights}" SelectedItem="{Binding SelectedFontWeight, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Text}" FontWeight="{Binding FontWeight}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom">
             <TextBlock Text="Size" Height="20" Width="50"/>
             <TextBox Text="{Binding SelectedFontSize, Mode=TwoWay}" Height="20" Width="50"/>
             <ListBox  HorizontalAlignment="Center" Height="80" Width="50" ItemsSource="{Binding FontSizes}" SelectedItem="{Binding SelectedFontSize, Mode=TwoWay}" />
         </StackPanel>
-        <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="AAAbbbbлллл" FontSize="{Binding SelectedFontSize}" FontFamily="{Binding SelectedFont}"/>
+        <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="AAAbbbbлллл" FontSize="{Binding SelectedFontSize}" FontFamily="{Binding SelectedFont}" FontStyle="{Binding SelectedFontStyle.FontStyle}" FontWeight="{Binding SelectedFontWeight.FontWeight}"/>
         <Button Grid.Column="1" Grid.Row="3" Command="{Binding ConfirmCommand}" Margin="0,0,15,0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="60" Background="Gainsboro">
             Ok
         </Button>

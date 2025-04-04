@@ -21,6 +21,7 @@
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
+            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="../../Resources/app.ico"/>
             <TextBlock Text=" FileList" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>
