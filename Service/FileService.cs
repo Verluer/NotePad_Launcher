@@ -16,7 +16,7 @@ namespace Service
             string exePath = Assembly.GetExecutingAssembly().Location; //Полный путь к исполняемому файлу
             string exeDirectory = Path.GetDirectoryName(exePath); //Извлечение директории
             string dataFilePath = Path.Combine(exeDirectory, "Documents");
-            directoryPath = Path.GetFullPath(dataFilePath); //Директория текстовых файлов
+            directoryPath = Path.GetFullPath(dataFilePath); 
             return directoryPath;
         }
         public FileModel OpenFile(string pathFile)
@@ -74,6 +74,20 @@ namespace Service
             else
             {
                 newFilePath = Path.Combine(directoryPath, model.FileName + ".txt");
+                if (File.Exists(newFilePath))
+                {
+                    int i = 1;
+                    while (File.Exists(newFilePath))
+                    {
+                        model.FileName = $"{model.FileName}({i}).txt";
+                        newFilePath = Path.Combine(directoryPath, model.FileName);
+                        i++;
+                        if (!File.Exists(newFilePath))
+                        {
+                            break;
+                        }
+                    }
+                }
                 File.WriteAllText(newFilePath, model.FileText);
             }
             return new FileModel
