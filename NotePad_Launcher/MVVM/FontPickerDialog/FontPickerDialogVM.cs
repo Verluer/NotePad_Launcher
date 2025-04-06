@@ -18,7 +18,6 @@ public class FontPickerDialogVM : INotifyPropertyChanged
     private ICommand? _confirmCommand;
     public event Action? CloseRequested;
     private readonly IStringService _stringService;
-    public event Action? UpdateTextBox;
     public ObservableCollection<FontFamily> Fonts { get; }
     public ObservableCollection<TextBlock> FontStyles { get; }
     public ObservableCollection<TextBlock> FontWeights { get; }

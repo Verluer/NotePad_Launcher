@@ -4,6 +4,7 @@ using Domain.IService;
 using Domain.IService.IEncryption;
 using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
+using NotePad_Launcher.MVVM.SettingsDialog;
 using NotePad_Launcher.ViewModels.EncryptionWindow;
 using NotePad_Launcher.ViewModels.FileListWindow;
 using Service;
@@ -46,18 +47,21 @@ namespace NotePad_Launcher
             services.AddSingleton<IEncryptionMethodStorage, EncryptionMethodStorage>();
             services.AddSingleton<IStringService, StringService>();
             services.AddSingleton<IFileAssociationService, FileAssociationService>();
+            services.AddSingleton<IWindowService, WindowService>();
             // Регистрация ViewModels
             services.AddSingleton<MainWindowVM>();
             services.AddTransient<FileListWindowVM>();
             services.AddTransient<EncryptionWindowVM>();
             services.AddTransient<ProgramInfDialogVM>();
             services.AddTransient<FontPickerDialogVM>();
+            services.AddTransient<SettingsDialogVM>();
             // Регистрация окон
             services.AddSingleton<MainWindow>();
             services.AddTransient<EncryptionWindow>();
             services.AddTransient<FileListWindow>();
             services.AddTransient<ProgramInfDialog>();
             services.AddTransient<FontPickerDialog>();
+            services.AddTransient<SettingsDialog>();
 
         }
     }

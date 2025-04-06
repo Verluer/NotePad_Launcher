@@ -1,9 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Domain.Enum;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.MVVM.FontPickerDialog;
-using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
@@ -23,25 +20,8 @@ namespace NotePad_Launcher
             viewModel.MinimizeRequested += OnMinimizeRequested;
             viewModel.UpdateWordWrapAction = () =>
             {
-                // Обновляем свойство FileText.WordWrap в View
                 FileText.WordWrap = viewModel.IsWordWrapEnabled;
             };
-            viewModel.OpenFileListWindowRequested += () =>
-            {
-                var fileListWindow = App.ServiceProvider.GetRequiredService<FileListWindow>();
-                fileListWindow.Show();
-            };
-            viewModel.OpenProgramInfDialogRequested += () =>
-            {
-                var programInfDialog = App.ServiceProvider.GetRequiredService<ProgramInfDialog>();
-                programInfDialog.ShowDialog();
-            };
-            viewModel.OpenFontPickerDialogRequested += () =>
-            {
-                var fontPickerDialog = App.ServiceProvider.GetRequiredService<FontPickerDialog>();
-                fontPickerDialog.ShowDialog();
-            };
-            viewModel.EncryptedMethodExecuted += OpenEncryptionWindow;
         }
         private void OnMinimizeRequested()
         {
@@ -58,30 +38,6 @@ namespace NotePad_Launcher
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.DragMove();
-            }
-        }
-
-        private void OpenEncryptionWindow(EncryptionMethod method)
-        {
-            EncryptionWindow encryptionWindow;
-            switch (method)
-            {
-                case EncryptionMethod.RSA:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-                case EncryptionMethod.Elgamal:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-                case EncryptionMethod.Rabina:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-                case EncryptionMethod.ECC:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
             }
         }
     }

@@ -10,6 +10,10 @@ using Domain.IService;
 using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.FontPickerDialog;
+using NotePad_Launcher.MVVM.ProgramInfDialog;
+using NotePad_Launcher.MVVM.SettingsDialog;
+using NotePad_Launcher.ViewModels.EncryptionWindow;
 using Service;
 using FontFamily = System.Windows.Media.FontFamily;
 using FontStyle = System.Windows.FontStyle;
@@ -38,9 +42,6 @@ public class MainWindowVM : INotifyPropertyChanged
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
-    public event Action OpenFileListWindowRequested;
-    public event Action OpenProgramInfDialogRequested;
-    public event Action OpenFontPickerDialogRequested;
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
 
     public Action UpdateWordWrapAction;
@@ -51,6 +52,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private readonly IServiceFunctions _serviceFunctions;
     private readonly IStringService _stringService;
     private readonly IFileAssociationService _fileAssociationService;
+    private readonly IWindowService _windowService;
     private bool _checkSaveFile = true;
     public string FilePath;
     public bool CheckSaveFile
@@ -186,6 +188,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public MainWindowVM()
     {
         _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
+        _windowService = App.ServiceProvider.GetRequiredService<IWindowService>();
         _fileDialog = new FileDialog();
         _serviceFunctions = new ServiceFunctions();
         _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
@@ -272,7 +275,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
     public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
     public ICommand ProgramInfCommand => _programInfCommand ??= new OtherRelayCommands(ExecuteProgramInf, CanExecute);
-    public ICommand FontPickerCommand => _fontPickerCommand ??= new OtherRelayCommands(ExecutePickerCommand, CanExecute);
+    public ICommand FontPickerCommand => _fontPickerCommand ??= new OtherRelayCommands(ExecuteFontPickerCommand, CanExecute);
 
     #endregion
 
@@ -281,6 +284,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteLogCommand(object? parameter)
     {
         _serviceFunctions.LogMessage(null);
+        _windowService.OpenWindowDialog<SettingsDialog>();
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -353,7 +357,8 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteFileList(object? parameter)
     {
-        OpenFileListWindowRequested?.Invoke();
+        _windowService.OpenWindow<NotePad_Launcher.FileListWindow>();
+        
     }
     private void ExecuteDeleteFile(object? parameter)
     {
@@ -382,6 +387,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             _encryptionMethodStorage.CurrentMethod = method;
             EncryptedMethodExecuted?.Invoke(method);
+            _windowService.OpenWindow<NotePad_Launcher.EncryptionWindow>();
         }
     }
     private void ExecuteMovingGitHub(object? parameter)
@@ -391,11 +397,11 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteProgramInf(object? parameter)
     {
-        OpenProgramInfDialogRequested?.Invoke();
+        _windowService.OpenWindowDialog<ProgramInfDialog>();
     }
-    private void ExecutePickerCommand(object? parameter)
+    private void ExecuteFontPickerCommand(object? parameter)
     {
-        OpenFontPickerDialogRequested?.Invoke();
+        _windowService.OpenWindowDialog<FontPickerDialog>();
     }
 
     #endregion
