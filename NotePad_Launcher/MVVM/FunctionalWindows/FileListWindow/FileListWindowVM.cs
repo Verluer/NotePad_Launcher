@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using NotePad_Launcher.MVVM.Commands;
 using Service;
+using NotePad_Launcher.ViewModels;
 
-namespace NotePad_Launcher.ViewModels.FileListWindow;
+namespace NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 
 public class FileListWindowVM : INotifyPropertyChanged
 

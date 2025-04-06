@@ -10,9 +10,11 @@ using System.Windows.Input;
 using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.Commands;
 using Service;
+using NotePad_Launcher.ViewModels;
 
-namespace NotePad_Launcher.ViewModels.EncryptionWindow;
+namespace NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 
 public class EncryptionWindowVM : INotifyPropertyChanged
 {
@@ -70,95 +72,95 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         }
     }
     #region TextBlock
-        public string MethodName
+    public string MethodName
+    {
+        get => _methodName;
+        set
         {
-            get => _methodName;
-            set
-            {
-                _methodName = value;
-                OnPropertyChanged(nameof(MethodName));
-            }
+            _methodName = value;
+            OnPropertyChanged(nameof(MethodName));
         }
-        private string _textBlockValue1;
-        public string TextBlockValue1
+    }
+    private string _textBlockValue1;
+    public string TextBlockValue1
+    {
+        get => _textBlockValue1;
+        set
         {
-            get => _textBlockValue1;
-            set
-            {
-                _textBlockValue1 = value;
-                OnPropertyChanged(nameof(TextBlockValue1));
-            }
+            _textBlockValue1 = value;
+            OnPropertyChanged(nameof(TextBlockValue1));
         }
-        private string _textBlockValue2;
-        public string TextBlockValue2
+    }
+    private string _textBlockValue2;
+    public string TextBlockValue2
+    {
+        get => _textBlockValue2;
+        set
         {
-            get => _textBlockValue2;
-            set
-            {
-                _textBlockValue2 = value;
-                OnPropertyChanged(nameof(TextBlockValue2));
-            }
+            _textBlockValue2 = value;
+            OnPropertyChanged(nameof(TextBlockValue2));
         }
-        private string _textBlockValue3;
-        public string TextBlockValue3
+    }
+    private string _textBlockValue3;
+    public string TextBlockValue3
+    {
+        get => _textBlockValue3;
+        set
         {
-            get => _textBlockValue3;
-            set
-            {
-                _textBlockValue3 = value;
-                OnPropertyChanged(nameof(TextBlockValue3));
-            }
+            _textBlockValue3 = value;
+            OnPropertyChanged(nameof(TextBlockValue3));
         }
-        private string _textBlockValue4;
-        public string TextBlockValue4
+    }
+    private string _textBlockValue4;
+    public string TextBlockValue4
+    {
+        get => _textBlockValue4;
+        set
         {
-            get => _textBlockValue4;
-            set
-            {
-                _textBlockValue4 = value;
-                OnPropertyChanged(nameof(TextBlockValue4));
-            }
+            _textBlockValue4 = value;
+            OnPropertyChanged(nameof(TextBlockValue4));
         }
-        private string _textBlockValue5;
-        public string TextBlockValue5
+    }
+    private string _textBlockValue5;
+    public string TextBlockValue5
+    {
+        get => _textBlockValue5;
+        set
         {
-            get => _textBlockValue5;
-            set
-            {
-                _textBlockValue1 = value;
-                OnPropertyChanged(nameof(TextBlockValue5));
-            }
+            _textBlockValue1 = value;
+            OnPropertyChanged(nameof(TextBlockValue5));
         }
-        private string _textBlockCloseKey;
-        public string TextBlockCloseKey
+    }
+    private string _textBlockCloseKey;
+    public string TextBlockCloseKey
+    {
+        get => _textBlockCloseKey;
+        set
         {
-            get => _textBlockCloseKey;
-            set
-            {
-                _textBlockCloseKey = value;
-                OnPropertyChanged(nameof(TextBlockCloseKey));
-            }
+            _textBlockCloseKey = value;
+            OnPropertyChanged(nameof(TextBlockCloseKey));
         }
-        private string _textBlockOpenKey;
-        public string TextBlockOpenKey
+    }
+    private string _textBlockOpenKey;
+    public string TextBlockOpenKey
+    {
+        get => _textBlockOpenKey;
+        set
         {
-            get => _textBlockOpenKey;
-            set
-            {
-                _textBlockOpenKey = value;
-                OnPropertyChanged(nameof(TextBlockOpenKey));
-            }
+            _textBlockOpenKey = value;
+            OnPropertyChanged(nameof(TextBlockOpenKey));
         }
-        private string _textBlockCloseKey1;
-        public string TextBlockCloseKey1
+    }
+    private string _textBlockCloseKey1;
+    public string TextBlockCloseKey1
+    {
+        get => _textBlockCloseKey1;
+        set
         {
-            get => _textBlockCloseKey1;
-            set
-            {
-                _textBlockCloseKey1 = value;
-                OnPropertyChanged(nameof(TextBlockCloseKey1));
-            }
+            _textBlockCloseKey1 = value;
+            OnPropertyChanged(nameof(TextBlockCloseKey1));
         }
+    }
     #endregion
     #region TextBox
 
@@ -342,7 +344,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             }
         }
     }
-#endregion
+    #endregion
     private void RSAUI()
     {
         MethodName = "RSA Encryption";
@@ -518,7 +520,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     switch (result.Signature)
                     {
                         case true:
-                            _fileDialog.ShowMessage("DigitalSignature valid", "Result Signature");  
+                            _fileDialog.ShowMessage("DigitalSignature valid", "Result Signature");
                             break;
                         case false:
                             _fileDialog.ShowMessage("DigitalSignature invalid", "Result Signature");

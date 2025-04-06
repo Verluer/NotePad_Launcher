@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
 using NotePad_Launcher.ViewModels.MainWindow;
 using System;
 using System.Collections.Generic;

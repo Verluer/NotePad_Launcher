@@ -1,5 +1,4 @@
-﻿
-using NotePad_Launcher.ViewModels;
+﻿using NotePad_Launcher.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,8 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using NotePad_Launcher.MVVM.Commands;
 
-namespace NotePad_Launcher.MVVM.FontPickerDialog;
+namespace NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 
 public class FontPickerDialogVM : INotifyPropertyChanged
 {
@@ -141,11 +141,11 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         }
         if (FontStyles.Count > 0)
         {
-            SelectedFontStyle = FontStyles[0];  
+            SelectedFontStyle = FontStyles[0];
         }
         if (FontWeights.Count > 0)
         {
-            SelectedFontWeight = FontWeights[0]; 
+            SelectedFontWeight = FontWeights[0];
         }
     }
 

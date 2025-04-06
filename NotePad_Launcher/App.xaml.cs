@@ -5,11 +5,13 @@ using Domain.IService.IEncryption;
 using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.MVVM.SettingsDialog;
-using NotePad_Launcher.ViewModels.EncryptionWindow;
-using NotePad_Launcher.ViewModels.FileListWindow;
 using Service;
 using Service.Encryption;
 using NotePad_Launcher.ViewModels.MainWindow;
+using NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 
 namespace NotePad_Launcher
 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using System;
 using System.Collections.Generic;

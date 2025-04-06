@@ -1,25 +1,23 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using Domain.Enum;
-using Domain.IService.IEncryption;
+using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.ViewModels.EncryptionWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 using NotePad_Launcher.ViewModels.MainWindow;
-using Service.Encryption;
-using static ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager;
 
 namespace NotePad_Launcher
 {
     /// <summary>
-    /// Логика взаимодействия для EncryptionWindow.xaml
+    /// Логика взаимодействия для FileListWindow.xaml
     /// </summary>
-    public partial class EncryptionWindow : Window
+    public partial class FileListWindow : Window
     {
-        public EncryptionWindow()
+        public FileListWindow()
         {
             InitializeComponent();
-            var viewModel = App.ServiceProvider.GetRequiredService<EncryptionWindowVM>();
+            var viewModel = App.ServiceProvider.GetRequiredService<FileListWindowVM>(); ;
             this.DataContext = viewModel;
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
@@ -45,6 +43,23 @@ namespace NotePad_Launcher
         private void OnMaximizeRequested()
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
+        private void FileListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (FileListView.SelectedItem is FileModel selectedFile)
+            {
+                var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+
+                if (mainWindow != null)
+                {
+                    var mainWindowVM = mainWindow.DataContext as MainWindowVM;
+                    if (mainWindowVM != null)
+                    {
+                        mainWindowVM.UpdateFileInfo(selectedFile);
+                    }
+                }
+                this.Close();
+            }
         }
 
     }

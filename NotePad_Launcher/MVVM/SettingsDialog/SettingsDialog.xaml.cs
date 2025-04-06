@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.MVVM.FontPickerDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 using System;
 using System.Collections.Generic;
 using System.Linq;

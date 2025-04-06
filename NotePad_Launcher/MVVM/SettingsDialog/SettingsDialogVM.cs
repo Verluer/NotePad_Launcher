@@ -1,7 +1,7 @@
-﻿using NotePad_Launcher.ViewModels;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using NotePad_Launcher.MVVM.Commands;
 
 namespace NotePad_Launcher.MVVM.SettingsDialog;
 

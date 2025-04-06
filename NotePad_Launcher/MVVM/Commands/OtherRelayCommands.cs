@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace NotePad_Launcher.ViewModels;
+namespace NotePad_Launcher.MVVM.Commands;
 
 public class OtherRelayCommands : ICommand
 {
