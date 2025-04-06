@@ -1,10 +1,11 @@
 ﻿
 using System.Windows;
 using System.Windows.Media;
+using Domain.Enum;
 
 namespace NotePad_Launcher;
 
-public class StringService : IStringService
+public class DataStorage : IDataStorage
 {
     public Func<string> GetTextCallback { get; set; }
 
@@ -21,5 +22,7 @@ public class StringService : IStringService
     {
         FamilySizeUpdated?.Invoke(updatedFontSize, updatedFontFamily, updatedFontStyle, updatedFontWeight);
     }
+
+    public EncryptionMethod CurrentMethod { get; set; }
 
 }

@@ -48,9 +48,8 @@ public class MainWindowVM : INotifyPropertyChanged
 
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
-    private readonly IEncryptionMethodStorage _encryptionMethodStorage;
     private readonly IServiceFunctions _serviceFunctions;
-    private readonly IStringService _stringService;
+    private readonly IDataStorage _dataStorage;
     private readonly IFileAssociationService _fileAssociationService;
     private readonly IWindowService _windowService;
     private bool _checkSaveFile = true;
@@ -191,15 +190,15 @@ public class MainWindowVM : INotifyPropertyChanged
         _windowService = App.ServiceProvider.GetRequiredService<IWindowService>();
         _fileDialog = new FileDialog();
         _serviceFunctions = new ServiceFunctions();
-        _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
+        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
         _fileService.ExDirectoryFile();
-        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
-        _stringService.GetTextCallback = () => FileTextDocument.Text;
-        _stringService.TextUpdated += OnTextUpdated;
+        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
+        _dataStorage.GetTextCallback = () => FileTextDocument.Text;
+        _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
-        _stringService.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
-        _stringService.FamilySizeUpdated += OnFamilySizeUpdated;
+        _dataStorage.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
+        _dataStorage.FamilySizeUpdated += OnFamilySizeUpdated;
         FileTextDocument = new TextDocument();
         _fileAssociationService.RegisterTxtFileAssociation();
     }
@@ -385,7 +384,7 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         if (parameter is EncryptionMethod method)
         {
-            _encryptionMethodStorage.CurrentMethod = method;
+            _dataStorage.CurrentMethod = method;
             EncryptedMethodExecuted?.Invoke(method);
             _windowService.OpenWindow<NotePad_Launcher.EncryptionWindow>();
         }

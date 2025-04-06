@@ -17,7 +17,7 @@ public class FontPickerDialogVM : INotifyPropertyChanged
     private ICommand? _closeCommand;
     private ICommand? _confirmCommand;
     public event Action? CloseRequested;
-    private readonly IStringService _stringService;
+    private readonly IDataStorage _stringService;
     public ObservableCollection<FontFamily> Fonts { get; }
     public ObservableCollection<TextBlock> FontStyles { get; }
     public ObservableCollection<TextBlock> FontWeights { get; }
@@ -79,7 +79,7 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         }
     }
 
-    public FontPickerDialogVM(IStringService stringSerivce)
+    public FontPickerDialogVM(IDataStorage stringSerivce)
     {
         _stringService = stringSerivce;
         Fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies.OrderBy(f => f.Source));

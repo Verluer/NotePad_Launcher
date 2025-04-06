@@ -1,11 +1,12 @@
-﻿using System.Drawing;
+﻿
 using System.Windows;
+using Domain.Enum;
 using FontFamily = System.Windows.Media.FontFamily;
 using FontStyle = System.Windows.FontStyle;
 
 namespace NotePad_Launcher;
 
-public interface IStringService
+public interface IDataStorage
 {
     Func<string> GetTextCallback { get; set; }
     event Action<string> TextUpdated;
@@ -21,4 +22,6 @@ public interface IStringService
 
     void PushUpdatedFamilySize(double updatedFontSize, FontFamily updatedFontFamily, FontStyle updatedFontStyle, FontWeight updatedFontWeight);
 
+
+    EncryptionMethod CurrentMethod { get; set; }
 }

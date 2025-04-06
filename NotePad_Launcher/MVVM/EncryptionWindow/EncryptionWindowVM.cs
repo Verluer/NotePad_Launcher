@@ -22,7 +22,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly IECCService _eccService;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
-    private readonly IStringService _stringService;
+    private readonly IDataStorage _stringService;
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -36,14 +36,14 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private ICommand? _decryptionCommand;
     private string _methodName;
     private EncryptionMethod _selectedMethod;
-    public EncryptionMethod SelectedMethod { get; } // Только для чтения
-    private readonly IEncryptionMethodStorage _encryptionMethodStorage;
-    public EncryptionWindowVM(IEncryptionMethodStorage encryptionMethodStorage)
+    public EncryptionMethod SelectedMethod { get; }
+    private readonly IDataStorage _dataStorage;
+    public EncryptionWindowVM(IDataStorage dataStorage)
     {
-        _encryptionMethodStorage = encryptionMethodStorage;
-        SelectedMethod = _encryptionMethodStorage.CurrentMethod;
+        _dataStorage = dataStorage;
+        SelectedMethod = _dataStorage.CurrentMethod;
         _serviceFunctions = new ServiceFunctions();
-        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
+        _stringService = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _rsaService = new RSAService();
         _elgamalService = new ElgamalService();
         _rabinaService = new RabinaService();

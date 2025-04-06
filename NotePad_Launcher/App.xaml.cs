@@ -42,10 +42,9 @@ namespace NotePad_Launcher
             services.AddSingleton<IRabinaService, RabinaService>();
             services.AddSingleton<IECCService, ECCService>();
             // Регистрация UI-логики
-            services.AddSingleton<IStringService, StringService>();
+            services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileDialog, FileDialog>();
-            services.AddSingleton<IEncryptionMethodStorage, EncryptionMethodStorage>();
-            services.AddSingleton<IStringService, StringService>();
+            services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileAssociationService, FileAssociationService>();
             services.AddSingleton<IWindowService, WindowService>();
             // Регистрация ViewModels
