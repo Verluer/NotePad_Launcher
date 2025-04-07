@@ -12,6 +12,7 @@ using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.Commands;
 using NotePad_Launcher.MVVM.FontPickerDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.MVVM.SettingsDialog;
 using Service;
@@ -283,7 +284,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteLogCommand(object? parameter)
     {
         _serviceFunctions.LogMessage(null);
-        _windowService.OpenWindowDialog<SettingsDialog>();
+        _windowService.OpenWindow<SearchWindow>();
     }
     private void ExecuteCloseCommand(object? parameter)
     {
