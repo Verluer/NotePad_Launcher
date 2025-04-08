@@ -40,6 +40,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _movingGithubCommand;
     private ICommand? _programInfCommand;
     private ICommand? _fontPickerCommand;
+    private ICommand? _searchPatternCommand;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -194,7 +195,6 @@ public class MainWindowVM : INotifyPropertyChanged
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
         _fileService.ExDirectoryFile();
-        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _dataStorage.GetTextCallback = () => FileTextDocument.Text;
         _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
@@ -271,6 +271,9 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand SaveFileDialogCommand => _saveFileDialogCommand ??= new OtherRelayCommands(ExecuteSaveFileDialog, CanExecute);
     public ICommand FileListCommand => _fileListCommand ??= new OtherRelayCommands(ExecuteFileList, CanExecute);
     public ICommand DeleteFileCommand => _deleteFileCommand ??= new OtherRelayCommands(ExecuteDeleteFile, CanExecute);
+    public ICommand SearchPatternCommand => _searchPatternCommand ??= new OtherRelayCommands(ExecuteSearchPattern, CanExecute);
+    
+    
     public ICommand ToggleWordWrapCommand => _toggleWordWrapCommand ??= new OtherRelayCommands(ExecuteWordWrap, CanExecute);
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
     public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
@@ -284,7 +287,6 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteLogCommand(object? parameter)
     {
         _serviceFunctions.LogMessage(null);
-        _windowService.OpenWindow<SearchWindow>();
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -375,6 +377,10 @@ public class MainWindowVM : INotifyPropertyChanged
                 CheckSaveFile = true;
             }
         }
+    }
+    private void ExecuteSearchPattern(object? parameter)
+    {
+        _windowService.OpenWindow<SearchWindow>();
     }
     private void ExecuteWordWrap(object? parameter)
     {

@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:local="clr-namespace:Domain.Enum;assembly=Domain"
-        xmlns:viewModels="clr-namespace:NotePad_Launcher.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         MinWidth="300" MinHeight="200"
@@ -53,6 +52,9 @@
                     <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
+                <MenuItem Header="Файл" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding SearchPatternCommand}"  Header="Найти" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                </MenuItem>
                 <MenuItem Header="Формат" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Command="{Binding FontPickerCommand}" Header="Шрифт" Style="{StaticResource MainWindowMenuItemStyle}"/>
@@ -73,7 +75,7 @@
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
-        <TextBox x:Name="FileName" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
+        <TextBox Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
         <!-- AvalonEdit -->
         <avalonEdit:TextEditor FontStyle="{Binding SelectedFontStyle,  FallbackValue=Normal}" FontWeight="{Binding SelectedFontWeight, FallbackValue=Normal}" FontSize="{Binding SelectedFontSize}" FontFamily="{Binding SelectedFontFamily}" Name="FileText" ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->

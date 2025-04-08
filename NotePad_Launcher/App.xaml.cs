@@ -44,6 +44,7 @@ namespace NotePad_Launcher
             services.AddSingleton<IElgamalService, ElgamalService>();
             services.AddSingleton<IRabinaService, RabinaService>();
             services.AddSingleton<IECCService, ECCService>();
+            services.AddSingleton<ISearchService, SearchService>();
             // Регистрация UI-логики
             services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileDialog, FileDialog>();

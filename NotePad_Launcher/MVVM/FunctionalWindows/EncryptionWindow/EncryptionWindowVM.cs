@@ -24,7 +24,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly IECCService _eccService;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
-    private readonly IDataStorage _stringService;
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -45,7 +44,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _dataStorage = dataStorage;
         SelectedMethod = _dataStorage.CurrentMethod;
         _serviceFunctions = new ServiceFunctions();
-        _stringService = App.ServiceProvider.GetRequiredService<IDataStorage>();
+        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _rsaService = new RSAService();
         _elgamalService = new ElgamalService();
         _rabinaService = new RabinaService();
@@ -416,7 +415,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     }
     private void ExecuteEncryptionCommand(object? parameter)
     {
-        var FileText = _stringService.GetTextCallback();
+        var FileText = _dataStorage.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
         switch (SelectedMethod)
@@ -434,7 +433,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 result = _rsaService.Encryption(model);
                 TextBlockCloseKey = $"Close key: {result.CloseKeyD},{result.ModulusN}";
                 TextBlockOpenKey = $"Open key: {result.PrimeE},{result.ModulusN}";
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Elgamal:
                 if (string.IsNullOrEmpty(TextBoxValue1) && string.IsNullOrEmpty(TextBoxValue2))
@@ -460,7 +459,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 result = _elgamalService.Encryption(model);
                 TextBlockCloseKey = $"{result.CloseKeyD},{result.PrimeP},{result.PrimeQ}";
                 TextBlockOpenKey = $"{result.PrimeE},{result.PrimeQ},{result.PrimeP}";
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Rabina:
                 model = new EncryptionModel
@@ -480,7 +479,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 TextBlockCloseKey = $"Close key: {result.PrimeP},{result.PrimeQ}";
                 TextBlockOpenKey = $"Open key: {result.ModulusN}";
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.ECC:
                 model = new EncryptionModel
@@ -491,7 +490,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 };
                 result = _eccService.Encryption(model);
                 TextBoxValue3 = result.PrimeE;
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
                 // Действие, если метод не выбран (None)
@@ -500,7 +499,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     }
     private void ExecuteDigitalSignatureCommand(object? parameter)
     {
-        var FileText = _stringService.GetTextCallback();
+        var FileText = _dataStorage.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
         switch (SelectedMethod)
@@ -529,7 +528,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    _stringService.PushUpdatedText(result.FileText);
+                    _dataStorage.PushUpdatedText(result.FileText);
                 }
                 break;
             case EncryptionMethod.Elgamal:
@@ -561,7 +560,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    _stringService.PushUpdatedText(result.FileText);
+                    _dataStorage.PushUpdatedText(result.FileText);
                 }
                 break;
             default:
@@ -571,7 +570,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     }
     private void ExecuteDecryptionCommand(object? parameter)
     {
-        var FileText = _stringService.GetTextCallback();
+        var FileText = _dataStorage.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
         switch (SelectedMethod)
@@ -585,7 +584,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _rsaService.Decryption(model);
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Elgamal:
                 model = new EncryptionModel
@@ -597,7 +596,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _elgamalService.Decryption(model);
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Rabina:
                 model = new EncryptionModel
@@ -608,7 +607,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _rabinaService.Decryption(model);
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.ECC:
                 model = new EncryptionModel
@@ -618,7 +617,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _eccService.Decryption(model);
-                _stringService.PushUpdatedText(result.FileText);
+                _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
                 // Действие, если метод не выбран (None)

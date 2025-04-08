@@ -13,9 +13,8 @@ public interface IDataStorage
 
     void PushUpdatedText(string updatedText);
 
-    /// <summary>
-    /// ///////////////////////////////////////
-    /// </summary>
+    event Action<int, int> SearchAction;
+    void ResultSearch(int IndexSearch, int LengthSearch);
     Func<(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)> GetFontFamilySizeCallback { get; set; }
 
     event Action<double, FontFamily, FontStyle, FontWeight> FamilySizeUpdated;
