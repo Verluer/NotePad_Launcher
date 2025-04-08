@@ -22,7 +22,7 @@ public class SearchWindowVM : INotifyPropertyChanged
     private ICommand? _closeCommand;
     private ICommand? _minimizeCommand;
     private ICommand? _searchCommand;
-    private static int currentMatchIndex = 0;
+    private static int currentMatchIndex = -1;
     private string previousOption = "None";
     private string _searchPattern;
     public string SearchPattern
