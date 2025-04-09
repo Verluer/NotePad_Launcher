@@ -4,5 +4,5 @@ namespace Domain.IService;
 
 public interface ISearchService
 {
-    public MatchCollection SearchPattern(string fileText, string pattern);
+    public MatchCollection SearchPattern(string fileText, string pattern, bool isRegisterAware);
 }

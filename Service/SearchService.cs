@@ -5,9 +5,10 @@ namespace Service;
 
 public class SearchService : ISearchService
 {
-    public MatchCollection SearchPattern(string fileText, string pattern)
+    public MatchCollection SearchPattern(string fileText, string pattern, bool isRegisterAware)
     {
-       var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+        var options = isRegisterAware ? RegexOptions.None : RegexOptions.IgnoreCase;
+        var regex = new Regex(pattern, options);
        var matches = regex.Matches(fileText);
         return matches;
     }

@@ -37,7 +37,7 @@ public class SearchWindowVM : INotifyPropertyChanged
             }
         }
     }
-    private string _selectedOption;
+    private string _selectedOption = "Down";
 
     public string SelectedOption
     {
@@ -48,6 +48,34 @@ public class SearchWindowVM : INotifyPropertyChanged
             {
                 _selectedOption = value;
                 OnPropertyChanged(nameof(SelectedOption));
+            }
+        }
+    }
+    private bool _isRegisterAware = false;
+
+    public bool IsRegisterAware
+    {
+        get => _isRegisterAware;
+        set
+        {
+            if (_isRegisterAware != value)
+            {
+                _isRegisterAware = value;
+                OnPropertyChanged(nameof(IsRegisterAware));
+            }
+        }
+    }
+    private bool _isTextFairing = false;
+
+    public bool IsTextFairing
+    {
+        get => _isTextFairing;
+        set
+        {
+            if (_isTextFairing != value)
+            {
+                _isTextFairing = value;
+                OnPropertyChanged(nameof(IsTextFairing));
             }
         }
     }
@@ -78,10 +106,11 @@ public class SearchWindowVM : INotifyPropertyChanged
     {
         CloseRequested?.Invoke();
     }
+
     private void ExecuteSearchCommand(object? parameter)
     {
         var fileText = _dataStorage.GetTextCallback();
-        MatchCollection matches = _searchService.SearchPattern(fileText, SearchPattern);
+        MatchCollection matches = _searchService.SearchPattern(fileText, SearchPattern, IsRegisterAware);
 
         if (SelectedOption == "Down")
         {
@@ -91,13 +120,27 @@ public class SearchWindowVM : INotifyPropertyChanged
         {
             currentMatchIndex--;
         }
+
         if (currentMatchIndex >= 0 && currentMatchIndex < matches.Count)
         {
             Match currentMatch = matches[currentMatchIndex];
             _dataStorage.ResultSearch(currentMatch.Index, currentMatch.Length);
+            if (IsTextFairing == true)
+            {
+                if (SelectedOption == "Down" && currentMatchIndex + 1 >= matches.Count)
+                {
+                    currentMatchIndex = -1;
+                }
+                else if (SelectedOption == "Up" && currentMatchIndex - 2 < -1)
+                {
+                    currentMatchIndex = matches.Count;
+                }
+            }
         }
         else
         {
+
+
             _fileDialog.ShowMessage($"Не удалось найти {SearchPattern}", "Error");
 
             if (SelectedOption == "Down")

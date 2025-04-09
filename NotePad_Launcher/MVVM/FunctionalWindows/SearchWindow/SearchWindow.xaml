@@ -48,5 +48,9 @@
             <RadioButton Content="Вверх" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Up}" Margin="0,0,10,0"/>
             <RadioButton Content="Вниз" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Down}"/>
         </DockPanel>
+        <StackPanel  Grid.Column="0" Grid.Row="2" VerticalAlignment="Bottom">
+            <CheckBox Content="С учетом регистра" IsChecked="{Binding IsRegisterAware, Mode=TwoWay}" Margin="5,0,0,5"/>
+            <CheckBox Content="Обтекание текста" IsChecked="{Binding IsTextFairing, Mode=TwoWay}" Margin="5,0,0,5"/>
+        </StackPanel>
     </Grid>
 </Window>
