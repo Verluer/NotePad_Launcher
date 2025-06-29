@@ -44,4 +44,7 @@ public class DataStorage : IDataStorage
     public EncryptionMethod CurrentMethod { get; set; }
     #endregion
 
+    #region Изначальный путь файла
+    public string StartupFilePath { get; set; }
+    #endregion
 }

@@ -104,7 +104,7 @@ public class MainWindowVM : INotifyPropertyChanged
             }
         }
     }
-    private double _selectedFontSize = 14; 
+    private double _selectedFontSize = 14;
     public double SelectedFontSize
     {
         get => _selectedFontSize;
@@ -181,7 +181,19 @@ public class MainWindowVM : INotifyPropertyChanged
         get => _currentFile;
         set => SetField(ref _currentFile, value);
     }
-
+    private string _startupFilePath;
+    public string StartupFilePath
+    {
+        get => _startupFilePath;
+        set
+        {
+            if (_startupFilePath != value)
+            {
+                _startupFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
@@ -202,6 +214,16 @@ public class MainWindowVM : INotifyPropertyChanged
         _dataStorage.FamilySizeUpdated += OnFamilySizeUpdated;
         FileTextDocument = new TextDocument();
         _fileAssociationService.RegisterTxtFileAssociation();
+        StartupFilePath = _dataStorage.StartupFilePath;
+        if (string.IsNullOrEmpty(FilePath) && !string.IsNullOrEmpty(StartupFilePath))
+        {
+            var startFile = _fileService.OpenFile(StartupFilePath);
+            FilePath = startFile.FilePath;
+            FileName = startFile.FileName;
+            FileTextDocument.Text = string.Empty;
+            FileTextDocument.Text = startFile.FileText;
+
+        }
     }
     #region Functions
 

@@ -23,4 +23,6 @@ public interface IDataStorage
 
 
     EncryptionMethod CurrentMethod { get; set; }
+
+    public string StartupFilePath { get; set; }
 }

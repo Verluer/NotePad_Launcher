@@ -32,6 +32,13 @@ namespace NotePad_Launcher
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
+                
+            if (e.Args.Length > 0)
+            {
+                string filePath = e.Args[0];
+                var dataStorage = ServiceProvider.GetRequiredService<IDataStorage>();
+                dataStorage.StartupFilePath = filePath;
+            }
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
