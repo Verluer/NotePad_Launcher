@@ -11,6 +11,7 @@
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
         <commands:OptionToBoolConverter x:Key="OptionToBoolConverter" />
+        <commands:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -24,7 +25,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <TextBlock Text=" Search" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
+            <TextBlock Text="{Binding TitleMethod}" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ButtonHeadStyle}">
@@ -40,13 +41,41 @@
         </DockPanel>
         <TextBlock Grid.Column="0" Grid.Row="1" Text=" Что:" FontSize="14" Height="20" VerticalAlignment="Center"/>
         <TextBox Text="{Binding SearchPattern, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Height="18" Width="250" MaxWidth="250" MaxHeight="18" VerticalAlignment="Center" Margin="30,0,0,0" />
+        <TextBlock Grid.Column="0" Grid.Row="2" Text=" Чем:" FontSize="14" Height="20" VerticalAlignment="Top">
+            <TextBlock.Visibility>
+                <Binding Path="IsTextBlockReplaceVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+            </TextBlock.Visibility>
+        </TextBlock>
+        <TextBox Text="{Binding ReplacePattern, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Height="18" Width="250" MaxWidth="250" MaxHeight="18" VerticalAlignment="Top" Margin="30,0,0,0" >
+            <TextBox.Visibility>
+                <Binding Path="IsTextBoxReplaceVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+            </TextBox.Visibility>
+        </TextBox>
         <StackPanel Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" Margin="0,10,0,0">
             <Button Content="Найти далее" Command="{Binding SearchCommand}" FontSize="12" Height="22" Width="75"/>
-            <Button Content="Отмена" Command="{Binding CloseCommand}" FontSize="12" Height="22" Width="75" Margin="0,10,0,0"/>
+            <Button Content="Заменить" Command="{Binding ReplaceCommand}" FontSize="12" Height="22" Width="75" Margin="0,5,0,0">
+                <Button.Visibility>
+                    <Binding Path="IsButtonReplaceVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                </Button.Visibility>
+            </Button>
+            <Button Content="Заменить все" Command="{Binding ReplaceAllCommand}" FontSize="12" Height="22" Width="75" Margin="0,5,0,0">
+                <Button.Visibility>
+                    <Binding Path="IsButtonReplaceAllVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                </Button.Visibility>
+            </Button>
+            <Button Content="Отмена" Command="{Binding CloseCommand}" FontSize="12" Height="22" Width="75" Margin="{Binding ButtonCloseMargin}"/>
         </StackPanel>
         <DockPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,15">
-            <RadioButton Content="Вверх" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Up}" Margin="0,0,10,0"/>
-            <RadioButton Content="Вниз" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Down}"/>
+            <RadioButton Content="Вверх" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Up}" Margin="0,0,10,0">
+                <RadioButton.Visibility>
+                    <Binding Path="IsRadioButtonUpVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                </RadioButton.Visibility>
+            </RadioButton>
+            <RadioButton Content="Вниз" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Down}">
+                <RadioButton.Visibility>
+                    <Binding Path="IsRadioButtonDownVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
+                </RadioButton.Visibility>
+            </RadioButton>
         </DockPanel>
         <StackPanel  Grid.Column="0" Grid.Row="2" VerticalAlignment="Bottom">
             <CheckBox Content="С учетом регистра" IsChecked="{Binding IsRegisterAware, Mode=TwoWay}" Margin="5,0,0,5"/>

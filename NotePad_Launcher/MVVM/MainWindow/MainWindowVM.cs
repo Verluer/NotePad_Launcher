@@ -45,6 +45,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
+    public event Action<SearchReplaceMethod> SearchReplaceMethodExecuted;
 
     public Action UpdateWordWrapAction;
 
@@ -402,7 +403,12 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteSearchPattern(object? parameter)
     {
-        _windowService.OpenWindow<SearchWindow>();
+        if (parameter is SearchReplaceMethod method)
+        {
+            _dataStorage.searchReplaceMethod = method;
+            SearchReplaceMethodExecuted?.Invoke(method);
+            _windowService.OpenWindow<SearchWindow>();
+        }
     }
     private void ExecuteWordWrap(object? parameter)
     {

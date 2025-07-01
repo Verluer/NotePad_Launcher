@@ -52,8 +52,9 @@
                     <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
-                <MenuItem Header="Файл" Style="{StaticResource MainWindowMenuItemStyle}">
-                    <MenuItem Command="{Binding SearchPatternCommand}"  Header="Найти" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                <MenuItem Header="Правка" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static local:SearchReplaceMethod.Search}" Header="Найти" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static local:SearchReplaceMethod.Replace}" Header="Заменить" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
                 <MenuItem Header="Формат" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Style="{StaticResource MainWindowMenuItemStyle}"/>

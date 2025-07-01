@@ -40,8 +40,9 @@ public class DataStorage : IDataStorage
     }
     #endregion
 
-    #region Хранение выбранного метода шифрования
+    #region Хранение методов
     public EncryptionMethod CurrentMethod { get; set; }
+    public SearchReplaceMethod searchReplaceMethod { get; set; }
     #endregion
 
     #region Изначальный путь файла

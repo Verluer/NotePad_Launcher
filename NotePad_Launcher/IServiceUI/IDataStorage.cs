@@ -23,6 +23,6 @@ public interface IDataStorage
 
 
     EncryptionMethod CurrentMethod { get; set; }
-
+    SearchReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
 }
