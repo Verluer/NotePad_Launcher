@@ -1,8 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Domain.IService;
 using Domain.Model;
-using NotePad_Launcher.ViewModels.FileListWindow;
+using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
@@ -15,7 +17,7 @@ namespace NotePad_Launcher
         public FileListWindow()
         {
             InitializeComponent();
-            var viewModel = new FileListWindowVM();
+            var viewModel = App.ServiceProvider.GetRequiredService<FileListWindowVM>(); ;
             this.DataContext = viewModel;
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
@@ -46,20 +48,16 @@ namespace NotePad_Launcher
         {
             if (FileListView.SelectedItem is FileModel selectedFile)
             {
-                // Получаем ссылку на уже открытое основное окно (MainWindow)
                 var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
 
                 if (mainWindow != null)
                 {
-                    // Получаем ViewModel первого окна (MainWindow)
                     var mainWindowVM = mainWindow.DataContext as MainWindowVM;
                     if (mainWindowVM != null)
                     {
                         mainWindowVM.UpdateFileInfo(selectedFile);
                     }
                 }
-
-                // Закрываем SecondWindow после передачи данных
                 this.Close();
             }
         }

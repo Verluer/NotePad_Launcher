@@ -1,16 +1,14 @@
-﻿    <Window x:Class="NotePad_Launcher.MainWindow"
+﻿<Window x:Class="NotePad_Launcher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-        xmlns:mainWindow="clr-namespace:NotePad_Launcher.ViewModels.MainWindow"
-        xmlns:services="clr-namespace:NotePad_Launcher.Services"
         xmlns:local="clr-namespace:Domain.Enum;assembly=Domain"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
-        Style="{StaticResource MyWindowStyle}">
-
+        MinWidth="300" MinHeight="200"
+        Style="{StaticResource WindowStyle}">
 
     <Grid x:Name="MainWindowContainer">
         <!--Разделение программы на ряды и столбцы-->
@@ -26,67 +24,61 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
-        <!--Заголовок программы (Именование и три кнопки функционала)-->
-        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="#004C56" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <!-- Текст слева -->
-            <Menu DockPanel.Dock="Left" Background="#004C56">
-                <MenuItem Header="HeaderName" IsEnabled="False" Height="29">
-                    <MenuItem.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="NotePad Launcher" FontSize="16" Foreground="White" Height="26"/>
-                        </DataTemplate>
-                    </MenuItem.HeaderTemplate>
-                </MenuItem>
-            </Menu>
-            <!-- Кнопки справа -->
-            <Menu DockPanel.Dock="Right" Background="#004C56">
-                <MenuItem Height="30" Command="{Binding MinimizeCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="━" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30" Command="{Binding MaximizeCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="⛶" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-                <MenuItem Height="30" Command="{Binding CloseCommand}">
-                    <MenuItem.Header>
-                        <TextBlock Text="✖" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </MenuItem.Header>
-                </MenuItem>
-            </Menu>
+        <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
+            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="../../Resources/app.ico"/>
+            <TextBlock Text=" NotePad Launcher" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
+            <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource ButtonHeadStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Red"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button DockPanel.Dock="Right" Command="{Binding MaximizeCommand}" Content="⛶" Style="{StaticResource ButtonHeadStyle}"/>
+            <Button DockPanel.Dock="Right" Command="{Binding MinimizeCommand}" Content="━" Style="{StaticResource ButtonHeadStyle}"/>
         </DockPanel>
-
         <!--Меню кнопок под заголовком-->
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Header="Файл" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem Command="{Binding CreateFileCommand}"  Header="Создать" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding SaveFileCommand}" Header="Сохранить" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="Сохранить как" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Header="Файл" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding CreateFileCommand}"  Header="Создать" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SaveFileCommand}" Header="Сохранить" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="Сохранить как" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
-                <MenuItem Header="Формат" Height="25" FontSize="14" VerticalAlignment="Center" >
-                    <MenuItem x:Name="WordWrap" Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                    <MenuItem Header="Encryption" Height="25" FontSize="14" VerticalAlignment="Center">
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Height="18" FontSize="14" VerticalAlignment="Center"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Height="18" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Header="Правка" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static local:SearchReplaceMethod.Search}" Header="Найти" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static local:SearchReplaceMethod.Replace}" Header="Заменить" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                </MenuItem>
+                <MenuItem Header="Формат" Style="{StaticResource MainWindowMenuItemStyle}" >
+                    <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding FontPickerCommand}" Header="Шрифт" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Header="Encryption" Style="{StaticResource MainWindowMenuItemStyle}">
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     </MenuItem>
                 </MenuItem>
-                </Menu>
+                <MenuItem Header="Справка" Style="{StaticResource MainWindowMenuItemStyle}" >
+                    <MenuItem Header="Github" Command="{Binding MovingGithubCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Header="О программе" Command="{Binding ProgramInfCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                </MenuItem>
+            </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Command="{Binding  LogCommand}" Header="Log" Height="25" FontSize="14" VerticalAlignment="Center"/>
-                <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Height="25" FontSize="14" VerticalAlignment="Center"/>
+                <MenuItem Command="{Binding  LogCommand}" Header="Log-отладка" Style="{StaticResource MainWindowMenuItemStyle}"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
-        <TextBox x:Name="FileName" Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
-        <!-- AvalonEdit control -->
-        <avalonEdit:TextEditor Name="FileText" ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <TextBox Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}"  Grid.Column="1" Grid.Row="2" TextAlignment="Center" FontSize="25"/>
+        <!-- AvalonEdit -->
+        <avalonEdit:TextEditor FontStyle="{Binding SelectedFontStyle,  FallbackValue=Normal}" FontWeight="{Binding SelectedFontWeight, FallbackValue=Normal}" FontSize="{Binding SelectedFontSize}" FontFamily="{Binding SelectedFontFamily}" Name="FileText" ShowLineNumbers="True" Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Background="#F0F0F0" />

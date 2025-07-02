@@ -2,13 +2,17 @@
 using System.Windows;
 using Domain.IService;
 using Domain.IService.IEncryption;
-using NotePad_Launcher.Contracts;
-using NotePad_Launcher.Services;
-using NotePad_Launcher.ViewModels.EncryptionWindow;
-using NotePad_Launcher.ViewModels.FileListWindow;
+using NotePad_Launcher.MVVM.FontPickerDialog;
+using NotePad_Launcher.MVVM.ProgramInfDialog;
+using NotePad_Launcher.MVVM.SettingsDialog;
 using Service;
 using Service.Encryption;
 using NotePad_Launcher.ViewModels.MainWindow;
+using NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 
 namespace NotePad_Launcher
 {
@@ -28,31 +32,48 @@ namespace NotePad_Launcher
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
+                
+            if (e.Args.Length > 0)
+            {
+                string filePath = e.Args[0];
+                var dataStorage = ServiceProvider.GetRequiredService<IDataStorage>();
+                dataStorage.StartupFilePath = filePath;
+            }
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            // Регистрация зависимостей
+            // Регистрация сервайс-логики
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IRSAService, RSAService>();
             services.AddSingleton<IElgamalService, ElgamalService>();
             services.AddSingleton<IRabinaService, RabinaService>();
             services.AddSingleton<IECCService, ECCService>();
-            //
-            services.AddSingleton<IStringService, StringService>();
+            services.AddSingleton<ISearchService, SearchService>();
+            // Регистрация UI-логики
+            services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileDialog, FileDialog>();
-            services.AddSingleton<IEncryptionMethodStorage, EncryptionMethodStorage>();
-            services.AddSingleton<IStringService, StringService>();
-            // Регистрация ViewModels как Transient, если нужно создавать новый экземпляр для каждого окна
+            services.AddSingleton<IDataStorage, DataStorage>();
+            services.AddSingleton<IFileAssociationService, FileAssociationService>();
+            services.AddSingleton<IWindowService, WindowService>();
+            // Регистрация ViewModels
             services.AddSingleton<MainWindowVM>();
-            services.AddSingleton<FileListWindowVM>();
-            services.AddSingleton<EncryptionWindowVM>();
-            // Регистрация главного окна
+            services.AddTransient<FileListWindowVM>();
+            services.AddTransient<EncryptionWindowVM>();
+            services.AddTransient<ProgramInfDialogVM>();
+            services.AddTransient<FontPickerDialogVM>();
+            services.AddTransient<SettingsDialogVM>();
+            services.AddTransient<SearchWindowVM>();
+            // Регистрация окон
             services.AddSingleton<MainWindow>();
             services.AddTransient<EncryptionWindow>();
-            services.AddSingleton<FileListWindow>();
+            services.AddTransient<FileListWindow>();
+            services.AddTransient<ProgramInfDialog>();
+            services.AddTransient<FontPickerDialog>();
+            services.AddTransient<SettingsDialog>();
+            services.AddTransient<SearchWindow>();
 
         }
     }

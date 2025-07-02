@@ -4,12 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
-using NotePad_Launcher.Services;
+using NotePad_Launcher.MVVM.Commands;
 using Service;
+using NotePad_Launcher.ViewModels;
 
-namespace NotePad_Launcher.ViewModels.FileListWindow;
+namespace NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 
 public class FileListWindowVM : INotifyPropertyChanged
 
@@ -36,9 +35,9 @@ public class FileListWindowVM : INotifyPropertyChanged
 
     public ObservableCollection<FileModel> FileList { get; private set; }
 
-    public FileListWindowVM()
+    public FileListWindowVM(IFileService service)
     {
-        _fileService = App.ServiceProvider.GetRequiredService<FileService>();
+        _fileService = service;
         _fileDialog = new FileDialog();
         LoadFileList();
     }

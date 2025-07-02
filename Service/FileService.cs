@@ -11,24 +11,16 @@ namespace Service
     {
         private static string directoryPath;
 
-
         public string ExDirectoryFile()
         {
             string exePath = Assembly.GetExecutingAssembly().Location; //Полный путь к исполняемому файлу
             string exeDirectory = Path.GetDirectoryName(exePath); //Извлечение директории
             string dataFilePath = Path.Combine(exeDirectory, "Documents");
-            directoryPath = Path.GetFullPath(dataFilePath); //Директория текстовых файлов
+            directoryPath = Path.GetFullPath(dataFilePath); 
             return directoryPath;
         }
-        public void LogMessage(string message)
-        {
-            string logFilePath = "D:\\VIsual Studio\\VS project\\NotePad_Launcher\\NotePad_Launcher\\bin\\Debug\\net8.0-windows\\Documents\\log.txt";
-            File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
-        }
-
         public FileModel OpenFile(string pathFile)
         {
-            LogMessage(directoryPath);
             return new FileModel
                 {
                     FileName = Path.GetFileNameWithoutExtension(pathFile),
@@ -82,6 +74,20 @@ namespace Service
             else
             {
                 newFilePath = Path.Combine(directoryPath, model.FileName + ".txt");
+                if (File.Exists(newFilePath))
+                {
+                    int i = 1;
+                    while (File.Exists(newFilePath))
+                    {
+                        model.FileName = $"{model.FileName}({i}).txt";
+                        newFilePath = Path.Combine(directoryPath, model.FileName);
+                        i++;
+                        if (!File.Exists(newFilePath))
+                        {
+                            break;
+                        }
+                    }
+                }
                 File.WriteAllText(newFilePath, model.FileText);
             }
             return new FileModel
@@ -92,7 +98,6 @@ namespace Service
         }
         public List<FileModel> GetTextFiles()
         {
-            LogMessage($"List: {directoryPath}");
             if (!Directory.Exists(directoryPath))
                 throw new DirectoryNotFoundException($"Директория не найдена: {directoryPath}");
 
@@ -113,7 +118,7 @@ namespace Service
         public bool CheckTextChange(string pathFile, string fileText)
         {
             if (string.IsNullOrEmpty(pathFile))
-                throw new ArgumentException("Путь к файлу не может быть пустым или null.", nameof(pathFile));
+                return true;
 
             var checkTextFromFile = File.ReadAllText(pathFile, Encoding.UTF8);
             return checkTextFromFile == fileText;
@@ -124,9 +129,13 @@ namespace Service
             File.WriteAllText(pathFile, fileText);
         }
 
-        public string GetFileName(string pathFile)
+        public string GetFileNameWithout(string pathFile)
         {
             return Path.GetFileNameWithoutExtension(pathFile);
+        }
+        public string GetFileName(string pathFile)
+        {
+            return Path.GetFileName(pathFile);
         }
 
         public bool FileExists(string pathFile)

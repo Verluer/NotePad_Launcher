@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Domain.Enum;
+using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Editing;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
 using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
@@ -12,29 +12,38 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly IDataStorage _dataStorage;
+        public MainWindow(IDataStorage dataStorage)
         {
             InitializeComponent();
+            _dataStorage = dataStorage;
+            _dataStorage.SearchAction += TextFound;
             var viewModel = App.ServiceProvider.GetRequiredService<MainWindowVM>();
-            // Устанавливаем DataContext
             this.DataContext = viewModel;
             FileText.Document = viewModel.FileTextDocument;
-            // Подписываемся на события
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
             viewModel.UpdateWordWrapAction = () =>
             {
-                // Обновляем свойство FileText.WordWrap в View
                 FileText.WordWrap = viewModel.IsWordWrapEnabled;
             };
-            viewModel.OpenFileListWindowRequested += () =>
+            _dataStorage.GetSelectionCallback = () =>
             {
-                var fileListWindow = new FileListWindow();
-                fileListWindow.Show();
+                var selection = FileText.TextArea.Selection;
+                if (selection.IsEmpty || selection.SurroundingSegment == null)
+                {
+                    return (0, 0);
+                }
+                int index = selection.SurroundingSegment.Offset;
+                int length = selection.Length;
+                return (index, length);
             };
-            viewModel.EncryptedMethodExecuted += OpenEncryptionWindow;
+            _dataStorage.GetCaretOffset = () =>
+            {
+                var offset = FileText.CaretOffset;
+                return offset;
+            };
         }
-
         private void OnMinimizeRequested()
         {
             this.WindowState = WindowState.Minimized;
@@ -53,28 +62,11 @@ namespace NotePad_Launcher
             }
         }
 
-        private void OpenEncryptionWindow(EncryptionMethod method)
+        private void TextFound(int IndexSearch, int LengthSearch)
         {
-            EncryptionWindow encryptionWindow;
-            switch (method)
-            {
-                case EncryptionMethod.RSA:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-                case EncryptionMethod.Elgamal:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-                case EncryptionMethod.Rabina:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-                case EncryptionMethod.ECC:
-                    encryptionWindow = App.ServiceProvider.GetRequiredService<EncryptionWindow>();
-                    encryptionWindow.Show();
-                    break;
-            }
+            FileText.Select(IndexSearch, LengthSearch);
+            var location = FileText.Document.GetLocation(IndexSearch);
+            FileText.ScrollTo(location.Line, location.Column);
         }
     }
 }

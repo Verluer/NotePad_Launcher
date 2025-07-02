@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace NotePad_Launcher.Contracts;
+namespace NotePad_Launcher;
 
 public interface IFileDialog
 {

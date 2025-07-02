@@ -1,16 +1,23 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Domain.Enum;
 using Domain.IService;
 using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.Contracts;
-using NotePad_Launcher.Services;
+using NotePad_Launcher.MVVM.Commands;
+using NotePad_Launcher.MVVM.FontPickerDialog;
+using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
+using NotePad_Launcher.MVVM.ProgramInfDialog;
+using NotePad_Launcher.MVVM.SettingsDialog;
 using Service;
+using FontFamily = System.Windows.Media.FontFamily;
+using FontStyle = System.Windows.FontStyle;
 
 
 namespace NotePad_Launcher.ViewModels.MainWindow;
@@ -30,21 +37,26 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _toggleWordWrapCommand;
     private ICommand? _logCommand;
     private ICommand? _encryptedMethodCommand;
+    private ICommand? _movingGithubCommand;
+    private ICommand? _programInfCommand;
+    private ICommand? _fontPickerCommand;
+    private ICommand? _searchPatternCommand;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
-    public event Action OpenFileListWindowRequested;
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
+    public event Action<SearchReplaceMethod> SearchReplaceMethodExecuted;
 
     public Action UpdateWordWrapAction;
-    private string FilePath;
 
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
-    private readonly IEncryptionMethodStorage _encryptionMethodStorage;
     private readonly IServiceFunctions _serviceFunctions;
-    private readonly IStringService _stringService;
+    private readonly IDataStorage _dataStorage;
+    private readonly IFileAssociationService _fileAssociationService;
+    private readonly IWindowService _windowService;
     private bool _checkSaveFile = true;
+    public string FilePath;
     public bool CheckSaveFile
     {
         get => _checkSaveFile;
@@ -56,18 +68,6 @@ public class MainWindowVM : INotifyPropertyChanged
                 OnPropertyChanged();
             }
         }
-    }
-    public MainWindowVM()
-    {
-        _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
-        _fileDialog = new FileDialog();
-        _serviceFunctions = new ServiceFunctions();
-        _encryptionMethodStorage = App.ServiceProvider.GetRequiredService<IEncryptionMethodStorage>();
-        _fileService.ExDirectoryFile();
-        _stringService = App.ServiceProvider.GetRequiredService<IStringService>();
-        _stringService.GetTextCallback = () => FileTextDocument.Text;
-        _stringService.TextUpdated += OnTextUpdated;
-        FileTextDocument = new TextDocument();
     }
     private TextDocument _fileTextDocument;
     public TextDocument FileTextDocument
@@ -86,9 +86,8 @@ public class MainWindowVM : INotifyPropertyChanged
 
                 if (_fileTextDocument != null)
                 {
-                    _fileTextDocument.Changed += OnDocumentChanged; 
+                    _fileTextDocument.Changed += OnDocumentChanged;
                 }
-
                 OnPropertyChanged();
             }
         }
@@ -106,6 +105,61 @@ public class MainWindowVM : INotifyPropertyChanged
             }
         }
     }
+    private double _selectedFontSize = 14;
+    public double SelectedFontSize
+    {
+        get => _selectedFontSize;
+        set
+        {
+            if (_selectedFontSize != value)
+            {
+                _selectedFontSize = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private FontFamily _selectedFontFamily;
+
+    public FontFamily SelectedFontFamily
+    {
+        get => _selectedFontFamily;
+        set
+        {
+            if (_selectedFontFamily != value)
+            {
+                _selectedFontFamily = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    private FontStyle _selectedFontStyle;
+    public FontStyle SelectedFontStyle
+    {
+        get => _selectedFontStyle;
+        set
+        {
+            if (_selectedFontStyle != value)
+            {
+                _selectedFontStyle = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    private FontWeight _selectedFontWeight;
+    public FontWeight SelectedFontWeight
+    {
+        get => _selectedFontWeight;
+        set
+        {
+            if (_selectedFontWeight != value)
+            {
+                _selectedFontWeight = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     private bool _isWordWrapEnabled;
     public bool IsWordWrapEnabled
     {
@@ -128,13 +182,59 @@ public class MainWindowVM : INotifyPropertyChanged
         get => _currentFile;
         set => SetField(ref _currentFile, value);
     }
-
+    private string _startupFilePath;
+    public string StartupFilePath
+    {
+        get => _startupFilePath;
+        set
+        {
+            if (_startupFilePath != value)
+            {
+                _startupFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public event PropertyChangedEventHandler? PropertyChanged;
 
 
     #endregion
+    public MainWindowVM()
+    {
+        _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
+        _windowService = App.ServiceProvider.GetRequiredService<IWindowService>();
+        _fileDialog = new FileDialog();
+        _serviceFunctions = new ServiceFunctions();
+        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
+        _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
+        _fileService.ExDirectoryFile();
+        _dataStorage.GetTextCallback = () => FileTextDocument.Text;
+        _dataStorage.TextUpdated += OnTextUpdated;
+        SelectedFontFamily = new FontFamily("Arial");
+        _dataStorage.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
+        _dataStorage.FamilySizeUpdated += OnFamilySizeUpdated;
+        FileTextDocument = new TextDocument();
+        _fileAssociationService.RegisterTxtFileAssociation();
+        StartupFilePath = _dataStorage.StartupFilePath;
+        if (string.IsNullOrEmpty(FilePath) && !string.IsNullOrEmpty(StartupFilePath))
+        {
+            var startFile = _fileService.OpenFile(StartupFilePath);
+            FilePath = startFile.FilePath;
+            FileName = startFile.FileName;
+            FileTextDocument.Text = string.Empty;
+            FileTextDocument.Text = startFile.FileText;
 
+        }
+    }
     #region Functions
+
+    private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)
+    {
+        SelectedFontFamily = fontFamily;
+        SelectedFontSize = fontSize;
+        SelectedFontStyle = fontStyle;
+        SelectedFontWeight = fontWeight;
+    }
     private void OnTextUpdated(string newText)
     {
         FileTextDocument.Text = newText;
@@ -158,7 +258,7 @@ public class MainWindowVM : INotifyPropertyChanged
 
     public bool CheckingSaveFile(bool saveFile)
     {
-        if (!saveFile) 
+        if (!saveFile)
         {
             var result = _fileDialog.ShowYesNoDialog(
                 "Текстовой файл не был сохранен, вы хотите продолжить?", "");
@@ -194,16 +294,22 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand SaveFileDialogCommand => _saveFileDialogCommand ??= new OtherRelayCommands(ExecuteSaveFileDialog, CanExecute);
     public ICommand FileListCommand => _fileListCommand ??= new OtherRelayCommands(ExecuteFileList, CanExecute);
     public ICommand DeleteFileCommand => _deleteFileCommand ??= new OtherRelayCommands(ExecuteDeleteFile, CanExecute);
+    public ICommand SearchPatternCommand => _searchPatternCommand ??= new OtherRelayCommands(ExecuteSearchPattern, CanExecute);
+    
+    
     public ICommand ToggleWordWrapCommand => _toggleWordWrapCommand ??= new OtherRelayCommands(ExecuteWordWrap, CanExecute);
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
-        
+    public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
+    public ICommand ProgramInfCommand => _programInfCommand ??= new OtherRelayCommands(ExecuteProgramInf, CanExecute);
+    public ICommand FontPickerCommand => _fontPickerCommand ??= new OtherRelayCommands(ExecuteFontPickerCommand, CanExecute);
+
     #endregion
 
     #region Execute Button Parameter
     // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
-        _serviceFunctions.LogMessage(CheckSaveFile.ToString());
+        _serviceFunctions.LogMessage(null);
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -225,13 +331,13 @@ public class MainWindowVM : INotifyPropertyChanged
             return;
         }
         FilePath = _fileDialog.OpenTextFileDialog(FilePath);
-        if (string.IsNullOrEmpty(FilePath)) return; 
+        if (string.IsNullOrEmpty(FilePath)) return;
         var filePath = FilePath;
         var openFile = _fileService.OpenFile(filePath);
-            FilePath = openFile.FilePath;
-            FileName = openFile.FileName;
-            FileTextDocument.Text = string.Empty;
-            FileTextDocument.Text = openFile.FileText;
+        FilePath = openFile.FilePath;
+        FileName = openFile.FileName;
+        FileTextDocument.Text = string.Empty;
+        FileTextDocument.Text = openFile.FileText;
     }
 
     private void ExecuteCreateFile(object? parameter)
@@ -268,15 +374,16 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteSaveFileDialog(object? parameter)
     {
 
-            FilePath = _fileDialog.SaveFileDialog(FilePath);
-            _fileService.WriteAllText(FilePath, FileTextDocument.Text);
-            FileName = _fileService.GetFileName(FilePath);
-            CheckSaveFile = true;
-            _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
+        FilePath = _fileDialog.SaveFileDialog(FilePath);
+        _fileService.WriteAllText(FilePath, FileTextDocument.Text);
+        FileName = _fileService.GetFileNameWithout(FilePath);
+        CheckSaveFile = true;
+        _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
     }
     private void ExecuteFileList(object? parameter)
     {
-        OpenFileListWindowRequested?.Invoke();
+        _windowService.OpenWindow<NotePad_Launcher.FileListWindow>();
+        
     }
     private void ExecuteDeleteFile(object? parameter)
     {
@@ -294,6 +401,15 @@ public class MainWindowVM : INotifyPropertyChanged
             }
         }
     }
+    private void ExecuteSearchPattern(object? parameter)
+    {
+        if (parameter is SearchReplaceMethod method)
+        {
+            _dataStorage.searchReplaceMethod = method;
+            SearchReplaceMethodExecuted?.Invoke(method);
+            _windowService.OpenWindow<SearchWindow>();
+        }
+    }
     private void ExecuteWordWrap(object? parameter)
     {
         IsWordWrapEnabled = !IsWordWrapEnabled;
@@ -303,10 +419,23 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         if (parameter is EncryptionMethod method)
         {
-            _encryptionMethodStorage.CurrentMethod = method;
-            _serviceFunctions.LogMessage($"Method: {_encryptionMethodStorage.CurrentMethod}");
+            _dataStorage.CurrentMethod = method;
             EncryptedMethodExecuted?.Invoke(method);
+            _windowService.OpenWindow<NotePad_Launcher.EncryptionWindow>();
         }
+    }
+    private void ExecuteMovingGitHub(object? parameter)
+    {
+        string url = "https://github.com/Verluer/NotePad_Launcher";
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+    }
+    private void ExecuteProgramInf(object? parameter)
+    {
+        _windowService.OpenWindowDialog<ProgramInfDialog>();
+    }
+    private void ExecuteFontPickerCommand(object? parameter)
+    {
+        _windowService.OpenWindowDialog<FontPickerDialog>();
     }
 
     #endregion
