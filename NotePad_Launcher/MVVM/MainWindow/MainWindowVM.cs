@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.Commands;
 using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.MVVM.SettingsDialog;
 using Service;
@@ -55,6 +56,22 @@ public class MainWindowVM : INotifyPropertyChanged
     private readonly IDataStorage _dataStorage;
     private readonly IFileAssociationService _fileAssociationService;
     private readonly IWindowService _windowService;
+    private readonly IConfigService _configService;
+
+    private AppConfigModel _config;
+    public AppConfigModel Config
+    {
+        get => _config;
+        set
+        {
+            if (_config != value)
+            {
+                _config = value;
+                OnPropertyChanged(nameof(Config));
+            }
+        }
+    }
+
     private bool _checkSaveFile = true;
     public string FilePath;
     public bool CheckSaveFile
@@ -207,8 +224,15 @@ public class MainWindowVM : INotifyPropertyChanged
         _serviceFunctions = new ServiceFunctions();
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
-        _fileService.ExDirectoryFile();
-        _dataStorage.GetTextCallback = () => FileTextDocument.Text;
+        _configService = App.ServiceProvider.GetRequiredService<IConfigService>();
+        Config = _configService.Load();
+        if (Config.DocsPath == "FirstLaunch")
+        {
+            string DocumentPath = _fileService.ExDirectoryFile();
+            Config.DocsPath = DocumentPath;
+            _configService.Save(Config);
+        }
+            _dataStorage.GetTextCallback = () => FileTextDocument.Text;
         _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
         _dataStorage.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
@@ -309,7 +333,7 @@ public class MainWindowVM : INotifyPropertyChanged
     // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
-        _serviceFunctions.LogMessage(null);
+        _windowService.OpenWindow<SettingsWindow>();
     }
     private void ExecuteCloseCommand(object? parameter)
     {

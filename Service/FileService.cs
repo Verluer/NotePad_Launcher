@@ -9,14 +9,20 @@ namespace Service
 {
     public class FileService : IFileService
     {
-        private static string directoryPath;
+        private readonly IConfigService _configService;
+        private AppConfigModel _config;
 
+        public FileService(IConfigService configService)
+        {
+            _configService = configService;
+            _config = _configService.Load();
+        }
         public string ExDirectoryFile()
         {
             string exePath = Assembly.GetExecutingAssembly().Location; //Полный путь к исполняемому файлу
             string exeDirectory = Path.GetDirectoryName(exePath); //Извлечение директории
             string dataFilePath = Path.Combine(exeDirectory, "Documents");
-            directoryPath = Path.GetFullPath(dataFilePath); 
+            string directoryPath = Path.GetFullPath(dataFilePath); 
             return directoryPath;
         }
         public FileModel OpenFile(string pathFile)
@@ -33,14 +39,14 @@ namespace Service
         public FileModel CreateFile()
         {
             string FileName = "New Text File.txt";
-            string CreateFileInDirectory = Path.Combine(directoryPath, FileName);
+            string CreateFileInDirectory = Path.Combine(_config.DocsPath, FileName);
             if (File.Exists(CreateFileInDirectory))
             {
                 int i = 1;
                 while (File.Exists(CreateFileInDirectory))
                 {
                     FileName = $"New Text File({i}).txt";
-                    CreateFileInDirectory = Path.Combine(directoryPath, FileName);
+                    CreateFileInDirectory = Path.Combine(_config.DocsPath, FileName);
                     i++;
                     if (!File.Exists(CreateFileInDirectory))
                     {
@@ -73,14 +79,14 @@ namespace Service
             }
             else
             {
-                newFilePath = Path.Combine(directoryPath, model.FileName + ".txt");
+                newFilePath = Path.Combine(_config.DocsPath, model.FileName + ".txt");
                 if (File.Exists(newFilePath))
                 {
                     int i = 1;
                     while (File.Exists(newFilePath))
                     {
                         model.FileName = $"{model.FileName}({i}).txt";
-                        newFilePath = Path.Combine(directoryPath, model.FileName);
+                        newFilePath = Path.Combine(_config.DocsPath, model.FileName);
                         i++;
                         if (!File.Exists(newFilePath))
                         {
@@ -98,10 +104,10 @@ namespace Service
         }
         public List<FileModel> GetTextFiles()
         {
-            if (!Directory.Exists(directoryPath))
-                throw new DirectoryNotFoundException($"Директория не найдена: {directoryPath}");
+            if (!Directory.Exists(_config.DocsPath))
+                throw new DirectoryNotFoundException($"Директория не найдена: {_config.DocsPath}");
 
-            return Directory.GetFiles(directoryPath, "*.txt")
+            return Directory.GetFiles(_config.DocsPath, "*.txt")
                 .Select(file => new FileModel
                 {
                     FileName = Path.GetFileNameWithoutExtension(file),

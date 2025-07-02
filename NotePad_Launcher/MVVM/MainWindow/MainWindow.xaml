@@ -72,7 +72,7 @@
                 </MenuItem>
             </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Command="{Binding  LogCommand}" Header="Log-отладка" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                <MenuItem Command="{Binding  LogCommand}" Header="⚙" Style="{StaticResource MainWindowMenuItemStyle}"/>
             </Menu>
         </DockPanel>
         <!--Текстовой обьект для именования файлов-->
