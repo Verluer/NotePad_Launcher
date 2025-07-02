@@ -29,6 +29,10 @@ public class SearchWindowVM : INotifyPropertyChanged
     private static int currentMatchIndex = -1;
     private string previousOption = "None";
     private string _searchPattern;
+    Match ReplaceMatch = null;
+    private int lastMatchOffset = -1;
+    private int previousCaretOffset = -1;
+    private string previousSearchPattern = string.Empty;
     public string SearchPattern
     {
         get => _searchPattern;
@@ -57,12 +61,12 @@ public class SearchWindowVM : INotifyPropertyChanged
     private string _replacePattern;
     public string ReplacePattern
     {
-        get => _searchPattern;
+        get => _replacePattern;
         set
         {
-            if (_searchPattern != value)
+            if (_replacePattern != value)
             {
-                _searchPattern = value;
+                _replacePattern = value;
                 OnPropertyChanged();
             }
         }
@@ -129,7 +133,7 @@ public class SearchWindowVM : INotifyPropertyChanged
             if (_isButtonReplaceVisible != value)
             {
                 _isButtonReplaceVisible = value;
-                OnPropertyChanged(nameof(IsButtonReplaceVisible)); 
+                OnPropertyChanged(nameof(IsButtonReplaceVisible));
             }
         }
     }
@@ -147,7 +151,7 @@ public class SearchWindowVM : INotifyPropertyChanged
             }
         }
     }
-   private bool _isTextBlockReplaceVisible = true;
+    private bool _isTextBlockReplaceVisible = true;
 
     public bool IsTextBlockReplaceVisible
     {
@@ -254,13 +258,13 @@ public class SearchWindowVM : INotifyPropertyChanged
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
     public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
     public ICommand SearchCommand => _searchCommand ??= new OtherRelayCommands(ExecuteSearchCommand, CanExecute);
-
+    public ICommand ReplaceCommand => _replaceCommand ??= new OtherRelayCommands(ExecuteReplaceCommand, CanExecute);
+    public ICommand ReplaceAllCommand => _replaceAllCommand ??= new OtherRelayCommands(ExecuteReplaceAllCommand, CanExecute);
     private void ExecuteCloseCommand(object? parameter)
     {
         CloseRequested?.Invoke();
     }
-
-    private void ExecuteSearchCommand(object? parameter)
+    private Match Search()
     {
         var fileText = _dataStorage.GetTextCallback();
         MatchCollection matches = _searchService.SearchPattern(fileText, SearchPattern, IsRegisterAware);
@@ -268,39 +272,110 @@ public class SearchWindowVM : INotifyPropertyChanged
         if (matches.Count == 0)
         {
             _fileDialog.ShowMessage($"Не удалось найти {SearchPattern}", "Error");
-            return;
+            return null;
         }
+
+        int currentCaretOffset = _dataStorage.GetCaretOffset();
+
+        // 1. Сброс при смене паттерна — только в начало
+        // 2. Сброс при ручном перемещении курсора — с позиции курсора
+        if (SearchPattern != previousSearchPattern)
+        {
+            lastMatchOffset = 0;
+        }
+        else if (currentCaretOffset != previousCaretOffset)
+        {
+            lastMatchOffset = currentCaretOffset;
+        }
+
+        previousSearchPattern = SearchPattern;
+        previousCaretOffset = currentCaretOffset;
+
+        int index = -1;
 
         if (SelectedOption == "Down")
         {
-            currentMatchIndex++;
-            if (currentMatchIndex >= matches.Count)
+            for (int i = 0; i < matches.Count; i++)
             {
-                currentMatchIndex = IsTextFairing ? 0 : matches.Count - 1;
-                if (!IsTextFairing)
+                if (matches[i].Index >= lastMatchOffset)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+            {
+                if (IsTextFairing)
+                {
+                    index = 0;
+                }
+                else
                 {
                     _fileDialog.ShowMessage($"Достигнут конец документа", "Inf");
-                    return;
+                    return null;
                 }
             }
         }
         else if (SelectedOption == "Up")
         {
-            currentMatchIndex--;
-            if (currentMatchIndex < 0)
+            for (int i = matches.Count - 1; i >= 0; i--)
             {
-                currentMatchIndex = IsTextFairing ? matches.Count - 1 : 0;
-                if (!IsTextFairing)
+                if (matches[i].Index + matches[i].Length <= lastMatchOffset)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+            {
+                if (IsTextFairing)
+                {
+                    index = matches.Count - 1;
+                }
+                else
                 {
                     _fileDialog.ShowMessage($"Достигнуто начало документа", "Inf");
-                    return;
+                    return null;
                 }
             }
         }
 
-        Match currentMatch = matches[currentMatchIndex];
+        Match currentMatch = matches[index];
+
+        // Обновляем offset после найденного слова
+        lastMatchOffset = currentMatch.Index + currentMatch.Length;
+
         _dataStorage.ResultSearch(currentMatch.Index, currentMatch.Length);
         previousOption = SelectedOption;
+
+        return currentMatch;
+    }
+    private void ExecuteSearchCommand(object? parameter)
+    {
+        ReplaceMatch = Search();
+    }
+    private void ExecuteReplaceCommand(object? parameter)
+    {
+        var (areaIndex, areaLength) = _dataStorage.GetSelectionCallback();
+        var fileText = _dataStorage.GetTextCallback();
+        string areaText = fileText.Substring(areaIndex, areaLength);
+        if (!areaText.Equals(SearchPattern, StringComparison.OrdinalIgnoreCase))
+        {
+            ReplaceMatch = Search();
+        }
+        else
+        {
+            string resultReplace = _searchService.ReplaceText(fileText, ReplaceMatch.Index, ReplaceMatch.Length, ReplacePattern);
+            _dataStorage.PushUpdatedText(resultReplace);
+        }
+    }
+    private void ExecuteReplaceAllCommand(object? parameter)
+    {
+        var fileText = _dataStorage.GetTextCallback();
+        string resultReplaceAll = _searchService.ReplaceAllText(fileText, SearchPattern, ReplacePattern, IsRegisterAware);
+        _dataStorage.PushUpdatedText(resultReplaceAll);
     }
     private void ExecuteMinimizeCommand(object? parameter)
     {

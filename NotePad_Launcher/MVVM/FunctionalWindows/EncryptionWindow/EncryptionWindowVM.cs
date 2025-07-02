@@ -255,7 +255,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isElement2Visible != value)
             {
                 _isElement2Visible = value;
-                OnPropertyChanged(nameof(IsElement2Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsElement2Visible));
             }
         }
     }
@@ -269,7 +269,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isTextBlock3Visible != value)
             {
                 _isTextBlock3Visible = value;
-                OnPropertyChanged(nameof(IsTextBlock3Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsTextBlock3Visible));
             }
         }
     }
@@ -283,7 +283,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isTextBoxValue3Visible != value)
             {
                 _isTextBoxValue3Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxValue3Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsTextBoxValue3Visible));
             }
         }
     }
@@ -297,7 +297,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isTextBoxValue4Visible != value)
             {
                 _isTextBoxValue4Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxValue4Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsTextBoxValue4Visible));
             }
         }
     }
@@ -311,7 +311,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isTextBoxValue5Visible != value)
             {
                 _isTextBoxValue5Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxValue5Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsTextBoxValue5Visible));
             }
         }
     }
@@ -325,7 +325,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isTextBoxCloseKey2Visible != value)
             {
                 _isTextBoxCloseKey2Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxCloseKey2Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsTextBoxCloseKey2Visible));
             }
         }
     }
@@ -339,7 +339,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             if (_isTextBoxCloseKey3Visible != value)
             {
                 _isTextBoxCloseKey3Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxCloseKey3Visible)); // Уведомляем об изменении
+                OnPropertyChanged(nameof(IsTextBoxCloseKey3Visible));
             }
         }
     }

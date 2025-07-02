@@ -39,7 +39,8 @@ public class DataStorage : IDataStorage
         FamilySizeUpdated?.Invoke(updatedFontSize, updatedFontFamily, updatedFontStyle, updatedFontWeight);
     }
     #endregion
-
+    public Func<(int index, int length)> GetSelectionCallback { get; set; }
+    public Func<int> GetCaretOffset { get; set; }
     #region Хранение методов
     public EncryptionMethod CurrentMethod { get; set; }
     public SearchReplaceMethod searchReplaceMethod { get; set; }

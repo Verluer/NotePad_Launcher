@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Editing;
 using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.ViewModels.MainWindow;
 
@@ -25,6 +26,22 @@ namespace NotePad_Launcher
             viewModel.UpdateWordWrapAction = () =>
             {
                 FileText.WordWrap = viewModel.IsWordWrapEnabled;
+            };
+            _dataStorage.GetSelectionCallback = () =>
+            {
+                var selection = FileText.TextArea.Selection;
+                if (selection.IsEmpty || selection.SurroundingSegment == null)
+                {
+                    return (0, 0);
+                }
+                int index = selection.SurroundingSegment.Offset;
+                int length = selection.Length;
+                return (index, length);
+            };
+            _dataStorage.GetCaretOffset = () =>
+            {
+                var offset = FileText.CaretOffset;
+                return offset;
             };
         }
         private void OnMinimizeRequested()

@@ -21,7 +21,8 @@ public interface IDataStorage
 
     void PushUpdatedFamilySize(double updatedFontSize, FontFamily updatedFontFamily, FontStyle updatedFontStyle, FontWeight updatedFontWeight);
 
-
+    public Func<(int index, int length)> GetSelectionCallback { get; set; }
+    public Func<int> GetCaretOffset { get; set; }
     EncryptionMethod CurrentMethod { get; set; }
     SearchReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
