@@ -1,16 +1,21 @@
 ﻿using System.Windows;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace NotePad_Launcher;
 
 public class FileDialog : IFileDialog
 {
-    public string OpenTextFileDialog(string pathToClose)
+    public string OpenTextFileDialog(string pathToClose, string extension)
     {
-        var openFileDialog = new OpenFileDialog
+        var openFileDialog = new OpenFileDialog();
+        if (extension == "txt")
         {
-            Filter = "Текстовые файлы (*.txt)|*.txt"
-        };
+            openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
+        }
+        else if (extension == null)
+        {
+        }
 
         if (openFileDialog.ShowDialog() == true)
         {
@@ -34,9 +39,24 @@ public class FileDialog : IFileDialog
             return saveFileDialog.FileName;
         }
 
-        return pathToClose;
+        return null;
     }
+    public string FolderFileDialog(string initialPath = null)
+    {
+        var dialog = new CommonOpenFileDialog
+        {
+            Title = "Выберите папку",
+            IsFolderPicker = true,
+            InitialDirectory = initialPath
+        };
 
+        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+            return dialog.FileName;
+        }
+
+        return null;
+    }
     public void ShowMessage(string message, string title)
     {
         MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);

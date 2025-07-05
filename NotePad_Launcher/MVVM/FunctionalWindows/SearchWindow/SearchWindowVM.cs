@@ -264,6 +264,10 @@ public class SearchWindowVM : INotifyPropertyChanged
     {
         CloseRequested?.Invoke();
     }
+    private void ExecuteMinimizeCommand(object? parameter)
+    {
+        MinimizeRequested?.Invoke();
+    }
     private Match Search()
     {
         var fileText = _dataStorage.GetTextCallback();
@@ -376,10 +380,6 @@ public class SearchWindowVM : INotifyPropertyChanged
         var fileText = _dataStorage.GetTextCallback();
         string resultReplaceAll = _searchService.ReplaceAllText(fileText, SearchPattern, ReplacePattern, IsRegisterAware);
         _dataStorage.PushUpdatedText(resultReplaceAll);
-    }
-    private void ExecuteMinimizeCommand(object? parameter)
-    {
-        MinimizeRequested?.Invoke();
     }
     private bool CanExecute(object? parameter) => true;
 

@@ -13,6 +13,7 @@ using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 
 namespace NotePad_Launcher
 {
@@ -52,6 +53,7 @@ namespace NotePad_Launcher
             services.AddSingleton<IRabinaService, RabinaService>();
             services.AddSingleton<IECCService, ECCService>();
             services.AddSingleton<ISearchService, SearchService>();
+            services.AddSingleton<IConfigService, ConfigService>();
             // Регистрация UI-логики
             services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileDialog, FileDialog>();
@@ -66,6 +68,7 @@ namespace NotePad_Launcher
             services.AddTransient<FontPickerDialogVM>();
             services.AddTransient<SettingsDialogVM>();
             services.AddTransient<SearchWindowVM>();
+            services.AddTransient<SettingsWindowVM>();
             // Регистрация окон
             services.AddSingleton<MainWindow>();
             services.AddTransient<EncryptionWindow>();
@@ -74,6 +77,7 @@ namespace NotePad_Launcher
             services.AddTransient<FontPickerDialog>();
             services.AddTransient<SettingsDialog>();
             services.AddTransient<SearchWindow>();
+            services.AddTransient<SettingsWindow>();
 
         }
     }
