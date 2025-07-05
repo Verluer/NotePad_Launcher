@@ -17,22 +17,27 @@ namespace Service
             _configService = configService;
             _config = _configService.Load();
         }
+        public void LogMessage(string message)
+        {
+            string logFilePath = Path.Combine(_config.DocsPath, "log.txt");
+            File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
+        }
         public string ExDirectoryFile()
         {
             string exePath = Assembly.GetExecutingAssembly().Location; //Полный путь к исполняемому файлу
             string exeDirectory = Path.GetDirectoryName(exePath); //Извлечение директории
             string dataFilePath = Path.Combine(exeDirectory, "Documents");
-            string directoryPath = Path.GetFullPath(dataFilePath); 
+            string directoryPath = Path.GetFullPath(dataFilePath);
             return directoryPath;
         }
         public FileModel OpenFile(string pathFile)
         {
             return new FileModel
-                {
-                    FileName = Path.GetFileNameWithoutExtension(pathFile),
-                    FileText = File.ReadAllText(pathFile, Encoding.UTF8),
-                    FilePath = pathFile
-                };
+            {
+                FileName = Path.GetFileNameWithoutExtension(pathFile),
+                FileText = File.ReadAllText(pathFile, Encoding.UTF8),
+                FilePath = pathFile
+            };
 
         }
 
@@ -70,37 +75,49 @@ namespace Service
             string newFilePath = null;
             if (model.FilePath != null)
             {
-                newFilePath = Path.Combine(Path.GetDirectoryName(model.FilePath), model.FileName + ".txt");
-                if (model.FilePath != newFilePath)
+                if (_config.SaveSetting == "SaveNormal")
                 {
-                    File.Delete(model.FilePath);
+                    newFilePath = Path.Combine(Path.GetDirectoryName(model.FilePath), model.FileName + ".txt");
+                    if (model.FilePath != newFilePath)
+                    {
+                        File.Delete(model.FilePath);
+                    }
+                    File.WriteAllText(newFilePath, model.FileText);
                 }
-                File.WriteAllText(newFilePath, model.FileText);
+                else if (_config.SaveSetting == "SaveDirectory")
+                {
+                    newFilePath = Path.Combine(_config.DocsPath, model.FileName + ".txt");
+                    if (model.FilePath != newFilePath)
+                    {
+                        File.Delete(model.FilePath);
+                    }
+                    File.WriteAllText(newFilePath, model.FileText);
+                }
+
             }
             else
             {
                 newFilePath = Path.Combine(_config.DocsPath, model.FileName + ".txt");
-                if (File.Exists(newFilePath))
-                {
-                    int i = 1;
-                    while (File.Exists(newFilePath))
+                    if (File.Exists(newFilePath))
                     {
-                        model.FileName = $"{model.FileName}({i}).txt";
-                        newFilePath = Path.Combine(_config.DocsPath, model.FileName);
-                        i++;
-                        if (!File.Exists(newFilePath))
+                        int i = 1;
+                        while (File.Exists(newFilePath))
                         {
-                            break;
+                            model.FileName = $"{model.FileName}({i}).txt";
+                            newFilePath = Path.Combine(_config.DocsPath, model.FileName);
+                            i++;
+                            if (!File.Exists(newFilePath))
+                            {
+                                break;
+                            }
                         }
                     }
+                    File.WriteAllText(newFilePath, model.FileText);
                 }
-                File.WriteAllText(newFilePath, model.FileText);
-            }
-            return new FileModel
-            {
-                FilePath = newFilePath
-            };
-
+                return new FileModel
+                {
+                    FilePath = newFilePath
+                };
         }
         public List<FileModel> GetTextFiles()
         {

@@ -17,14 +17,17 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
 {
     public class SettingsWindowVM : INotifyPropertyChanged
     {
+
         public event PropertyChangedEventHandler? PropertyChanged;
         private readonly IDataStorage _dataStorage;
         private readonly IConfigService _configService;
+        private readonly IFileDialog _fileDialog;
         public event Action? MinimizeRequested;
         public event Action? CloseRequested;
         private ICommand? _closeCommand;
         private ICommand? _minimizeCommand;
         private ICommand? _saveCommand;
+        private ICommand? _openFolderCommand;
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -50,6 +53,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
                 }
             }
         }
+
         private string _textBoxDocumentDirect;
         public string TextBoxDocumentDirect
         {
@@ -63,17 +67,64 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
                 }
             }
         }
+        private bool _isStackPanelGeneralVisible = true;
+
+        public bool IsStackPanelGeneralVisible
+        {
+            get => _isStackPanelGeneralVisible;
+            set
+            {
+                if (_isStackPanelGeneralVisible != value)
+                {
+                    _isStackPanelGeneralVisible = value;
+                    OnPropertyChanged(nameof(IsStackPanelGeneralVisible));
+                }
+            }
+        }
+        private string _selectedSettings;
+        public string SelectedSettings
+        {
+            get => _selectedSettings;
+            set
+            {
+                if (_selectedSettings != value)
+                {
+                    _selectedSettings = value;
+                    OnPropertyChanged(nameof(SelectedSettings));
+                    if (value == "General") IsStackPanelGeneralVisible = true;
+                    if (value == "Test") IsStackPanelGeneralVisible = false;
+                }
+            }
+        }
+        private string _selectedSaveConf;
+        public string SelectedSaveConf
+        {
+            get => _selectedSaveConf;
+            set
+            {
+                if (_selectedSaveConf != value)
+                {
+                    _selectedSaveConf = value;
+                    OnPropertyChanged(nameof(SelectedSaveConf));
+                    if (value == "SaveDirectory") ;
+                    if (value == "SaveNormal") ;
+                }
+            }
+        }
         public SettingsWindowVM(IDataStorage dataStorage, IConfigService configService)
         {
             _dataStorage = dataStorage;
             _configService = configService;
+            _fileDialog = new FileDialog();
             Config = _configService.Load();
             TextBoxDocumentDirect = Config.DocsPath;
+            SelectedSaveConf = Config.SaveSetting;
 
         }
         public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
         public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
         public ICommand SaveCommand => _saveCommand ??= new OtherRelayCommands(ExecuteSaveCommand, CanExecute);
+        public ICommand OpenFolderCommand => _openFolderCommand ??= new OtherRelayCommands(ExecuteOpenFolderCommand, CanExecute);
         private void ExecuteCloseCommand(object? parameter)
         {
             CloseRequested?.Invoke();
@@ -85,8 +136,13 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         private void ExecuteSaveCommand(object? parameter)
         {
             Config.DocsPath = TextBoxDocumentDirect;
+            Config.SaveSetting = SelectedSaveConf;
             _configService.Save(Config);
             CloseRequested?.Invoke();
+        }
+        private void ExecuteOpenFolderCommand(object? parameter)
+        {
+            TextBoxDocumentDirect = _fileDialog.FolderFileDialog(Config.DocsPath);
         }
         private bool CanExecute(object? parameter) => true;
 

@@ -41,6 +41,7 @@ public class DataStorage : IDataStorage
     #endregion
     public Func<(int index, int length)> GetSelectionCallback { get; set; }
     public Func<int> GetCaretOffset { get; set; }
+
     #region Хранение методов
     public EncryptionMethod CurrentMethod { get; set; }
     public SearchReplaceMethod searchReplaceMethod { get; set; }
@@ -49,4 +50,5 @@ public class DataStorage : IDataStorage
     #region Изначальный путь файла
     public string StartupFilePath { get; set; }
     #endregion
+
 }

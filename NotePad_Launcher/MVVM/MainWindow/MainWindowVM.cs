@@ -354,7 +354,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             return;
         }
-        FilePath = _fileDialog.OpenTextFileDialog(FilePath);
+        FilePath = _fileDialog.OpenTextFileDialog(FilePath, "txt");
         if (string.IsNullOrEmpty(FilePath)) return;
         var filePath = FilePath;
         var openFile = _fileService.OpenFile(filePath);
@@ -397,12 +397,15 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteSaveFileDialog(object? parameter)
     {
-
-        FilePath = _fileDialog.SaveFileDialog(FilePath);
-        _fileService.WriteAllText(FilePath, FileTextDocument.Text);
-        FileName = _fileService.GetFileNameWithout(FilePath);
-        CheckSaveFile = true;
-        _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
+        var selectedPath = _fileDialog.SaveFileDialog(FilePath);
+        if (!string.IsNullOrEmpty(selectedPath))
+        {
+            FilePath = selectedPath;
+            _fileService.WriteAllText(FilePath, FileTextDocument.Text);
+            FileName = _fileService.GetFileNameWithout(FilePath);
+            CheckSaveFile = true;
+            _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
+        }
     }
     private void ExecuteFileList(object? parameter)
     {

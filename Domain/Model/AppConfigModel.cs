@@ -9,5 +9,6 @@ namespace Domain.Model
     public class AppConfigModel
     {
         public string DocsPath { get; set; } = @"FirstLaunch";
+        public string SaveSetting { get; set; } = "SaveNormal";
     }
 }
