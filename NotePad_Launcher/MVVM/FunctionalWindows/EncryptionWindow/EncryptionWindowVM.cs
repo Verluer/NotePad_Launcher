@@ -39,7 +39,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private EncryptionMethod _selectedMethod;
     public EncryptionMethod SelectedMethod { get; }
     private readonly IDataStorage _dataStorage;
-    public EncryptionWindowVM(IDataStorage dataStorage, FileDialog fileDialog)
+    public EncryptionWindowVM(IDataStorage dataStorage, IFileDialog fileDialog)
     {
         _dataStorage = dataStorage;
         SelectedMethod = _dataStorage.CurrentMethod;
