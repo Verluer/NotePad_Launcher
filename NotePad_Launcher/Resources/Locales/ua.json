@@ -1,3 +1,40 @@
 ﻿{
-  "Test": "Тест виконан"
+  "MainMenuItemFile": "Файл",
+  "MainMenuItemFileCreate": "Створити",
+  "MainMenuItemFileOpen": "Відкрити",
+  "MainMenuItemFileSave": "Зберегти",
+  "MainMenuItemFileSaveDialog": "Зберегти як",
+  "MainMenuItemFileList": "Список файлів",
+  "MainMenuItemFileDelete": "Видалити",
+  "MainMenuItemEdit": "Правка",
+  "MainMenuItemEditSearch": "Знайти",
+  "MainMenuItemEditReplace": "Замінити",
+  "MainMenuItemFormat": "Формат",
+  "MainMenuItemFormatWordWrap": "Обтікання словами",
+  "MainMenuItemFormatFont": "Шрифт",
+  "MainMenuItemHelp": "Довідка",
+  "MainMenuItemHelpAbout": "Про програму",
+
+  "MainMessageNotSaved": "Текстовий файл не було збережено, ви хочете продовжити?",
+  "MainMessageSavedTitle": "Збережено",
+  "MainMessageSaved": "Текстовий файл успішно збережено",
+  "MainMessageTextNull": "Введіть текст для текстового файлу",
+  "MainMessageConfirmDelete": "Ви точно хочете видалити цей файл?",
+
+  "ClassFileDialogTextFileFilter": "Текстовий файл",
+  "ClassFileDialogSaveFileTitle": "Зберегти як",
+  "ClassFileDialogSaveFileName": "Новий файл",
+
+  "SettingsRadioButtonGeneral": "Загальні",
+  "SettingsTextBlockGeneralMain": "Основні параметри",
+  "SettingsTextBlockGeneralDirectory": "Директорія\nДокументів:",
+  "SettingsRadioButtonGeneralSaveConf1": "Зберігати файли в директорії",
+  "SettingsRadioButtonGeneralSaveConf2": "Зберігати файли за шляхом відкриття",
+  "SettingsRadioButtonTest": "Перевірка",
+  "SettingsButtonSave": "Зберігти",
+  "SettingsButtonCancel": "Скасувати",
+
+  "AboutText": "Назва: NotePad Launcher\nВерсія: Alpha\nРозробник: Verluer\nДата створення: 24.03.2025\n\nЦей застосунок створено виключно з навчальною метою для вдосконалення навичок програмування.\nВін не призначений для комерційного використання та розповсюджується \"як є\" без будь-яких гарантій.\n\nУсі права на код і алгоритми належать автору."
+
+
 }

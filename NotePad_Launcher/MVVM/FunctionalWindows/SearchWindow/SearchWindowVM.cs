@@ -9,6 +9,7 @@ using System.Windows.Forms.VisualStyles;
 using Service;
 using Domain.Enum;
 using System.Windows;
+using System;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 
@@ -209,13 +210,13 @@ public class SearchWindowVM : INotifyPropertyChanged
     }
     private SearchReplaceMethod _selectedMethod;
     public SearchReplaceMethod SelectedMethod { get; }
-    public SearchWindowVM(IDataStorage dataStorage)
+    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog)
     {
         _searchService = App.ServiceProvider.GetRequiredService<ISearchService>();
         _dataStorage = dataStorage;
         SelectedMethod = _dataStorage.searchReplaceMethod;
         _serviceFunctions = new ServiceFunctions();
-        _fileDialog = new FileDialog();
+        _fileDialog = fileDialog;
         switch (SelectedMethod)
         {
             case SearchReplaceMethod.Search:

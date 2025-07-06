@@ -1,3 +1,39 @@
 ﻿{
-  "Test": "Compele Test"
+  "MainMenuItemFile": "File",
+  "MainMenuItemFileCreate": "Create",
+  "MainMenuItemFileOpen": "Open",
+  "MainMenuItemFileSave": "Save",
+  "MainMenuItemFileSaveDialog": "Save as",
+  "MainMenuItemFileList": "File list",
+  "MainMenuItemFileDelete": "Delete",
+  "MainMenuItemEdit": "Edit",
+  "MainMenuItemEditSearch": "Find",
+  "MainMenuItemEditReplace": "Replace",
+  "MainMenuItemFormat": "Format",
+  "MainMenuItemFormatWordWrap": "WordWrap",
+  "MainMenuItemFormatFont": "Font",
+  "MainMenuItemHelp": "Help",
+  "MainMenuItemHelpAbout": "About App",
+
+  "MainMessageNotSaved": "The text file has not been saved, do you want to continue?",
+  "MainMessageSavedTitle": "Saved",
+  "MainMessageSaved": "The text file was successfully saved",
+  "MainMessageTextNull": "Enter the text for the text file",
+  "MainMessageConfirmDelete": "Are you sure you want to delete this file?",
+
+  "ClassFileDialogTextFileFilter": "Text file",
+  "ClassFileDialogSaveFileTitle": "Save as",
+  "ClassFileDialogSaveFileName": "New File",
+
+  "SettingsRadioButtonGeneral": "General",
+  "SettingsTextBlockGeneralMain": "Main parameters",
+  "SettingsTextBlockGeneralDirectory": "Document\nDirectory:",
+  "SettingsRadioButtonGeneralSaveConf1": "Save files to a directory",
+  "SettingsRadioButtonGeneralSaveConf2": "Save files in the opening path",
+  "SettingsRadioButtonTest": "Test",
+  "SettingsButtonSave": "Save",
+  "SettingsButtonCancel": "Cancel",
+
+  "AboutText": "Name: NotePad Launcher\nVersion: Alpha\nDeveloper: Verluer\nCreation Date: 24.03.2025\n\nThis application was created solely for educational purposes to practice programming skills.\nIt is not intended for commercial use and is distributed \"as is\" without any warranties.\n\nAll rights to the code and algorithms belong to the author."
+
 }

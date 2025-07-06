@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MVVM\InformationWindows\ProgramInfDialog\app.ico" />
     <None Remove="Resources\app.ico" />
   </ItemGroup>
 
@@ -29,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="MVVM\InformationWindows\ProgramInfDialog\app.ico" />
     <Resource Include="Resources\app.ico" />
   </ItemGroup>
 

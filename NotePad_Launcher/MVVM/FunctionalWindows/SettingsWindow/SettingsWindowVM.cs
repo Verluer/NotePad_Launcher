@@ -131,11 +131,11 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         "ua",
         "ru"
     };
-        public SettingsWindowVM(IDataStorage dataStorage, IConfigService configService)
+        public SettingsWindowVM(IDataStorage dataStorage, IConfigService configService, IFileDialog fileDialog)
         {
             _dataStorage = dataStorage;
             _configService = configService;
-            _fileDialog = new FileDialog();
+            _fileDialog = fileDialog;
             Config = _configService.Load();
             TextBoxDocumentDirect = Config.DocsPath;
             SelectedSaveConf = Config.SaveSetting;

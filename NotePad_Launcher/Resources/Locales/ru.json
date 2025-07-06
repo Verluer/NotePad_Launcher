@@ -1,3 +1,38 @@
 ﻿{
-  "Test": "Тест выполнен"
+  "MainMenuItemFile": "Файл",
+  "MainMenuItemFileCreate": "Создать",
+  "MainMenuItemFileOpen": "Открыть",
+  "MainMenuItemFileSave": "Сохранить",
+  "MainMenuItemFileSaveDialog": "Сохранить как",
+  "MainMenuItemFileList": "Список файлов",
+  "MainMenuItemFileDelete": "Удалить",
+  "MainMenuItemEdit": "Правка",
+  "MainMenuItemEditSearch": "Найти",
+  "MainMenuItemEditReplace": "Заменить",
+  "MainMenuItemFormat": "Формат",
+  "MainMenuItemFormatWordWrap": "Перенос по строкам",
+  "MainMenuItemFormatFont": "Шрифт",
+  "MainMenuItemHelp": "Справка",
+  "MainMenuItemHelpAbout": "О приложении",
+
+  "MainMessageNotSaved": "Текстовой файл не был сохранен, вы хотите продолжить?",
+  "MainMessageSavedTitle": "Сохранение",
+  "MainMessageSaved": "Текстовый файл был успешно сохранен",
+  "MainMessageTextNull": "Введите текст для текстового файла",
+  "MainMessageConfirmDelete": "Вы точно хотите удалить этот файл?",
+
+  "ClassFileDialogTextFileFilter": "Текстовой файл",
+  "ClassFileDialogSaveFileTitle": "Сохранить как",
+  "ClassFileDialogSaveFileName": "Новый файл",
+
+  "SettingsRadioButtonGeneral": "Общее",
+  "SettingsTextBlockGeneralMain": "Основные параметры",
+  "SettingsTextBlockGeneralDirectory": "Директория\nДокументов: ",
+  "SettingsRadioButtonGeneralSaveConf1": "Сохранять файлы в директориy",
+  "SettingsRadioButtonGeneralSaveConf2": "Сохранять файлы по пути открытия",
+  "SettingsRadioButtonTest": "Проверка",
+  "SettingsButtonSave": "Сохранить",
+  "SettingsButtonCancel": "Отменить",
+
+  "AboutText": "Название: NotePad Launcher\nВерсия: Alpha\nРазработчик: Verluer\nДата создания: 24.03.2025\n\nДанное приложение было создано исключительно в практических целях для изучения и отработки навыков программирования.\nОно не предназначено для коммерческого использования и распространяется \"как есть\" без каких-либо гарантий.\n\nВсе права на код и алгоритмы принадлежат автору."
 }

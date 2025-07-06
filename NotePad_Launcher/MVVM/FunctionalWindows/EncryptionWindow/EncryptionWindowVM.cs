@@ -39,7 +39,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private EncryptionMethod _selectedMethod;
     public EncryptionMethod SelectedMethod { get; }
     private readonly IDataStorage _dataStorage;
-    public EncryptionWindowVM(IDataStorage dataStorage)
+    public EncryptionWindowVM(IDataStorage dataStorage, FileDialog fileDialog)
     {
         _dataStorage = dataStorage;
         SelectedMethod = _dataStorage.CurrentMethod;
@@ -49,7 +49,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _elgamalService = new ElgamalService();
         _rabinaService = new RabinaService();
         _eccService = new ECCService();
-        _fileDialog = new FileDialog();
+        _fileDialog = fileDialog;
         TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
         {

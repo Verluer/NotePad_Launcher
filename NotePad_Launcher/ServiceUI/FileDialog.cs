@@ -1,17 +1,31 @@
 ﻿using System.Windows;
+using Domain.IService;
+using Domain.Model;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using NotePad_Launcher.IServiceUI;
 
 namespace NotePad_Launcher;
 
 public class FileDialog : IFileDialog
 {
+    private readonly ILocalizationService _localizationService;
+    private readonly IConfigService _configService;
+    private AppConfigModel Config;
+
+    public FileDialog(ILocalizationService localizationService, IConfigService configService)
+    {
+        _configService = configService;
+        Config = _configService.Load();
+        _localizationService = localizationService;
+        _localizationService.LoadLanguage(Config.Language);
+    }
     public string OpenTextFileDialog(string pathToClose, string extension)
     {
         var openFileDialog = new OpenFileDialog();
         if (extension == "txt")
         {
-            openFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt";
+            openFileDialog.Filter = $"{_localizationService["ClassFileDialogTextFileFilter"]}(*.txt)|*.txt";
         }
         else if (extension == null)
         {
@@ -28,10 +42,10 @@ public class FileDialog : IFileDialog
     {
         var saveFileDialog = new SaveFileDialog
         {
-            Title = "Сохранить файл как",
-            Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*",
+            Title = _localizationService["ClassFileDialogSaveFileTitle"],
+            Filter = $"{_localizationService["ClassFileDialogTextFileFilter"]} (*.txt)|*.txt|Все файлы (*.*)|*.*",
             DefaultExt = ".txt",
-            FileName = "Новый файл"
+            FileName = _localizationService["ClassFileDialogSaveFileName"]
         };
 
         if (saveFileDialog.ShowDialog() == true)
