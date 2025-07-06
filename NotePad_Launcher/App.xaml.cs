@@ -14,6 +14,8 @@ using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
+using NotePad_Launcher.IServiceUI;
+using NotePad_Launcher.ServiceUI;
 
 namespace NotePad_Launcher
 {
@@ -60,6 +62,7 @@ namespace NotePad_Launcher
             services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileAssociationService, FileAssociationService>();
             services.AddSingleton<IWindowService, WindowService>();
+            services.AddSingleton<ILocalizationService, LocalizationService>();
             // Регистрация ViewModels
             services.AddSingleton<MainWindowVM>();
             services.AddTransient<FileListWindowVM>();
