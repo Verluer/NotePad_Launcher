@@ -335,7 +335,7 @@ public class MainWindowVM : INotifyPropertyChanged
     // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
-        _windowService.OpenWindow<SettingsWindow>();
+        _windowService.OpenWindowDialog<SettingsWindow>();
     }
     private void ExecuteCloseCommand(object? parameter)
     {
