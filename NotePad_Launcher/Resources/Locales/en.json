@@ -34,6 +34,18 @@
   "SettingsButtonSave": "Save",
   "SettingsButtonCancel": "Cancel",
 
+  "SearchTextBlock1": "What:",
+  "SearchTextBlock2": "With:",
+  "SearchButtonFind": "Find Next",
+  "SearchButtonReplace": "Replace",
+  "SearchButtonReplaceAll": "Replace All",
+  "SearchButtonCancel": "Cancel",
+  "SearchButtonOk": "Ok",
+  "SearchCheckBoxRegisterAware": "Match case",
+  "SearchCheckBoxWrapAround": "Wrap around",
+  "SearchRadioButtonUp": "Up",
+  "SearchRadioButtonDown": "Down",
+
   "AboutText": "Name: NotePad Launcher\nVersion: Alpha\nDeveloper: Verluer\nCreation Date: 24.03.2025\n\nThis application was created solely for educational purposes to practice programming skills.\nIt is not intended for commercial use and is distributed \"as is\" without any warranties.\n\nAll rights to the code and algorithms belong to the author."
 
 }

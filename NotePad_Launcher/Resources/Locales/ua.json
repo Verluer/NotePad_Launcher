@@ -34,6 +34,18 @@
   "SettingsButtonSave": "Зберігти",
   "SettingsButtonCancel": "Скасувати",
 
+  "SearchTextBlock1": "Що:",
+  "SearchTextBlock2": "Чим:",
+  "SearchButtonFind": "Знайти далі",
+  "SearchButtonReplace": "Замінити",
+  "SearchButtonReplaceAll": "Замінити все",
+  "SearchButtonCancel": "Скасувати",
+  "SearchButtonOk": "ОК",
+  "SearchCheckBoxRegisterAware": "Враховувати регістр",
+  "SearchCheckBoxWrapAround": "Обтікання тексту",
+  "SearchRadioButtonUp": "Вгору",
+  "SearchRadioButtonDown": "Вниз",
+
   "AboutText": "Назва: NotePad Launcher\nВерсія: Alpha\nРозробник: Verluer\nДата створення: 24.03.2025\n\nЦей застосунок створено виключно з навчальною метою для вдосконалення навичок програмування.\nВін не призначений для комерційного використання та розповсюджується \"як є\" без будь-яких гарантій.\n\nУсі права на код і алгоритми належать автору."
 
 

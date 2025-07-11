@@ -10,6 +10,8 @@ using Service;
 using Domain.Enum;
 using System.Windows;
 using System;
+using NotePad_Launcher.ServiceUI;
+using Domain.Model;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 
@@ -22,6 +24,7 @@ public class SearchWindowVM : INotifyPropertyChanged
     private readonly IDataStorage _dataStorage;
     private readonly IServiceFunctions _serviceFunctions;
     private readonly IFileDialog _fileDialog;
+    private readonly IConfigService _configService;
     private ICommand? _closeCommand;
     private ICommand? _minimizeCommand;
     private ICommand? _searchCommand;
@@ -34,6 +37,20 @@ public class SearchWindowVM : INotifyPropertyChanged
     private int lastMatchOffset = -1;
     private int previousCaretOffset = -1;
     private string previousSearchPattern = string.Empty;
+
+    private AppConfigModel _config;
+    public AppConfigModel Config
+    {
+        get => _config;
+        set
+        {
+            if (_config != value)
+            {
+                _config = value;
+                OnPropertyChanged(nameof(Config));
+            }
+        }
+    }
     public string SearchPattern
     {
         get => _searchPattern;
@@ -210,7 +227,7 @@ public class SearchWindowVM : INotifyPropertyChanged
     }
     private SearchReplaceMethod _selectedMethod;
     public SearchReplaceMethod SelectedMethod { get; }
-    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog)
+    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService)
     {
         _searchService = App.ServiceProvider.GetRequiredService<ISearchService>();
         _dataStorage = dataStorage;
@@ -227,6 +244,9 @@ public class SearchWindowVM : INotifyPropertyChanged
                 break;
 
         }
+        _configService = configService;
+        Config = _configService.Load();
+        LocalizationService.Instance.LoadLanguage(Config.Language);
     }
     private void SerachUI()
     {
