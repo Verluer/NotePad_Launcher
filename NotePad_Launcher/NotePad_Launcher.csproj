@@ -33,9 +33,15 @@
 
   <ItemGroup>
     <Resource Include="Resources\app.ico" />
-    <Resource Include="Resources\Locales\en.json" />
-    <Resource Include="Resources\Locales\ru.json" />
-    <Resource Include="Resources\Locales\ua.json" />
+    <Content Include="Resources\Locales\en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Locales\ru.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Locales\ua.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\Style.xaml" />
   </ItemGroup>
 
