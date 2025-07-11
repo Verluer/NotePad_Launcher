@@ -10,12 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="MVVM\InformationWindows\ProgramInfDialog\app.ico" />
     <None Remove="Resources\app.ico" />
+    <None Remove="Resources\Locales\en.json" />
+    <None Remove="Resources\Locales\ru.json" />
+    <None Remove="Resources\Locales\ua.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\app.ico" />
+    <Page Remove="Resources\Style.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,8 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="MVVM\InformationWindows\ProgramInfDialog\app.ico" />
     <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\Locales\en.json" />
+    <Resource Include="Resources\Locales\ru.json" />
+    <Resource Include="Resources\Locales\ua.json" />
+    <Resource Include="Resources\Style.xaml" />
   </ItemGroup>
 
 </Project>

@@ -1,32 +1,42 @@
-﻿using NotePad_Launcher.IServiceUI;
+﻿using Domain.IService;
+using NotePad_Launcher.IServiceUI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace NotePad_Launcher.ServiceUI
 {
     public class LocalizationService : ILocalizationService
     {
+        private readonly IFileService _fileService;
+
         private Dictionary<string, string> _translations = new Dictionary<string, string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public static LocalizationService Instance { get; } = new LocalizationService();
+        public static LocalizationService Instance { get; private set; }
+        public LocalizationService(IFileService fileService)
+        {
+            _fileService = fileService;
+            Instance = this;
+        }
 
         public string this[string key]
         {
             get => _translations.TryGetValue(key, out var value) ? value : $"[{key}]";
         }
-
+        
         public void LoadLanguage(string langCode)
         {
-            var path = Path.Combine(@"D:\VIsual Studio\VS project\NotePad_Launcher\NotePad_Launcher\Resources\Locales", $"{langCode}.json");
+            var resourcesDirectory = _fileService.ExDirectoryFile("Resources\\Locales");
+            var path = Path.Combine($@"{resourcesDirectory}", $"{langCode}.json");
             if (!File.Exists(path)) return;
 
             var json = File.ReadAllText(path);

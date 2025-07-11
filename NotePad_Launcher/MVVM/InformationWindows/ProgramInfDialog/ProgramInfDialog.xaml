@@ -37,7 +37,7 @@
                 </Button.Style>
             </Button>
         </DockPanel>
-        <Image Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Source="/MVVM/InformationWindows/ProgramInfDialog/app.ico"/>
+        <Image Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30" Source="pack://application:,,,/NotePad_Launcher;component/Resources/app.ico"/>
         <TextBlock Text="{Binding Source={StaticResource LocService}, Path=[AboutText]}" Grid.Column="1" Grid.Row="2" MaxWidth="300" Width="300" TextWrapping="Wrap" xml:space="preserve" HorizontalAlignment="Center" />
 
         <Button Grid.Column="1" Grid.Row="3" Command="{Binding CloseCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="20" Width="60" Background="Gainsboro">

@@ -226,10 +226,11 @@ public class MainWindowVM : INotifyPropertyChanged
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
         _configService = App.ServiceProvider.GetRequiredService<IConfigService>();
+        _fileService.CreateDocumentsDirectory();
         Config = _configService.Load();
         if (Config.DocsPath == "FirstLaunch")
         {
-            string DocumentPath = _fileService.ExDirectoryFile();
+            string DocumentPath = _fileService.ExDirectoryFile("Documents");
             Config.DocsPath = DocumentPath;
             _configService.Save(Config);
         }

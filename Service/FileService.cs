@@ -22,13 +22,33 @@ namespace Service
             string logFilePath = Path.Combine(_config.DocsPath, "log.txt");
             File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
         }
-        public string ExDirectoryFile()
+        public string ExDirectoryFile(string Folder)
         {
-            string exePath = Assembly.GetExecutingAssembly().Location; //Полный путь к исполняемому файлу
-            string exeDirectory = Path.GetDirectoryName(exePath); //Извлечение директории
-            string dataFilePath = Path.Combine(exeDirectory, "Documents");
-            string directoryPath = Path.GetFullPath(dataFilePath);
-            return directoryPath;
+
+            var exePath = Assembly.GetExecutingAssembly().Location;
+            var exeDirectory = Path.GetDirectoryName(exePath);
+            var resourcesDirectory = "";
+            var counter = 0;
+            while (counter < 5)
+            {
+                resourcesDirectory = Path.Combine(exeDirectory, Folder);
+                if (!Directory.Exists(resourcesDirectory))
+                {
+                    exeDirectory = Directory.GetParent(exeDirectory).FullName;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return resourcesDirectory;
+        }
+        public void CreateDocumentsDirectory()
+        {
+            var exePath = Assembly.GetExecutingAssembly().Location;
+            var exeDirectory = Path.GetDirectoryName(exePath);
+            var documentsDirect = Path.Combine($@"{exeDirectory}/Documents");
+            Directory.CreateDirectory(documentsDirect);
         }
         public FileModel OpenFile(string pathFile)
         {

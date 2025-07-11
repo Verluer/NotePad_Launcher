@@ -16,6 +16,7 @@ using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.ServiceUI;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace NotePad_Launcher
 {
@@ -35,7 +36,8 @@ namespace NotePad_Launcher
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
-                
+
+            var _ = ServiceProvider.GetRequiredService<ILocalizationService>();
             if (e.Args.Length > 0)
             {
                 string filePath = e.Args[0];
