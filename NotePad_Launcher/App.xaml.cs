@@ -48,6 +48,7 @@ namespace NotePad_Launcher
             var configService = ServiceProvider.GetRequiredService<IConfigService>();
             Config = configService.Load();
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            LocalizationService.Instance.LoadLanguage(App.Config.Language);
             mainWindow.Show();
         }
 

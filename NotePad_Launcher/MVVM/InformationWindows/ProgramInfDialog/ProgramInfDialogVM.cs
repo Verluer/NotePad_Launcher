@@ -31,7 +31,6 @@ public class ProgramInfDialogVM : INotifyPropertyChanged
 
     public ProgramInfDialogVM()
     {
-        LocalizationService.Instance.LoadLanguage(App.Config.Language);
     }
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
     private void ExecuteCloseCommand(object? parameter)

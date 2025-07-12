@@ -128,7 +128,6 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             TextBoxDocumentDirect = App.Config.DocsPath;
             SelectedSaveConf = App.Config.SaveSetting;
             SelectedLanguage = App.Config.Language;
-            LocalizationService.Instance.LoadLanguage(SelectedLanguage);
 
         }
         public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
@@ -149,6 +148,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             App.Config.SaveSetting = SelectedSaveConf;
             App.Config.Language = SelectedLanguage;
             _configService.Save(App.Config);
+            LocalizationService.Instance.LoadLanguage(SelectedLanguage);
             CloseRequested?.Invoke();
         }
         private void ExecuteOpenFolderCommand(object? parameter)

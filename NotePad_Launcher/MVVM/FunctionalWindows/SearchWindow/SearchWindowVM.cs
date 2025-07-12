@@ -230,7 +230,6 @@ public class SearchWindowVM : INotifyPropertyChanged
                 break;
 
         }
-        LocalizationService.Instance.LoadLanguage(App.Config.Language);
     }
     private void SerachUI()
     {

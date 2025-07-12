@@ -217,7 +217,6 @@ public class MainWindowVM : INotifyPropertyChanged
             App.Config.DocsPath = DocumentPath;
             _configService.Save(App.Config);
         }
-        LocalizationService.Instance.LoadLanguage(App.Config.Language);
         _dataStorage.GetTextCallback = () => FileTextDocument.Text;
         _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
