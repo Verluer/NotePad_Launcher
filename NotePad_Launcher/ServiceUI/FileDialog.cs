@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.ServiceUI;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace NotePad_Launcher;
 
@@ -28,14 +29,14 @@ public class FileDialog : IFileDialog
 
         return pathToClose;
     }
-    public string SaveFileDialog(string pathToClose)
+    public string SaveFileDialog(string pathToClose, string FileName)
     {
         var saveFileDialog = new SaveFileDialog
         {
             Title = LocalizationService.Instance["ClassFileDialogSaveFileTitle"],
             Filter = $"{LocalizationService.Instance["ClassFileDialogTextFileFilter"]} (*.txt)|*.txt|Все файлы (*.*)|*.*",
             DefaultExt = ".txt",
-            FileName = LocalizationService.Instance["ClassFileDialogSaveFileName"]
+            FileName = FileName
         };
 
         if (saveFileDialog.ShowDialog() == true)

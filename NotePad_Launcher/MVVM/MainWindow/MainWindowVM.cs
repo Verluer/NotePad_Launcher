@@ -398,7 +398,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteSaveFileDialog(object? parameter)
     {
-        var selectedPath = _fileDialog.SaveFileDialog(FilePath);
+        var selectedPath = _fileDialog.SaveFileDialog(FilePath, FileName);
         if (!string.IsNullOrEmpty(selectedPath))
         {
             FilePath = selectedPath;

@@ -285,11 +285,11 @@ public class SearchWindowVM : INotifyPropertyChanged
 
         int currentCaretOffset = _dataStorage.GetCaretOffset();
 
-        // 1. Сброс при смене паттерна — только в начало
-        // 2. Сброс при ручном перемещении курсора — с позиции курсора
+        // Сброс при смене паттерна — только в начало (0)
+        // Сброс при ручном перемещении курсора — с позиции курсора
         if (SearchPattern != previousSearchPattern)
         {
-            lastMatchOffset = 0;
+            lastMatchOffset = 0; // Оставляем как у тебя было
         }
         else if (currentCaretOffset != previousCaretOffset)
         {
@@ -329,7 +329,8 @@ public class SearchWindowVM : INotifyPropertyChanged
         {
             for (int i = matches.Count - 1; i >= 0; i--)
             {
-                if (matches[i].Index + matches[i].Length <= lastMatchOffset)
+                // Исправленная проверка для поиска вверх — берем совпадения с индексом < lastMatchOffset
+                if (matches[i].Index < lastMatchOffset)
                 {
                     index = i;
                     break;
@@ -353,16 +354,30 @@ public class SearchWindowVM : INotifyPropertyChanged
         Match currentMatch = matches[index];
 
         // Обновляем offset после найденного слова
-        lastMatchOffset = currentMatch.Index + currentMatch.Length;
+        if (SelectedOption == "Down")
+        {
+            lastMatchOffset = currentMatch.Index + currentMatch.Length;
+        }
+        else if (SelectedOption == "Up")
+        {
+            // Для поиска вверх смещаем offset на начало текущего совпадения,
+            // чтобы следующий поиск вверх шел дальше назад
+            lastMatchOffset = currentMatch.Index;
+        }
 
         _dataStorage.ResultSearch(currentMatch.Index, currentMatch.Length);
         previousOption = SelectedOption;
 
         return currentMatch;
     }
+
+
+
+
     private void ExecuteSearchCommand(object? parameter)
     {
         ReplaceMatch = Search();
+        if(SelectedOption == "Up") ReplaceMatch = Search();
     }
     private void ExecuteReplaceCommand(object? parameter)
     {

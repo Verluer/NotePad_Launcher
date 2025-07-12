@@ -9,53 +9,49 @@ public class FileAssociationService : IFileAssociationService
 {
     public void RegisterTxtFileAssociation()
     {
-        var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+        var exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+        var exeName = Path.GetFileName(exePath);
         var directoryPath = Path.GetDirectoryName(exePath);
 
         var iconFilePath = FindIcon(directoryPath, "app.ico");
-
         var iconPath = iconFilePath ?? $"\"{exePath}\",0";
 
         const string extension = ".txt";
         const string fileType = "NotePad_Launcher.txtfile";
-        var existingFileType = Registry.GetValue($"HKEY_CLASSES_ROOT\\{extension}", "", null);
-        if (existingFileType == null || !existingFileType.ToString().Equals(fileType))
+
+        try
         {
-            try
+            using (var key = Registry.CurrentUser.CreateSubKey($@"Software\Classes\{extension}"))
             {
-                using (var key = Registry.ClassesRoot.CreateSubKey(extension))
-                {
-                    if (key == null) return;
-                    key.SetValue("", fileType);
-                    key.SetValue("Content Type", "text/plain");
-                }
-
-                using (var classKey = Registry.ClassesRoot.CreateSubKey(fileType))
-                {
-                    if (classKey == null) return;
-                    classKey.SetValue("", "Text Document for NotePad_Launcher");
-
-                    using (var iconKey = classKey.CreateSubKey("DefaultIcon"))
-                    {
-                        if (iconKey == null) return;
-                        iconKey.SetValue("", iconPath);
-                    }
-
-                    using (var commandKey = classKey.CreateSubKey(@"shell\open\command"))
-                    {
-                        if (commandKey == null) return;
-                        commandKey.SetValue("", $"\"{exePath}\" \"%1\"");
-                    }
-                }
-
-                SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
+                key?.SetValue("", fileType);
+                key?.SetValue("Content Type", "text/plain");
             }
-            catch
+
+            using (var classKey = Registry.CurrentUser.CreateSubKey($@"Software\Classes\{fileType}"))
             {
-                //
+                classKey?.SetValue("", "Text Document for NotePad_Launcher");
+
+                using (var iconKey = classKey?.CreateSubKey("DefaultIcon"))
+                    iconKey?.SetValue("", iconPath);
+
+                using (var commandKey = classKey?.CreateSubKey(@"shell\open\command"))
+                    commandKey?.SetValue("", $"\"{exePath}\" \"%1\"");
             }
+
+            using (var appKey = Registry.CurrentUser.CreateSubKey($@"Software\Classes\Applications\{exeName}"))
+            {
+                using (var shellKey = appKey?.CreateSubKey(@"shell\open\command"))
+                    shellKey?.SetValue("", $"\"{exePath}\" \"%1\"");
+            }
+
+            SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
+        }
+        catch
+        {
+            // Логировать ошибку при необходимости
         }
     }
+
     public static string FindIcon(string baseDirectory, string iconFileName)
     {
         try
