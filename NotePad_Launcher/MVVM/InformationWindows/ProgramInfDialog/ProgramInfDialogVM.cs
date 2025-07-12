@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using NotePad_Launcher.MVVM.Commands;
+using NotePad_Launcher.ServiceUI;
+using Domain.Model;
+using Domain.IService;
 
 namespace NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
 
@@ -24,6 +27,27 @@ public class ProgramInfDialogVM : INotifyPropertyChanged
         field = value;
         OnPropertyChanged(propertyName);
         return true;
+    }
+    private readonly IConfigService _configService;
+    private AppConfigModel _config;
+    public AppConfigModel Config
+    {
+        get => _config;
+        set
+        {
+            if (_config != value)
+            {
+                _config = value;
+                OnPropertyChanged(nameof(Config));
+            }
+        }
+    }
+
+    public ProgramInfDialogVM(IConfigService configService)
+    {
+        _configService = configService;
+        Config = _configService.Load();
+        LocalizationService.Instance.LoadLanguage(Config.Language);
     }
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
     private void ExecuteCloseCommand(object? parameter)

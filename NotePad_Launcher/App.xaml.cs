@@ -14,6 +14,9 @@ using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
+using NotePad_Launcher.IServiceUI;
+using NotePad_Launcher.ServiceUI;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 
 namespace NotePad_Launcher
 {
@@ -33,7 +36,8 @@ namespace NotePad_Launcher
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
-                
+
+            var _ = ServiceProvider.GetRequiredService<ILocalizationService>();
             if (e.Args.Length > 0)
             {
                 string filePath = e.Args[0];
@@ -60,6 +64,7 @@ namespace NotePad_Launcher
             services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileAssociationService, FileAssociationService>();
             services.AddSingleton<IWindowService, WindowService>();
+            services.AddSingleton<ILocalizationService, LocalizationService>();
             // Регистрация ViewModels
             services.AddSingleton<MainWindowVM>();
             services.AddTransient<FileListWindowVM>();

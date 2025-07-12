@@ -5,9 +5,28 @@ namespace NotePad_Launcher;
 
 public class WindowService : IWindowService
 {
+    private readonly Dictionary<Type, Window> _openWindows = new();
     public void OpenWindow<TWindow>() where TWindow : Window, new()
     {
-        var window = App.ServiceProvider.GetRequiredService <TWindow>();
+
+        var windowType = typeof(TWindow);
+
+        if (_openWindows.TryGetValue(windowType, out var existingWindow))
+        {
+            if (existingWindow.IsVisible)
+            {
+                if (existingWindow.WindowState == WindowState.Minimized)
+                    existingWindow.WindowState = WindowState.Normal;
+
+                existingWindow.Activate();
+                return;
+            }
+        }
+        var window = new TWindow();
+        _openWindows[windowType] = window;
+
+        window.Closed += (s, e) => _openWindows.Remove(windowType);
+
         window.Show();
     }
     public void OpenWindowDialog<TWindow>() where TWindow : Window, new()

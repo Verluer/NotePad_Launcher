@@ -4,12 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-        xmlns:local="clr-namespace:Domain.Enum;assembly=Domain"
+        xmlns:enum="clr-namespace:Domain.Enum;assembly=Domain"
+        xmlns:local="clr-namespace:NotePad_Launcher.ServiceUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         MinWidth="300" MinHeight="200"
         Style="{StaticResource WindowStyle}">
-
+    <Window.Resources>
+        <ObjectDataProvider x:Key="LocService" ObjectType="{x:Type local:LocalizationService}" MethodName="get_Instance" />
+    </Window.Resources>
     <Grid x:Name="MainWindowContainer">
         <!--Разделение программы на ряды и столбцы-->
         <Grid.RowDefinitions>
@@ -25,7 +28,7 @@
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="../../Resources/app.ico"/>
+            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="pack://application:,,,/NotePad_Launcher;component/Resources/app.ico"/>
             <TextBlock Text=" NotePad Launcher" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>
@@ -44,31 +47,31 @@
         <!--Меню кнопок под заголовком-->
         <DockPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Background="#F0F0F0" LastChildFill="False">
             <Menu DockPanel.Dock="Left" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">
-                <MenuItem Header="Файл" Style="{StaticResource MainWindowMenuItemStyle}">
-                    <MenuItem Command="{Binding CreateFileCommand}"  Header="Создать" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding OpenFileCommand}" Header="Открыть" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding SaveFileCommand}" Header="Сохранить" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="Сохранить как" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding FileListCommand}" Header="Список файлов" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding DeleteFileCommand}" Header="Удалить Файл" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFile]}" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding CreateFileCommand}"  Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileCreate]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding OpenFileCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileOpen]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SaveFileCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileSave]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SaveFileDialogCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileSaveDialog]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding FileListCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileList]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding DeleteFileCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileDelete]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
-                <MenuItem Header="Правка" Style="{StaticResource MainWindowMenuItemStyle}">
-                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static local:SearchReplaceMethod.Search}" Header="Найти" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static local:SearchReplaceMethod.Replace}" Header="Заменить" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEdit]}" Style="{StaticResource MainWindowMenuItemStyle}">
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:SearchReplaceMethod.Search}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditSearch]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:SearchReplaceMethod.Replace}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditReplace]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
-                <MenuItem Header="Формат" Style="{StaticResource MainWindowMenuItemStyle}" >
-                    <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="Перенос по строкам" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding FontPickerCommand}" Header="Шрифт" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormat]}" Style="{StaticResource MainWindowMenuItemStyle}" >
+                    <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormatWordWrap]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding FontPickerCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormatFont]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Header="Encryption" Style="{StaticResource MainWindowMenuItemStyle}">
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Elgamal}"  Header="Elgamal" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.Rabina}"  Header="Rabina" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static local:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.Elgamal}"  Header="Elgamal" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.Rabina}"  Header="Rabina" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Справка" Style="{StaticResource MainWindowMenuItemStyle}" >
+                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemHelp]}" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Header="Github" Command="{Binding MovingGithubCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Header="О программе" Command="{Binding ProgramInfCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemHelpAbout]}" Command="{Binding ProgramInfCommand}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
             </Menu>
             <Menu DockPanel.Dock="Right" Background="#F0F0F0" VerticalAlignment="Center" Width="Auto">

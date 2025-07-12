@@ -35,10 +35,10 @@ public class FileListWindowVM : INotifyPropertyChanged
 
     public ObservableCollection<FileModel> FileList { get; private set; }
 
-    public FileListWindowVM(IFileService service)
+    public FileListWindowVM(IFileService service, IFileDialog fileDialog)
     {
         _fileService = service;
-        _fileDialog = new FileDialog();
+        _fileDialog = fileDialog;
         LoadFileList();
     }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

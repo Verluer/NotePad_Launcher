@@ -11,10 +11,13 @@
 
   <ItemGroup>
     <None Remove="Resources\app.ico" />
+    <None Remove="Resources\Locales\en.json" />
+    <None Remove="Resources\Locales\ru.json" />
+    <None Remove="Resources\Locales\ua.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\app.ico" />
+    <Page Remove="Resources\Style.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +33,16 @@
 
   <ItemGroup>
     <Resource Include="Resources\app.ico" />
+    <Content Include="Resources\Locales\en.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Locales\ru.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Locales\ua.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\Style.xaml" />
   </ItemGroup>
 
 </Project>

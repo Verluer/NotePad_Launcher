@@ -2,7 +2,9 @@
 using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.MVVM.Commands;
+using NotePad_Launcher.ServiceUI;
 using Service;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
     {
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         private readonly IDataStorage _dataStorage;
         private readonly IConfigService _configService;
         private readonly IFileDialog _fileDialog;
@@ -111,14 +114,33 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
                 }
             }
         }
-        public SettingsWindowVM(IDataStorage dataStorage, IConfigService configService)
+        private string _selectedLanguage;
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set
+            {
+                _selectedLanguage = value;
+                OnPropertyChanged(nameof(SelectedLanguage));
+            }
+        }
+
+        public List<string> Language { get; } = new List<string>
+    {
+        "en",
+        "ua",
+        "ru"
+    };
+        public SettingsWindowVM(IDataStorage dataStorage, IConfigService configService, IFileDialog fileDialog)
         {
             _dataStorage = dataStorage;
             _configService = configService;
-            _fileDialog = new FileDialog();
+            _fileDialog = fileDialog;
             Config = _configService.Load();
             TextBoxDocumentDirect = Config.DocsPath;
             SelectedSaveConf = Config.SaveSetting;
+            SelectedLanguage = Config.Language;
+            LocalizationService.Instance.LoadLanguage(SelectedLanguage);
 
         }
         public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
@@ -137,6 +159,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         {
             Config.DocsPath = TextBoxDocumentDirect;
             Config.SaveSetting = SelectedSaveConf;
+            Config.Language = SelectedLanguage;
             _configService.Save(Config);
             CloseRequested?.Invoke();
         }

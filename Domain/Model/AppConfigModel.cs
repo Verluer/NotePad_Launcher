@@ -10,5 +10,6 @@ namespace Domain.Model
     {
         public string DocsPath { get; set; } = @"FirstLaunch";
         public string SaveSetting { get; set; } = "SaveNormal";
+        public string Language { get; set; } = "en";
     }
 }

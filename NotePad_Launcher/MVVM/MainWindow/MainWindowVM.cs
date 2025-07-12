@@ -16,6 +16,7 @@ using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.MVVM.SettingsDialog;
+using NotePad_Launcher.ServiceUI;
 using Service;
 using FontFamily = System.Windows.Media.FontFamily;
 using FontStyle = System.Windows.FontStyle;
@@ -220,19 +221,21 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
         _windowService = App.ServiceProvider.GetRequiredService<IWindowService>();
-        _fileDialog = new FileDialog();
+        _fileDialog = App.ServiceProvider.GetRequiredService<IFileDialog>();
         _serviceFunctions = new ServiceFunctions();
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
         _configService = App.ServiceProvider.GetRequiredService<IConfigService>();
+        _fileService.CreateDocumentsDirectory();
         Config = _configService.Load();
         if (Config.DocsPath == "FirstLaunch")
         {
-            string DocumentPath = _fileService.ExDirectoryFile();
+            string DocumentPath = _fileService.ExDirectoryFile("Documents");
             Config.DocsPath = DocumentPath;
             _configService.Save(Config);
         }
-            _dataStorage.GetTextCallback = () => FileTextDocument.Text;
+        LocalizationService.Instance.LoadLanguage(Config.Language);
+        _dataStorage.GetTextCallback = () => FileTextDocument.Text;
         _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
         _dataStorage.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
@@ -285,7 +288,7 @@ public class MainWindowVM : INotifyPropertyChanged
         if (!saveFile)
         {
             var result = _fileDialog.ShowYesNoDialog(
-                "Текстовой файл не был сохранен, вы хотите продолжить?", "");
+                $"{LocalizationService.Instance["MainMessageNotSaved"]}", "");
 
             return result == MessageBoxResult.Yes;
         }
@@ -333,7 +336,7 @@ public class MainWindowVM : INotifyPropertyChanged
     // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
-        _windowService.OpenWindow<SettingsWindow>();
+        _windowService.OpenWindowDialog<SettingsWindow>();
     }
     private void ExecuteCloseCommand(object? parameter)
     {
@@ -390,10 +393,10 @@ public class MainWindowVM : INotifyPropertyChanged
             var saveFile = _fileService.SaveFile(model);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
-            _fileDialog.ShowMessage("Текстовой файл успешно сохранен", "Сохранение");
+            _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);
         }
         else
-            _fileDialog.ShowMessage("Введите текст для текстового файла", "Сохранение");
+            _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageTextNull"], LocalizationService.Instance["MainMessageSavedTitle"]);
     }
     private void ExecuteSaveFileDialog(object? parameter)
     {
@@ -404,7 +407,7 @@ public class MainWindowVM : INotifyPropertyChanged
             _fileService.WriteAllText(FilePath, FileTextDocument.Text);
             FileName = _fileService.GetFileNameWithout(FilePath);
             CheckSaveFile = true;
-            _fileDialog.ShowMessage($"Файл сохранен:\n{FilePath}", "Сохранение");
+            _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}:\n{FilePath}", LocalizationService.Instance["MainMessageSavedTitle"]);
         }
     }
     private void ExecuteFileList(object? parameter)
@@ -416,8 +419,7 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         if (_fileService.FileExists(FilePath))
         {
-            var result = _fileDialog.ShowYesNoDialog(
-                "Вы точно хотите удалить этот текстовой файл??");
+            var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
             if (result == MessageBoxResult.Yes)
             {
                 FileTextDocument.Text = string.Empty;
