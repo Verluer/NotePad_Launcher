@@ -15,7 +15,6 @@ using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
-using NotePad_Launcher.MVVM.SettingsDialog;
 using NotePad_Launcher.ServiceUI;
 using Service;
 using FontFamily = System.Windows.Media.FontFamily;
@@ -58,20 +57,6 @@ public class MainWindowVM : INotifyPropertyChanged
     private readonly IFileAssociationService _fileAssociationService;
     private readonly IWindowService _windowService;
     private readonly IConfigService _configService;
-
-    private AppConfigModel _config;
-    public AppConfigModel Config
-    {
-        get => _config;
-        set
-        {
-            if (_config != value)
-            {
-                _config = value;
-                OnPropertyChanged(nameof(Config));
-            }
-        }
-    }
 
     private bool _checkSaveFile = true;
     public string FilePath;
@@ -225,16 +210,14 @@ public class MainWindowVM : INotifyPropertyChanged
         _serviceFunctions = new ServiceFunctions();
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
-        _configService = App.ServiceProvider.GetRequiredService<IConfigService>();
         _fileService.CreateDocumentsDirectory();
-        Config = _configService.Load();
-        if (Config.DocsPath == "FirstLaunch")
+        if (App.Config.DocsPath == "FirstLaunch")
         {
             string DocumentPath = _fileService.ExDirectoryFile("Documents");
-            Config.DocsPath = DocumentPath;
-            _configService.Save(Config);
+            App.Config.DocsPath = DocumentPath;
+            _configService.Save(App.Config);
         }
-        LocalizationService.Instance.LoadLanguage(Config.Language);
+        LocalizationService.Instance.LoadLanguage(App.Config.Language);
         _dataStorage.GetTextCallback = () => FileTextDocument.Text;
         _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
@@ -374,7 +357,7 @@ public class MainWindowVM : INotifyPropertyChanged
             return;
         }
 
-        var nameFile = _fileService.CreateFile();
+        var nameFile = _fileService.CreateFile(App.Config.DocsPath);
         FileName = nameFile.FileName;
         FileTextDocument.Text = string.Empty;
         FilePath = nameFile.FilePath;
@@ -390,7 +373,7 @@ public class MainWindowVM : INotifyPropertyChanged
         };
         if (!string.IsNullOrEmpty(model.FileText.Trim()))
         {
-            var saveFile = _fileService.SaveFile(model);
+            var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
             _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);

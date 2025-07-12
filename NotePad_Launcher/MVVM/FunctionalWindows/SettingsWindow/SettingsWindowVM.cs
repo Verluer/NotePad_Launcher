@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
@@ -31,6 +32,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         private ICommand? _minimizeCommand;
         private ICommand? _saveCommand;
         private ICommand? _openFolderCommand;
+
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -42,19 +44,6 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             field = value;
             OnPropertyChanged(propertyName);
             return true;
-        }
-        private AppConfigModel _config;
-        public AppConfigModel Config
-        {
-            get => _config;
-            set
-            {
-                if (_config != value)
-                {
-                    _config = value;
-                    OnPropertyChanged(nameof(Config));
-                }
-            }
         }
 
         private string _textBoxDocumentDirect;
@@ -131,15 +120,14 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         "ua",
         "ru"
     };
-        public SettingsWindowVM(IDataStorage dataStorage, IConfigService configService, IFileDialog fileDialog)
+        public SettingsWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService)
         {
-            _dataStorage = dataStorage;
             _configService = configService;
+            _dataStorage = dataStorage;
             _fileDialog = fileDialog;
-            Config = _configService.Load();
-            TextBoxDocumentDirect = Config.DocsPath;
-            SelectedSaveConf = Config.SaveSetting;
-            SelectedLanguage = Config.Language;
+            TextBoxDocumentDirect = App.Config.DocsPath;
+            SelectedSaveConf = App.Config.SaveSetting;
+            SelectedLanguage = App.Config.Language;
             LocalizationService.Instance.LoadLanguage(SelectedLanguage);
 
         }
@@ -157,15 +145,16 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         }
         private void ExecuteSaveCommand(object? parameter)
         {
-            Config.DocsPath = TextBoxDocumentDirect;
-            Config.SaveSetting = SelectedSaveConf;
-            Config.Language = SelectedLanguage;
-            _configService.Save(Config);
+            App.Config.DocsPath = TextBoxDocumentDirect;
+            App.Config.SaveSetting = SelectedSaveConf;
+            App.Config.Language = SelectedLanguage;
+            _configService.Save(App.Config);
             CloseRequested?.Invoke();
         }
         private void ExecuteOpenFolderCommand(object? parameter)
         {
-            TextBoxDocumentDirect = _fileDialog.FolderFileDialog(Config.DocsPath);
+            var owner = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            TextBoxDocumentDirect = _fileDialog.FolderFileDialog(App.Config.DocsPath, owner);
         }
         private bool CanExecute(object? parameter) => true;
 

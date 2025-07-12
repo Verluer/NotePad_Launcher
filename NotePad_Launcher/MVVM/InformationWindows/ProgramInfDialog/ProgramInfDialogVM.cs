@@ -28,26 +28,10 @@ public class ProgramInfDialogVM : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
-    private readonly IConfigService _configService;
-    private AppConfigModel _config;
-    public AppConfigModel Config
-    {
-        get => _config;
-        set
-        {
-            if (_config != value)
-            {
-                _config = value;
-                OnPropertyChanged(nameof(Config));
-            }
-        }
-    }
 
-    public ProgramInfDialogVM(IConfigService configService)
+    public ProgramInfDialogVM()
     {
-        _configService = configService;
-        Config = _configService.Load();
-        LocalizationService.Instance.LoadLanguage(Config.Language);
+        LocalizationService.Instance.LoadLanguage(App.Config.Language);
     }
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
     private void ExecuteCloseCommand(object? parameter)

@@ -58,7 +58,31 @@ namespace NotePad_Launcher
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.DragMove();
+                if (this.WindowState == WindowState.Maximized)
+                {
+                    // Позиция курсора относительно экрана
+                    var mousePos = e.GetPosition(this);
+                    var screenPos = this.PointToScreen(mousePos);
+
+                    // Процент от ширины окна, где кликнули
+                    double relativeX = mousePos.X / this.ActualWidth;
+
+                    // Переводим окно в нормальное состояние
+                    this.WindowState = WindowState.Normal;
+
+                    // Вычисляем новое положение окна, чтобы курсор "оставался" на том же месте заголовка
+                    // Смещаем окно по X, чтобы курсор оказался на нужной позиции внутри окна
+                    this.Left = screenPos.X - relativeX * this.Width;
+                    this.Top = screenPos.Y - mousePos.Y;
+
+                    // Теперь можно начать перетаскивание
+                    this.DragMove();
+                }
+                else
+                {
+                    // Если не максимизировано, просто перетаскиваем
+                    this.DragMove();
+                }
             }
         }
 

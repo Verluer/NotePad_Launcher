@@ -4,7 +4,6 @@ using Domain.IService;
 using Domain.IService.IEncryption;
 using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
-using NotePad_Launcher.MVVM.SettingsDialog;
 using Service;
 using Service.Encryption;
 using NotePad_Launcher.ViewModels.MainWindow;
@@ -17,6 +16,7 @@ using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.ServiceUI;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using Domain.Model;
 
 namespace NotePad_Launcher
 {
@@ -26,6 +26,7 @@ namespace NotePad_Launcher
     public partial class App : Application
     {
         public static ServiceProvider ServiceProvider { get; set; }
+        public static AppConfigModel Config { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -44,6 +45,8 @@ namespace NotePad_Launcher
                 var dataStorage = ServiceProvider.GetRequiredService<IDataStorage>();
                 dataStorage.StartupFilePath = filePath;
             }
+            var configService = ServiceProvider.GetRequiredService<IConfigService>();
+            Config = configService.Load();
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
         }
@@ -71,7 +74,6 @@ namespace NotePad_Launcher
             services.AddTransient<EncryptionWindowVM>();
             services.AddTransient<ProgramInfDialogVM>();
             services.AddTransient<FontPickerDialogVM>();
-            services.AddTransient<SettingsDialogVM>();
             services.AddTransient<SearchWindowVM>();
             services.AddTransient<SettingsWindowVM>();
             // Регистрация окон
@@ -80,7 +82,6 @@ namespace NotePad_Launcher
             services.AddTransient<FileListWindow>();
             services.AddTransient<ProgramInfDialog>();
             services.AddTransient<FontPickerDialog>();
-            services.AddTransient<SettingsDialog>();
             services.AddTransient<SearchWindow>();
             services.AddTransient<SettingsWindow>();
 

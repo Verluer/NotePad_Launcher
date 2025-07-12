@@ -11,14 +11,10 @@ public class FileDialog : IFileDialog
 {
     private readonly ILocalizationService _localizationService;
     private readonly IConfigService _configService;
-    private AppConfigModel Config;
-
-    public FileDialog(ILocalizationService localizationService, IConfigService configService)
+    public FileDialog(ILocalizationService localizationService)
     {
-        _configService = configService;
-        Config = _configService.Load();
         _localizationService = localizationService;
-        _localizationService.LoadLanguage(Config.Language);
+        _localizationService.LoadLanguage(App.Config.Language);
     }
     public string OpenTextFileDialog(string pathToClose, string extension)
     {
@@ -55,7 +51,7 @@ public class FileDialog : IFileDialog
 
         return null;
     }
-    public string FolderFileDialog(string initialPath = null)
+    public string FolderFileDialog(string initialPath = null, Window owner = null)
     {
         var dialog = new CommonOpenFileDialog
         {
@@ -64,12 +60,13 @@ public class FileDialog : IFileDialog
             InitialDirectory = initialPath
         };
 
-        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+
+        if (dialog.ShowDialog(owner) == CommonFileDialogResult.Ok)
         {
             return dialog.FileName;
         }
 
-        return null;
+        return initialPath;
     }
     public void ShowMessage(string message, string title)
     {

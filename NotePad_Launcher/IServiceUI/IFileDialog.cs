@@ -6,7 +6,7 @@ public interface IFileDialog
 {
     string OpenTextFileDialog(string pathToClose, string extension);
     string SaveFileDialog(string pathToClose);
-    string FolderFileDialog(string pathToClose);
+    string FolderFileDialog(string pathToClose, Window owner);
     void ShowMessage(string message, string title);
     bool ShowConfirmation(string message);
     MessageBoxResult ShowYesNoDialog(string message, string title = "");

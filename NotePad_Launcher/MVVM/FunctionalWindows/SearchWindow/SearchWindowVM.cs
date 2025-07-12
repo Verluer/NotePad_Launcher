@@ -37,20 +37,6 @@ public class SearchWindowVM : INotifyPropertyChanged
     private int lastMatchOffset = -1;
     private int previousCaretOffset = -1;
     private string previousSearchPattern = string.Empty;
-
-    private AppConfigModel _config;
-    public AppConfigModel Config
-    {
-        get => _config;
-        set
-        {
-            if (_config != value)
-            {
-                _config = value;
-                OnPropertyChanged(nameof(Config));
-            }
-        }
-    }
     public string SearchPattern
     {
         get => _searchPattern;
@@ -227,7 +213,7 @@ public class SearchWindowVM : INotifyPropertyChanged
     }
     private SearchReplaceMethod _selectedMethod;
     public SearchReplaceMethod SelectedMethod { get; }
-    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService)
+    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog)
     {
         _searchService = App.ServiceProvider.GetRequiredService<ISearchService>();
         _dataStorage = dataStorage;
@@ -244,9 +230,7 @@ public class SearchWindowVM : INotifyPropertyChanged
                 break;
 
         }
-        _configService = configService;
-        Config = _configService.Load();
-        LocalizationService.Instance.LoadLanguage(Config.Language);
+        LocalizationService.Instance.LoadLanguage(App.Config.Language);
     }
     private void SerachUI()
     {
