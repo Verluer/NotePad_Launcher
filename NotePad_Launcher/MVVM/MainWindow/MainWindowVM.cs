@@ -378,8 +378,17 @@ public class MainWindowVM : INotifyPropertyChanged
             CheckSaveFile = true;
             _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);
         }
+        else if (!string.IsNullOrEmpty(model.FileName.Trim()))
+        {
+            var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
+            FilePath = saveFile.FilePath;
+            CheckSaveFile = true;
+            _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);
+        }
         else
+        {
             _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageTextNull"], LocalizationService.Instance["MainMessageSavedTitle"]);
+        }
     }
     private void ExecuteSaveFileDialog(object? parameter)
     {
