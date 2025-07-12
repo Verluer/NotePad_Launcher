@@ -371,15 +371,22 @@ public class MainWindowVM : INotifyPropertyChanged
             FileName = FileName,
             FilePath = FilePath
         };
-        if (!string.IsNullOrEmpty(model.FileText.Trim()))
+        if (!string.IsNullOrWhiteSpace(model.FileText))
         {
+            if(string.IsNullOrWhiteSpace(model.FileName))
+            {
+                var tempModel = _fileService.CreateFile(App.Config.DocsPath);
+                model.FileName = tempModel.FileName;
+                model.FilePath = tempModel.FilePath;
+                FileName = tempModel.FileName;
+            }
             var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
             _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);
         }
-        else if (!string.IsNullOrEmpty(model.FileName.Trim()))
-        {
+        else if(!string.IsNullOrWhiteSpace(model.FileName))
+            {
             var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
