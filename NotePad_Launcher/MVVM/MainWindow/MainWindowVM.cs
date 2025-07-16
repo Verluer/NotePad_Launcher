@@ -234,6 +234,7 @@ public class MainWindowVM : INotifyPropertyChanged
             FileTextDocument.Text = startFile.FileText;
 
         }
+        _dataStorage.SelectionFileUpdated += UpdateFileInfo;
     }
     #region Functions
 
@@ -410,7 +411,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteFileList(object? parameter)
     {
-        _windowService.OpenWindow<NotePad_Launcher.FileListWindow>();
+        _windowService.OpenWindow<FileListWindow>();
         
     }
     private void ExecuteDeleteFile(object? parameter)

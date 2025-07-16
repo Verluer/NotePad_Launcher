@@ -48,7 +48,6 @@ public class FileAssociationService : IFileAssociationService
         }
         catch
         {
-            // Логировать ошибку при необходимости
         }
     }
 

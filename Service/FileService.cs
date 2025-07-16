@@ -3,8 +3,6 @@ using System.Text;
 using Domain.IService;
 using Domain.Model;
 
-// Пространство имен WPF
-
 namespace Service
 {
     public class FileService : IFileService

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using Domain.Enum;
+using Domain.Model;
 
 namespace NotePad_Launcher;
 
@@ -49,6 +50,15 @@ public class DataStorage : IDataStorage
 
     #region Изначальный путь файла
     public string StartupFilePath { get; set; }
+    #endregion
+
+    #region FileList Selection
+
+    public event Action<FileModel> SelectionFileUpdated;
+    public void PushUpdatedSelectionFile(FileModel selectionFile)
+    {
+        SelectionFileUpdated?.Invoke(selectionFile);
+    }
     #endregion
 
 }

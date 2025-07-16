@@ -58,7 +58,7 @@ public class FileListWindowVM : INotifyPropertyChanged
         try
         {
             var files = _fileService.GetTextFiles(App.Config.DocsPath);
-            FileListItem = files; // Привязываем список файлов
+            FileListItem = files;
         }
         catch (Exception ex)
         {

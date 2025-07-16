@@ -532,10 +532,8 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 }
                 break;
             case EncryptionMethod.Elgamal:
-                // Действие для метода B
                 break;
             case EncryptionMethod.Rabina:
-                // Действие для метода C
                 break;
             case EncryptionMethod.ECC:
                 model = new EncryptionModel

@@ -6,9 +6,9 @@ namespace NotePad_Launcher;
 public class WindowService : IWindowService
 {
     private readonly Dictionary<Type, Window> _openWindows = new();
-    public void OpenWindow<TWindow>() where TWindow : Window, new()
-    {
 
+    public void OpenWindow<TWindow>() where TWindow : Window
+    {
         var windowType = typeof(TWindow);
 
         if (_openWindows.TryGetValue(windowType, out var existingWindow))
@@ -22,16 +22,20 @@ public class WindowService : IWindowService
                 return;
             }
         }
-        var window = new TWindow();
+
+        // Создание окна через DI
+        var window = App.ServiceProvider.GetRequiredService<TWindow>();
         _openWindows[windowType] = window;
 
         window.Closed += (s, e) => _openWindows.Remove(windowType);
 
         window.Show();
     }
-    public void OpenWindowDialog<TWindow>() where TWindow : Window, new()
+
+    public void OpenWindowDialog<TWindow>() where TWindow : Window
     {
         var window = App.ServiceProvider.GetRequiredService<TWindow>();
         window.ShowDialog();
     }
+
 }

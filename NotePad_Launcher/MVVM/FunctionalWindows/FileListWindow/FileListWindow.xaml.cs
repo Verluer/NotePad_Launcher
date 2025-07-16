@@ -14,7 +14,8 @@ namespace NotePad_Launcher
     /// </summary>
     public partial class FileListWindow : Window
     {
-        public FileListWindow()
+        private readonly IDataStorage _dataStorage;
+        public FileListWindow(IDataStorage dataStorage)
         {
             InitializeComponent();
             var viewModel = App.ServiceProvider.GetRequiredService<FileListWindowVM>(); ;
@@ -22,6 +23,7 @@ namespace NotePad_Launcher
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
             viewModel.CloseRequested += OnCloseRequested;
+            _dataStorage = dataStorage;
         }
 
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
@@ -48,16 +50,8 @@ namespace NotePad_Launcher
         {
             if (FileListView.SelectedItem is FileModel selectedFile)
             {
-                var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+                _dataStorage.PushUpdatedSelectionFile(selectedFile);
 
-                if (mainWindow != null)
-                {
-                    var mainWindowVM = mainWindow.DataContext as MainWindowVM;
-                    if (mainWindowVM != null)
-                    {
-                        mainWindowVM.UpdateFileInfo(selectedFile);
-                    }
-                }
                 this.Close();
             }
         }

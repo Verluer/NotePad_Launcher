@@ -1,6 +1,7 @@
 ﻿
 using System.Windows;
 using Domain.Enum;
+using Domain.Model;
 using FontFamily = System.Windows.Media.FontFamily;
 using FontStyle = System.Windows.FontStyle;
 
@@ -26,4 +27,7 @@ public interface IDataStorage
     EncryptionMethod CurrentMethod { get; set; }
     SearchReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
+
+    public event Action<FileModel> SelectionFileUpdated;
+    public void PushUpdatedSelectionFile(FileModel selectionFile);
 }

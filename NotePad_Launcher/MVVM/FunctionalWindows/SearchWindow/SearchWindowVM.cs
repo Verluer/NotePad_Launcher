@@ -289,7 +289,7 @@ public class SearchWindowVM : INotifyPropertyChanged
         // Сброс при ручном перемещении курсора — с позиции курсора
         if (SearchPattern != previousSearchPattern)
         {
-            lastMatchOffset = 0; // Оставляем как у тебя было
+            lastMatchOffset = 0;
         }
         else if (currentCaretOffset != previousCaretOffset)
         {
@@ -329,7 +329,6 @@ public class SearchWindowVM : INotifyPropertyChanged
         {
             for (int i = matches.Count - 1; i >= 0; i--)
             {
-                // Исправленная проверка для поиска вверх — берем совпадения с индексом < lastMatchOffset
                 if (matches[i].Index < lastMatchOffset)
                 {
                     index = i;
@@ -360,8 +359,6 @@ public class SearchWindowVM : INotifyPropertyChanged
         }
         else if (SelectedOption == "Up")
         {
-            // Для поиска вверх смещаем offset на начало текущего совпадения,
-            // чтобы следующий поиск вверх шел дальше назад
             lastMatchOffset = currentMatch.Index;
         }
 
