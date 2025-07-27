@@ -3,15 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:commands="clr-namespace:NotePad_Launcher.MVVM.Commands"
         xmlns:local="clr-namespace:NotePad_Launcher"
         mc:Ignorable="d"
         Title="FileListWindow" Height="350" Width="250"
         MinWidth="250" MinHeight="350" MaxWidth="250" MaxHeight="350"
         Style="{StaticResource WindowStyle}">
+    <Window.Resources>
+        <commands:SelectedItemToBoolConverter x:Key="SelectedItemToBoolConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
@@ -20,8 +24,29 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
+        <Border Grid.Row="1" Grid.ColumnSpan="2" Background="#F0F0F0">
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" >
+                <ItemsControl ItemsSource="{Binding FolderFile}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RadioButton Content="{Binding Name}" GroupName="OptionsGroup" Tag="{Binding}" Style="{StaticResource RoundedRadioButtonStyle}"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                            </RadioButton>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="2" Background="#F0F0F0">
+            <Button  Command="{Binding NewFolderCreateCommand}" Content="+" BorderThickness="2"  BorderBrush="Gray" Background="#F0F0F0" VerticalAlignment="Top" Height="30"/>
+        </Border>
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="../../Resources/app.ico"/>
+            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="pack://application:,,,/NotePad_Launcher;component/Resources/app.ico"/>
             <TextBlock Text=" FileList" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>

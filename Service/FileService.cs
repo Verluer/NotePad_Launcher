@@ -143,7 +143,16 @@ namespace Service
                     FilePath = file,
                 }).ToList();
         }
-
+        public List<string> LoadFolderFile(string DocsPath)
+        {
+            string[] folderPath = Directory.GetDirectories(DocsPath);
+            List<string> folderNames = new List<string>();
+            foreach (var path in folderPath)
+            {
+                folderNames.Add(Path.GetFileName(path));
+            }
+            return folderNames;
+        }
         public void DeleteFile(string filePath)
         {
             File.Delete(filePath);
@@ -176,5 +185,6 @@ namespace Service
         {
             return File.Exists(pathFile);
         }
+        
     }
 }

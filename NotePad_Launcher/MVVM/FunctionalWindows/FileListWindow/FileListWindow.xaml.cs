@@ -55,6 +55,17 @@ namespace NotePad_Launcher
                 this.Close();
             }
         }
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is RadioButton rb && rb.Content is string folderName)
+            {
+                var vm = DataContext as FileListWindowVM;
+                if (vm != null)
+                {
+                    vm.SelectedFolder = folderName;
+                }
+            }
+        }
 
     }
 }

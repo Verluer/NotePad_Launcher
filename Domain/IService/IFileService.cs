@@ -11,6 +11,7 @@ namespace Domain.IService
         public FileModel CreateFile(string DocsPath);
         public FileModel SaveFile(FileModel model, string SaveSetting, string DocsPath);
         public List<FileModel> GetTextFiles(string DocsPath);
+        public List<string> LoadFolderFile(string DocsPath);
         public void DeleteFile(string filePath);
         public bool CheckTextChange(string pathFile, string fileText);
         public void WriteAllText(string pathFile, string fileText);
