@@ -17,6 +17,7 @@ using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.ServiceUI;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Domain.Model;
+using NotePad_Launcher.MVVM.DialogWindows.InputTextDialog;
 
 namespace NotePad_Launcher
 {
@@ -85,6 +86,15 @@ namespace NotePad_Launcher
             services.AddTransient<FontPickerDialog>();
             services.AddTransient<SearchWindow>();
             services.AddTransient<SettingsWindow>();
+            // Регистрация диалогов 
+            services.AddTransient<InputTextDialogVM>(sp =>
+            { 
+                throw new InvalidOperationException("Use factory method to create InputTextDialogVM with parameters.");
+            });
+            services.AddTransient<Func<string, string, string, InputTextDialogVM>>(sp => (title, message, input) =>
+            {
+                return new InputTextDialogVM(title, message, input);
+            });
 
         }
     }

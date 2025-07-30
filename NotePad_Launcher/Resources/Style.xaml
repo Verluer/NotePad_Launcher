@@ -22,10 +22,12 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- HeadColor-->
     <LinearGradientBrush x:Key="HeadColor" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Color="#FF0C606C" Offset="0.784"/>
         <GradientStop Color="#FF063F47" Offset="0.083"/>
     </LinearGradientBrush>
+    <!-- StyleButton in Head-->
     <Style x:Key="ButtonHeadStyle" TargetType="Button">
         <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="30"/>
@@ -56,13 +58,13 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
+    <!-- Style MenuItem in MainWindowr-->
     <Style x:Key="MainWindowMenuItemStyle" TargetType="MenuItem">
         <Setter Property="Height" Value="25"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-
+    <!-- Style RadioButton in Settings (Options)-->
     <Style x:Key="RoundedRadioButtonStyle" TargetType="RadioButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -96,6 +98,32 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- Style ScrollViewer in FIleListWindow (Height scroll)-->
+    <Style TargetType="ScrollViewer" x:Key="CustomScrollViewer">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="10" />
+                        </Grid.RowDefinitions>
 
+                        <ScrollContentPresenter Grid.Row="0" />
+
+                        <ScrollBar
+                        x:Name="PART_HorizontalScrollBar"
+                        Grid.Row="1"
+                        Orientation="Horizontal"
+                        Height="12"
+                        Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                        Maximum="{TemplateBinding ScrollableWidth}"
+                        ViewportSize="{TemplateBinding ViewportWidth}"
+                        Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

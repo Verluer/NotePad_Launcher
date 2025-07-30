@@ -29,6 +29,10 @@ public class FileListWindowVM : INotifyPropertyChanged
     private ICommand? _minimizeCommand;
     private ICommand? _maximizeCommand;
     private ICommand? _newFolderCreateCommand;
+    private ICommand? _folderEditNameCommand;
+    private ICommand? _folderDeleteCommand;
+    private ICommand? _nextFolderCommand;
+    private ICommand? _backFolderCommand;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     private List<FileModel> _fileListItem;
@@ -94,11 +98,11 @@ public class FileListWindowVM : INotifyPropertyChanged
             item.IsSelected = item.Name == name;
     }
 
-    private void LoadFileList(string Option)
+    private void LoadFileList(string nameFolder)
     {
         try
         {
-            var pathFile = Path.Combine(App.Config.DocsPath, Option);
+            var pathFile = Path.Combine(App.Config.DocsPath, nameFolder);
             var files = _fileService.GetTextFiles(pathFile);
             FileListItem = files;
         }
@@ -111,13 +115,27 @@ public class FileListWindowVM : INotifyPropertyChanged
     public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
     public ICommand MaximizeCommand => _maximizeCommand ??= new OtherRelayCommands(ExecuteMaximizeCommand, CanExecute);
     public ICommand NewFolderCreateCommand => _newFolderCreateCommand ??= new OtherRelayCommands(ExecuteNewFolderCreateCommand, CanExecute);
+    public ICommand FolderEditNameCommand => _folderEditNameCommand ??= new OtherRelayCommands(ExecuteFolderEditNameCommand, CanExecute);
+    public ICommand FolderDeleteCommand => _folderDeleteCommand ??= new OtherRelayCommands(ExecuteFolderDeleteCommand, CanExecute);
+    public ICommand NextFolderCommand => _nextFolderCommand ??= new OtherRelayCommands(ExecuteNextFolderCommand, CanExecute);
+    public ICommand BackFolderCommand => _backFolderCommand ??= new OtherRelayCommands(ExecuteBackFolderCommand, CanExecute);
 
     private void ExecuteNewFolderCreateCommand(object? parameter)
     {
+        string nameFolder = _fileDialog.InputTextDialog("Create New Folder", "Create New Folder:", "NewFolder");
+        if (nameFolder == null) return;
+        string pathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}");
+        if (!Directory.Exists(pathFolder))
+        {
+            Directory.CreateDirectory(pathFolder);
+            UploadFolder();
+            MessageBox.Show($"Папка успешно создана {pathFolder}");
+            return;
+        }
         int i = 1;
         while (true)
         {
-            string tempPathFolder = Path.Combine(App.Config.DocsPath, $"NewFolder{i}");
+            string tempPathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}{i}");
             if (!Directory.Exists(tempPathFolder))
             {
                 Directory.CreateDirectory(tempPathFolder);
@@ -128,6 +146,81 @@ public class FileListWindowVM : INotifyPropertyChanged
             i++;
         }
     }
+    private void ExecuteFolderEditNameCommand(object? parameter)
+    {
+        string nameFolder = _fileDialog.InputTextDialog("Edit name", "Edit name Folder:", SelectedFolder);
+        if (nameFolder == null) return;
+        string oldPathFolder = Path.Combine(App.Config.DocsPath, SelectedFolder);
+        string pathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}");
+
+        if (!Directory.Exists(pathFolder))
+        {
+            Directory.Move(oldPathFolder, pathFolder);
+            UploadFolder();
+        }
+        else MessageBox.Show("Такая папка уже существует");
+
+    }
+    private void ExecuteFolderDeleteCommand(object? parameter)
+    {
+        string pathFolder = Path.Combine(App.Config.DocsPath, SelectedFolder);
+        var result = _fileDialog.ShowYesNoDialog($"Вы точно хотите удалить этот каталог?\n{pathFolder}", "Delete");
+        
+        if (result == MessageBoxResult.Yes)
+        {
+            Directory.Delete(pathFolder, true);
+            UploadFolder();
+        }
+        else return;
+        
+
+
+    }
+    private void ExecuteNextFolderCommand(object? parameter)
+    {
+        int currentIndex = -1;
+        for (int i = 0; i < FolderFile.Count; i++)
+        {
+            if (FolderFile[i].Name == SelectedFolder)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+        if (currentIndex >= 0 && currentIndex < FolderFile.Count - 1)
+        {
+            var nextFolder = FolderFile[currentIndex + 1];
+            SelectFolder(nextFolder.Name);
+        }
+        else
+        {
+            MessageBox.Show("Error");
+        }
+    }
+    private void ExecuteBackFolderCommand(object? parameter)
+    {
+        int currentIndex = -1;
+        for (int i = 0; i < FolderFile.Count; i++)
+        {
+            if (FolderFile[i].Name == SelectedFolder)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        if (currentIndex > 0) 
+        {
+            var previousFolder = FolderFile[currentIndex - 1];
+            SelectFolder(previousFolder.Name);
+        }
+        else
+        {
+            MessageBox.Show("Error");
+        }
+    }
+
+
     private void ExecuteCloseCommand(object? parameter)
     {
         CloseRequested?.Invoke();

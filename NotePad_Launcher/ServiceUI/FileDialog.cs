@@ -1,9 +1,12 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using Domain.IService;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using NotePad_Launcher.IServiceUI;
+using NotePad_Launcher.MVVM.DialogWindows.InputTextDialog;
 using NotePad_Launcher.ServiceUI;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
@@ -76,5 +79,18 @@ public class FileDialog : IFileDialog
     public MessageBoxResult ShowYesNoDialog(string message, string title = "")
     {
         return MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Warning);
+    }
+
+    public string InputTextDialog(string title, string message, string inputText)
+    {
+        var factory = App.ServiceProvider.GetRequiredService<Func<string, string, string, InputTextDialogVM>>();
+        var vm = factory(title, message, inputText);
+
+        var dialog = new InputTextDialog { DataContext = vm };
+        var result = dialog.ShowDialog();
+        if (result == true)
+            return vm.InputText;
+        else
+            return null;
     }
 }
