@@ -91,9 +91,9 @@ namespace NotePad_Launcher
             { 
                 throw new InvalidOperationException("Use factory method to create InputTextDialogVM with parameters.");
             });
-            services.AddTransient<Func<string, string, string, InputTextDialogVM>>(sp => (title, message, input) =>
+            services.AddTransient<Func<string, string, string, bool, bool, InputTextDialogVM>>(sp => (title, message, input, isTextBox, isComboBox) =>
             {
-                return new InputTextDialogVM(title, message, input);
+                return new InputTextDialogVM(title, message, input, isTextBox, isComboBox);
             });
 
         }

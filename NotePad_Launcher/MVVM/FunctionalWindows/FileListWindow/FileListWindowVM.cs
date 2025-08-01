@@ -43,8 +43,7 @@ public class FileListWindowVM : INotifyPropertyChanged
         set => SetField(ref _fileListItem, value);
     }
 
-    public ObservableCollection<FileModel> FileList { get; private set; }
-    public ObservableCollection<FolderEntry> FolderFile { get; }
+    public ObservableCollection<string> FolderFileString { get; set; } = new ObservableCollection<string>();
 
     private string _selectedFolder;
     public string SelectedFolder
@@ -60,23 +59,35 @@ public class FileListWindowVM : INotifyPropertyChanged
             }
         }
     }
+    private int _selectedIndex;
+    public int SelectedIndex
+    {
+        get => _selectedIndex;
+        set
+        {
+            if (_selectedIndex != value)
+            {
+                _selectedIndex = value;
+                OnPropertyChanged(nameof(SelectedIndex));
+            }
+        }
+    }
     public FileListWindowVM(IFileService service, IFileDialog fileDialog)
     {
         _fileService = service;
         _fileDialog = fileDialog;
-        FolderFile = new ObservableCollection<FolderEntry>();
         UploadFolder();
     }
     public void UploadFolder()
     {
-        FolderFile.Clear();
+        if (FolderFileString != null) FolderFileString.Clear();
         List<string> folderNames = _fileService.LoadFolderFile(App.Config.DocsPath);
-        foreach (var folderName in folderNames)
-        {
-            FolderFile.Add(new FolderEntry(folderName, this));
-        }
-        if (FolderFile.Any())
-            FolderFile[0].IsSelected = true;
+            foreach (var folderName in folderNames)
+            {
+                FolderFileString.Add(folderName);
+            }
+            if (FolderFileString.Any()) SelectedIndex = 0;
+
     }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
@@ -90,14 +101,6 @@ public class FileListWindowVM : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
-    public void SelectFolder(string name)
-    {
-        SelectedFolder = name;
-
-        foreach (var item in FolderFile)
-            item.IsSelected = item.Name == name;
-    }
-
     private void LoadFileList(string nameFolder)
     {
         try
@@ -111,6 +114,10 @@ public class FileListWindowVM : INotifyPropertyChanged
             _fileDialog.ShowMessage($"Ошибка: {ex.Message}", "Warning");
         }
     }
+    private void CreateFile()
+    {
+
+    }
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
     public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
     public ICommand MaximizeCommand => _maximizeCommand ??= new OtherRelayCommands(ExecuteMaximizeCommand, CanExecute);
@@ -122,7 +129,7 @@ public class FileListWindowVM : INotifyPropertyChanged
 
     private void ExecuteNewFolderCreateCommand(object? parameter)
     {
-        string nameFolder = _fileDialog.InputTextDialog("Create New Folder", "Create New Folder:", "NewFolder");
+        string nameFolder = _fileDialog.InputTextDialog("Create New Folder", "Create New Folder:", "NewFolder", true, false);
         if (nameFolder == null) return;
         string pathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}");
         if (!Directory.Exists(pathFolder))
@@ -148,7 +155,7 @@ public class FileListWindowVM : INotifyPropertyChanged
     }
     private void ExecuteFolderEditNameCommand(object? parameter)
     {
-        string nameFolder = _fileDialog.InputTextDialog("Edit name", "Edit name Folder:", SelectedFolder);
+        string nameFolder = _fileDialog.InputTextDialog("Edit name", "Edit name Folder:", SelectedFolder, true, false);
         if (nameFolder == null) return;
         string oldPathFolder = Path.Combine(App.Config.DocsPath, SelectedFolder);
         string pathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}");
@@ -179,18 +186,18 @@ public class FileListWindowVM : INotifyPropertyChanged
     private void ExecuteNextFolderCommand(object? parameter)
     {
         int currentIndex = -1;
-        for (int i = 0; i < FolderFile.Count; i++)
+        for (int i = 0; i < FolderFileString.Count; i++)
         {
-            if (FolderFile[i].Name == SelectedFolder)
+            if (FolderFileString[i] == SelectedFolder)
             {
                 currentIndex = i;
                 break;
             }
         }
-        if (currentIndex >= 0 && currentIndex < FolderFile.Count - 1)
+        if (currentIndex >= 0 && currentIndex < FolderFileString.Count - 1)
         {
-            var nextFolder = FolderFile[currentIndex + 1];
-            SelectFolder(nextFolder.Name);
+            var nextFolder = currentIndex + 1;
+            SelectedIndex = nextFolder;
         }
         else
         {
@@ -200,9 +207,9 @@ public class FileListWindowVM : INotifyPropertyChanged
     private void ExecuteBackFolderCommand(object? parameter)
     {
         int currentIndex = -1;
-        for (int i = 0; i < FolderFile.Count; i++)
+        for (int i = 0; i < FolderFileString.Count; i++)
         {
-            if (FolderFile[i].Name == SelectedFolder)
+            if (FolderFileString[i] == SelectedFolder)
             {
                 currentIndex = i;
                 break;
@@ -211,8 +218,8 @@ public class FileListWindowVM : INotifyPropertyChanged
 
         if (currentIndex > 0) 
         {
-            var previousFolder = FolderFile[currentIndex - 1];
-            SelectFolder(previousFolder.Name);
+            var previousFolder = currentIndex - 1;
+            SelectedIndex = previousFolder;
         }
         else
         {
@@ -234,38 +241,4 @@ public class FileListWindowVM : INotifyPropertyChanged
         MaximizeRequested?.Invoke();
     }
     private bool CanExecute(object? parameter) => true;
-    public class FolderEntry : INotifyPropertyChanged
-    {
-        private bool _isSelected;
-
-        public string Name { get; }
-
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    OnPropertyChanged(nameof(IsSelected));
-
-                    if (_isSelected)
-                        parent.SelectFolder(Name);
-                }
-            }
-        }
-
-        private readonly FileListWindowVM parent;
-
-        public FolderEntry(string name, FileListWindowVM parentViewModel)
-        {
-            Name = name;
-            parent = parentViewModel;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
 }

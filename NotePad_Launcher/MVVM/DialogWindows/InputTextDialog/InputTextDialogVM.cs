@@ -1,6 +1,10 @@
-﻿using NotePad_Launcher.MVVM.Commands;
+﻿using Domain.IService;
+using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.MVVM.Commands;
+using Service;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -25,7 +29,7 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
             OnPropertyChanged(propertyName);
             return true;
         }
-
+        private readonly IFileService _fileService;
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private ICommand? _closeCommand;
@@ -33,7 +37,36 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
         private ICommand? _cancelCommand;
         public event Action? CloseRequested;
         public event Action? OkRequested;
+        public ObservableCollection<string> FolderFileString { get; set; } = new ObservableCollection<string>();
 
+        private string _selectedFolder;
+        public string SelectedFolder
+        {
+            get => _selectedFolder;
+            set
+            {
+                if (_selectedFolder != value)
+                {
+                    _selectedFolder = value;
+                    OnPropertyChanged(nameof(SelectedFolder));
+                    if (IsComboBoxVisible = true)
+                        Result = value;
+                }
+            }
+        }
+        private int _selectedIndex;
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (_selectedIndex != value)
+                {
+                    _selectedIndex = value;
+                    OnPropertyChanged(nameof(SelectedIndex));
+                }
+            }
+        }
         private string _title;
         public string Title
         {
@@ -70,14 +103,60 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
                 {
                     _inputText = value;
                     OnPropertyChanged();
+                    if(IsTextBoxVisible = true) Result = value;
                 }
             }
         }
-        public InputTextDialogVM(string title, string message, string inputText)
+        private bool _isTextBoxVisible = true;
+
+        public bool IsTextBoxVisible
         {
+            get => _isTextBoxVisible;
+            set
+            {
+                if (_isTextBoxVisible != value)
+                {
+                    _isTextBoxVisible = value;
+                    OnPropertyChanged(nameof(IsTextBoxVisible));
+                }
+            }
+        }
+        private bool _isComboBoxVisible = true;
+
+        public bool IsComboBoxVisible
+        {
+            get => _isComboBoxVisible;
+            set
+            {
+                if (_isComboBoxVisible != value)
+                {
+                    _isComboBoxVisible = value;
+                    OnPropertyChanged(nameof(IsComboBoxVisible));
+                }
+            }
+        }
+        public string Result { get; set; } = "";
+        public InputTextDialogVM(string title, string message, string inputText, bool isTextBox, bool isComboBox)
+        {
+            _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
             Title = title;
             InputText = inputText;
             Message = message;
+            IsTextBoxVisible = isTextBox;
+            IsComboBoxVisible = isComboBox;
+            UploadFolder();
+            
+        }
+        public void UploadFolder()
+        {
+            if (FolderFileString != null) FolderFileString.Clear();
+            List<string> folderNames = _fileService.LoadFolderFile(App.Config.DocsPath);
+            foreach (var folderName in folderNames)
+            {
+                FolderFileString.Add(folderName);
+            }
+            if (FolderFileString.Any()) SelectedIndex = 0;
+
         }
         public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
         public ICommand OkCommand => _okCommand ??= new OtherRelayCommands(ExecuteOkCommand, CanExecute);

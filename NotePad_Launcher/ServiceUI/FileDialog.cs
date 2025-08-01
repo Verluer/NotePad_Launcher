@@ -81,15 +81,15 @@ public class FileDialog : IFileDialog
         return MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Warning);
     }
 
-    public string InputTextDialog(string title, string message, string inputText)
+    public string InputTextDialog(string title, string message, string inputText, bool isTextBox, bool isComboBox)
     {
-        var factory = App.ServiceProvider.GetRequiredService<Func<string, string, string, InputTextDialogVM>>();
-        var vm = factory(title, message, inputText);
+        var factory = App.ServiceProvider.GetRequiredService<Func<string, string, string, bool, bool, InputTextDialogVM>>();
+        var vm = factory(title, message, inputText, isTextBox, isComboBox);
 
         var dialog = new InputTextDialog { DataContext = vm };
         var result = dialog.ShowDialog();
         if (result == true)
-            return vm.InputText;
+            return vm.Result;
         else
             return null;
     }
