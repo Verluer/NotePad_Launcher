@@ -8,7 +8,7 @@ namespace Domain.IService
         public FileModel OpenFile(string pathFile);
         public string ExDirectoryFile(string Folder);
         public void CreateDocumentsDirectory();
-        public FileModel CreateFile(string DocsPath);
+        public FileModel CreateFile(string DocsPath, string FileName);
         public FileModel SaveFile(FileModel model, string SaveSetting, string DocsPath);
         public List<FileModel> GetTextFiles(string DocsPath);
         public List<string> LoadFolderFile(string DocsPath);

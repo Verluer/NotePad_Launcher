@@ -64,7 +64,7 @@ public class FileDialog : IFileDialog
             return dialog.FileName;
         }
 
-        return initialPath;
+        return null;
     }
     public void ShowMessage(string message, string title)
     {

@@ -144,7 +144,10 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
             Message = message;
             IsTextBoxVisible = isTextBox;
             IsComboBoxVisible = isComboBox;
-            UploadFolder();
+            if (IsComboBoxVisible == true)
+            {
+                UploadFolder();
+            }
             
         }
         public void UploadFolder()

@@ -52,9 +52,9 @@ namespace Service
 
         }
 
-        public FileModel CreateFile(string DocsPath)
+        public FileModel CreateFile(string DocsPath, string FileName)
         {
-            string FileName = "New Text File.txt";
+            FileName = $"{FileName}.txt";
             string CreateFileInDirectory = Path.Combine(DocsPath, FileName);
             if (File.Exists(CreateFileInDirectory))
             {
@@ -105,7 +105,7 @@ namespace Service
                     File.WriteAllText(newFilePath, model.FileText);
                 }
 
-            }
+            }   
             else
             {
                 newFilePath = Path.Combine(DocsPath, model.FileName + ".txt");

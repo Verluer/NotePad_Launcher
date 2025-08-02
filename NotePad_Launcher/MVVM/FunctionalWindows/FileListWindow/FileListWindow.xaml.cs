@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,26 +47,13 @@ namespace NotePad_Launcher
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
-        private void FileListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListViewItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (FileListView.SelectedItem is FileModel selectedFile)
+            if (sender is ListViewItem item && item.DataContext is FileModel selectedFile)
             {
                 _dataStorage.PushUpdatedSelectionFile(selectedFile);
-
                 this.Close();
             }
         }
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (sender is RadioButton rb && rb.Content is string folderName)
-            {
-                var vm = DataContext as FileListWindowVM;
-                if (vm != null)
-                {
-                    vm.SelectedFolder = folderName;
-                }
-            }
-        }
-
     }
 }

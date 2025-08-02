@@ -358,7 +358,7 @@ public class MainWindowVM : INotifyPropertyChanged
         }
         string currectPathConfig = _fileDialog.InputTextDialog("Create New File", "Select create file folder:", "", false, true);
         currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
-        var nameFile = _fileService.CreateFile(currectPathConfig);
+        var nameFile = _fileService.CreateFile(currectPathConfig, "NewFileText");
         FileName = nameFile.FileName;
         FileTextDocument.Text = string.Empty;
         FilePath = nameFile.FilePath;
@@ -376,22 +376,23 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             if(string.IsNullOrWhiteSpace(model.FileName))
             {
-                var tempModel = _fileService.CreateFile(App.Config.DocsPath);
+                var tempModel = _fileService.CreateFile(App.Config.DocsPath, "NewFileText");
                 model.FileName = tempModel.FileName;
                 model.FilePath = tempModel.FilePath;
                 FileName = tempModel.FileName;
             }
-            string currectPathConfig = App.Config.DocsPath;
-            if (App.Config.SaveSetting == "SaveDirectory")
+            string currectPathConfig = Path.GetDirectoryName(model.FilePath);
+            string testPathConfig = Path.GetDirectoryName(currectPathConfig);
+            if (App.Config.SaveSetting == "SaveDirectory" && App.Config.DocsPath != testPathConfig)
             {
                 currectPathConfig = _fileDialog.InputTextDialog("Save File", "Select save folder:", "", false, true);
+                if (currectPathConfig == null) return;
                 currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
-                if (model.FilePath == null) return;
             }
             var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
-            _fileDialog.ShowMessage($"{ LocalizationService.Instance["MainMessageSaved"]}:  {FilePath}, {currectPathConfig} ", $"{LocalizationService.Instance["MainMessageSavedTitle"]}");
+            _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}", $"{LocalizationService.Instance["MainMessageSavedTitle"]}");
         }
         else if(!string.IsNullOrWhiteSpace(model.FileName))
             {
