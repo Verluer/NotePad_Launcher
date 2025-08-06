@@ -66,7 +66,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 ECCUI();
                 break;
             default:
-                // Действие, если метод не выбран (None)
                 break;
         }
     }
@@ -493,7 +492,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
-                // Действие, если метод не выбран (None)
                 break;
         }
     }
@@ -562,7 +560,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 }
                 break;
             default:
-                // Действие, если метод не выбран (None)
                 break;
         }
     }
@@ -618,7 +615,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
-                // Действие, если метод не выбран (None)
                 break;
         }
     }

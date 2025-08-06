@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Shell;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,16 @@ namespace NotePad_Launcher
         public MainWindow(IDataStorage dataStorage)
         {
             InitializeComponent();
+
+            var chrome = new WindowChrome
+            {
+                CaptionHeight = 0,
+                ResizeBorderThickness = new Thickness(6),
+                UseAeroCaptionButtons = false
+            };
+
+            WindowChrome.SetWindowChrome(this, chrome);
+
             _dataStorage = dataStorage;
             _dataStorage.SearchAction += TextFound;
             var viewModel = App.ServiceProvider.GetRequiredService<MainWindowVM>();

@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Shell;
 
 namespace NotePad_Launcher.MVVM.ProgramInfDialog
 {
@@ -25,6 +26,16 @@ namespace NotePad_Launcher.MVVM.ProgramInfDialog
         public ProgramInfDialog()
         {
             InitializeComponent();
+
+            var chrome = new WindowChrome
+            {
+                CaptionHeight = 0,
+                ResizeBorderThickness = new Thickness(6),
+                UseAeroCaptionButtons = false
+            };
+
+            WindowChrome.SetWindowChrome(this, chrome);
+
             var viewModel = App.ServiceProvider.GetRequiredService<ProgramInfDialogVM>();
             this.DataContext = viewModel;
             viewModel.CloseRequested += OnCloseRequested;
@@ -37,7 +48,25 @@ namespace NotePad_Launcher.MVVM.ProgramInfDialog
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.DragMove();
+                if (this.WindowState == WindowState.Maximized)
+                {
+
+                    var mousePos = e.GetPosition(this);
+                    var screenPos = this.PointToScreen(mousePos);
+
+                    double relativeX = mousePos.X / this.ActualWidth;
+
+                    this.WindowState = WindowState.Normal;
+
+                    this.Left = screenPos.X - relativeX * this.Width;
+                    this.Top = screenPos.Y - mousePos.Y;
+
+                    this.DragMove();
+                }
+                else
+                {
+                    this.DragMove();
+                }
             }
         }
     }

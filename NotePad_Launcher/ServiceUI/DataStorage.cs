@@ -8,8 +8,14 @@ namespace NotePad_Launcher;
 
 public class DataStorage : IDataStorage
 {
-    #region хранение string
+    #region хранение данных
     public Func<string> GetTextCallback { get; set; }
+    public Func<(int index, int length)> GetSelectionCallback { get; set; }
+    public Func<int> GetCaretOffset { get; set; }
+    public EncryptionMethod CurrentMethod { get; set; }
+    public SearchReplaceMethod searchReplaceMethod { get; set; }
+    public string StartupFilePath { get; set; }
+
     #endregion
     #region Передача измененной строки
     public event Action<string> TextUpdated;
@@ -40,24 +46,13 @@ public class DataStorage : IDataStorage
         FamilySizeUpdated?.Invoke(updatedFontSize, updatedFontFamily, updatedFontStyle, updatedFontWeight);
     }
     #endregion
-    public Func<(int index, int length)> GetSelectionCallback { get; set; }
-    public Func<int> GetCaretOffset { get; set; }
-
-    #region Хранение методов
-    public EncryptionMethod CurrentMethod { get; set; }
-    public SearchReplaceMethod searchReplaceMethod { get; set; }
-    #endregion
-
-    #region Изначальный путь файла
-    public string StartupFilePath { get; set; }
-    #endregion
 
     #region FileList Selection
 
-    public event Action<FileModel> SelectionFileUpdated;
-    public void PushUpdatedSelectionFile(FileModel selectionFile)
+    public event Action<FileModel, bool> SelectionFileUpdated;
+    public void PushUpdatedSelectionFile(FileModel selectionFile, bool deleteFile)
     {
-        SelectionFileUpdated?.Invoke(selectionFile);
+        SelectionFileUpdated?.Invoke(selectionFile, deleteFile);
     }
     #endregion
 

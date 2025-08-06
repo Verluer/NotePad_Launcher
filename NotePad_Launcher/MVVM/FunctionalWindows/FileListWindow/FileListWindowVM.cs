@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using NotePad_Launcher.ServiceUI;
+using System.Collections;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 
@@ -22,6 +23,7 @@ public class FileListWindowVM : INotifyPropertyChanged
 {
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
+    private readonly IDataStorage _dataStorage;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -75,11 +77,12 @@ public class FileListWindowVM : INotifyPropertyChanged
             }
         }
     }
-    public FileListWindowVM(IFileService service, IFileDialog fileDialog)
+    public FileListWindowVM(IFileService service, IFileDialog fileDialog, IDataStorage dataStorage)
     {
         _fileService = service;
         _fileDialog = fileDialog;
         UploadFolder(0);
+        _dataStorage = dataStorage;
     }
     public void UploadFolder(int selectedIndex)
     {
@@ -273,13 +276,16 @@ public class FileListWindowVM : INotifyPropertyChanged
     }
     private void ExecuteMenuDeleteFileCommand(object? parameter)
     {
-        if (parameter is FileModel file)
+        if (parameter is IList list)
         {
-            var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
-            if (result == MessageBoxResult.Yes)
-            _fileService.DeleteFile(file.FilePath);
-            UploadFolder(SelectedIndex);
+            var items = list.Cast<FileModel>().ToList();
+            foreach (var item in items)
+            {
+                _dataStorage.PushUpdatedSelectionFile(item, true);
+                UploadFolder(SelectedIndex);
+            }
         }
+        else { MessageBox.Show("Error"); }
     }
     private void ExecuteMenuMoveFileCommand(object? parameter)
     {

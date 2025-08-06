@@ -210,9 +210,9 @@ public class MainWindowVM : INotifyPropertyChanged
         _serviceFunctions = new ServiceFunctions();
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
-        _fileService.CreateDocumentsDirectory();
         if (App.Config.DocsPath == "FirstLaunch")
         {
+            _fileService.CreateDocumentsDirectory();
             string DocumentPath = _fileService.ExDirectoryFile("Documents");
             App.Config.DocsPath = DocumentPath;
             _configService.Save(App.Config);
@@ -249,13 +249,34 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         FileTextDocument.Text = newText;
     }
-    public void UpdateFileInfo(FileModel fileModel)
+    public void UpdateFileInfo(FileModel fileModel, bool deleteFile)
     {
         if (!CheckingSaveFile(CheckSaveFile))
         {
             return;
         }
-
+        if (deleteFile == true)
+        {
+            var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
+            if (result == MessageBoxResult.Yes)
+            {
+                if (FilePath == fileModel.FilePath)
+                {
+                    FileTextDocument.Text = string.Empty;
+                    _fileService.DeleteFile(fileModel.FilePath);
+                    FileName = string.Empty;
+                    FilePath = string.Empty;
+                    CheckSaveFile = true;
+                    return;
+                }
+                else
+                {
+                    _fileService.DeleteFile(fileModel.FilePath);
+                    return;
+                }
+            }
+            else return;
+        }
         CurrentFile = fileModel;
         FilePath = CurrentFile.FilePath;
         FileTextDocument.Text = CurrentFile.FileText;
@@ -413,7 +434,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             FilePath = selectedPath;
             _fileService.WriteAllText(FilePath, FileTextDocument.Text);
-            FileName = _fileService.GetFileNameWithout(FilePath);
+            FileName = Path.GetFileNameWithoutExtension(FilePath);
             CheckSaveFile = true;
             _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}:\n{FilePath}", LocalizationService.Instance["MainMessageSavedTitle"]);
         }

@@ -28,6 +28,6 @@ public interface IDataStorage
     SearchReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
 
-    public event Action<FileModel> SelectionFileUpdated;
-    public void PushUpdatedSelectionFile(FileModel selectionFile);
+    public event Action<FileModel, bool> SelectionFileUpdated;
+    public void PushUpdatedSelectionFile(FileModel selectionFile, bool deleteFile);
 }

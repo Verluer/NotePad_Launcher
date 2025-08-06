@@ -7,7 +7,7 @@
     <Style x:Key="WindowStyle" TargetType="Window">
         <Setter Property="WindowStyle" Value="None"/>
         <Setter Property="Background" Value="{DynamicResource WindowBackground}"/>
-        <Setter Property="AllowsTransparency" Value="True"/>
+        <Setter Property="AllowsTransparency" Value="False"/>
         <Setter Property="ResizeMode" Value="CanResizeWithGrip"/>
         <Setter Property="Icon" Value="app.ico"/>
     </Style>

@@ -15,6 +15,7 @@ using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.ServiceUI;
+using SharpVectors.Converters;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Domain.Model;
 using NotePad_Launcher.MVVM.DialogWindows.InputTextDialog;
@@ -31,9 +32,12 @@ namespace NotePad_Launcher
 
         protected override void OnStartup(StartupEventArgs e)
         {
+
             base.OnStartup(e);
 
             var services = new ServiceCollection();
+
+            System.Threading.Tasks.Task.Run(() => PreloadSvgIcons());
 
             ConfigureServices(services);
 
@@ -97,6 +101,36 @@ namespace NotePad_Launcher
             });
 
         }
-    }
+        private void PreloadSvgIcons()
+        {
+            var thread = new Thread(() =>
+            {
+                var iconUris = new[]
+            {
+            new Uri("pack://application:,,,/Resources/Svg/Explorer.svg"),
+            new Uri("pack://application:,,,/Resources/Svg/FileUpdate.svg"),
+            new Uri("pack://application:,,,/Resources/Svg/FolderAdd.svg"),
+            new Uri("pack://application:,,,/Resources/Svg/FolderDelete.svg"),
+            new Uri("pack://application:,,,/Resources/Svg/FolderEdit.svg"),
+            new Uri("pack://application:,,,/Resources/Svg/Refresh.svg"),
+            new Uri("pack://application:,,,/Resources/Svg/TxtFileAdd.svg"),
 
+        };
+
+                foreach (var uri in iconUris)
+                {
+                    var svgViewbox = new SvgViewbox
+                    {
+                        Source = uri
+                    };
+
+                    svgViewbox.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                    svgViewbox.Arrange(new Rect(0, 0, 1, 1));
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
+    }
 }

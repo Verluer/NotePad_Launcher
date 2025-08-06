@@ -11,9 +11,18 @@
 
   <ItemGroup>
     <None Remove="Resources\app.ico" />
+    <None Remove="Resources\FolderAdd.png" />
     <None Remove="Resources\Locales\en.json" />
     <None Remove="Resources\Locales\ru.json" />
     <None Remove="Resources\Locales\ua.json" />
+    <None Remove="Resources\Svg\Explorer.svg" />
+    <None Remove="Resources\Svg\FileUpdate.svg" />
+    <None Remove="Resources\Svg\FolderAdd.svg" />
+    <None Remove="Resources\Svg\FolderDelete.svg" />
+    <None Remove="Resources\Svg\FolderEdit.svg" />
+    <None Remove="Resources\Svg\Refresh.svg" />
+    <None Remove="Resources\Svg\TxtFileAdd.svg" />
+    <None Remove="Resources\TxtFileAdd.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +32,8 @@
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+    <PackageReference Include="SharpVectors" Version="1.8.4.2" />
+    <PackageReference Include="SharpVectors.Wpf" Version="1.8.4.2" />
     <PackageReference Include="WindowsAPICodePack" Version="8.0.6" />
   </ItemGroup>
 
@@ -43,6 +54,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Style.xaml" />
+    <Resource Include="Resources\Svg\Explorer.svg" />
+    <Resource Include="Resources\Svg\FileUpdate.svg" />
+    <Resource Include="Resources\Svg\FolderAdd.svg" />
+    <Resource Include="Resources\Svg\FolderDelete.svg" />
+    <Resource Include="Resources\Svg\FolderEdit.svg" />
+    <Resource Include="Resources\Svg\Refresh.svg" />
+    <Resource Include="Resources\Svg\TxtFileAdd.svg" />
   </ItemGroup>
 
 </Project>

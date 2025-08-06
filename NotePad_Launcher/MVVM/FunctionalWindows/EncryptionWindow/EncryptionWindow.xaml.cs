@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Shell;
 using Domain.Enum;
 using Domain.IService.IEncryption;
 using Domain.Model;
@@ -19,6 +22,16 @@ namespace NotePad_Launcher
         public EncryptionWindow()
         {
             InitializeComponent();
+
+            var chrome = new WindowChrome
+            {
+                CaptionHeight = 0,
+                ResizeBorderThickness = new Thickness(6),
+                UseAeroCaptionButtons = false
+            };
+
+            WindowChrome.SetWindowChrome(this, chrome);
+
             var viewModel = App.ServiceProvider.GetRequiredService<EncryptionWindowVM>();
             this.DataContext = viewModel;
             viewModel.MaximizeRequested += OnMaximizeRequested;
@@ -30,7 +43,25 @@ namespace NotePad_Launcher
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.DragMove();
+                if (this.WindowState == WindowState.Maximized)
+                {
+
+                    var mousePos = e.GetPosition(this);
+                    var screenPos = this.PointToScreen(mousePos);
+
+                    double relativeX = mousePos.X / this.ActualWidth;
+
+                    this.WindowState = WindowState.Normal;
+
+                    this.Left = screenPos.X - relativeX * this.Width;
+                    this.Top = screenPos.Y - mousePos.Y;
+
+                    this.DragMove();
+                }
+                else
+                {
+                    this.DragMove();
+                }
             }
         }
         private void OnCloseRequested()
