@@ -3,15 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:commands="clr-namespace:NotePad_Launcher.MVVM.Commands"
         xmlns:local="clr-namespace:NotePad_Launcher"
+        xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
-        Title="FileListWindow" Height="350" Width="250"
-        MinWidth="250" MinHeight="350" MaxWidth="250" MaxHeight="350"
+        x:Name="FileList"
+        Title="FileListWindow" Height="450" Width="350"
+        MinWidth="250" MinHeight="350" MaxWidth="350" MaxHeight="450"
         Style="{StaticResource WindowStyle}">
+    <Window.Resources>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
@@ -20,8 +26,9 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="25"/>
         </Grid.ColumnDefinitions>
+
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="../../Resources/app.ico"/>
+            <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="pack://application:,,,/NotePad_Launcher;component/Resources/app.ico"/>
             <TextBlock Text=" FileList" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>
@@ -36,17 +43,102 @@
             </Button>
             <Button DockPanel.Dock="Right" Command="{Binding MinimizeCommand}" Content="━" Style="{StaticResource ButtonHeadStyle}"/>
         </DockPanel>
-        <ListView x:Name="FileListView" Grid.Column="1" Grid.Row="2" ItemsSource="{Binding FileListItem}" SelectionChanged="FileListView_SelectionChanged">
+
+
+
+        <Border Grid.Row="1" Grid.Column="1" Background="#F0F0F0" BorderThickness="1,2,1,1" BorderBrush="Gray" Margin="0,0,0,1" >
+            <ComboBox HorizontalContentAlignment="Center" ItemsSource="{Binding FolderFileString}" SelectedItem="{Binding SelectedFolder}"  SelectedIndex="{Binding SelectedIndex}">
+                <ComboBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Удалить каталог" Command="{Binding FolderDeleteCommand}" />
+                        <MenuItem Header="Переименовать каталог" Command="{Binding FolderEditNameCommand}" />
+                        <MenuItem Header="Создать каталог" Command="{Binding NewFolderCreateCommand}"/>
+                    </ContextMenu>
+                </ComboBox.ContextMenu>
+            </ComboBox>
+        </Border>
+        <Border  Grid.Row="1" BorderThickness="0,2,0,0" BorderBrush="Gray">
+            <Button  Command="{Binding BackFolderCommand}" Content="⇐" VerticalContentAlignment="Top" FontSize="15" BorderThickness="0"  Background="#F0F0F0"  />
+        </Border>
+        <Border  Grid.Row="1" Grid.Column="3" BorderThickness="0,2,0,0" BorderBrush="Gray">
+            <Button  Command="{Binding NextFolderCommand}" Content="⇒" VerticalContentAlignment="Top" FontSize="15" BorderThickness="0" Background="#F0F0F0"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="1" Background="#F0F0F0" >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button  Command="{Binding FolderCommand}" ToolTip="Проводник" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                    <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/Explorer.svg" Width="20" Height="20"/>
+                </Button>
+                <Button  Command="{Binding NewFolderCreateCommand}" ToolTip="Создать новый каталог" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                    <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FolderAdd.svg" Width="20" Height="20"/>
+                </Button>
+                <Button  Command="{Binding NewFileCreateCommand}" ToolTip="Создать новый текстовой файл" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                    <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/TxtFileAdd.svg" Width="20" Height="20"/>
+                </Button>
+                <Button  Command="{Binding FolderEditNameCommand}" ToolTip="Изменил название выбранного каталога" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                    <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FolderEdit.svg" Width="20" Height="20"/>
+                </Button>
+                <Button  Command="{Binding FolderDeleteCommand}" ToolTip="Удалить выбранный каталог" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                    <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FolderDelete.svg" Width="20" Height="20"/>
+                </Button>
+                <Button  Command="{Binding UpdateCommand}" ToolTip="Обновить окно" BorderThickness="1" BorderBrush="Gray" Background="#F0F0F0" MinWidth="25" MaxWidth="25">
+                    <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FileUpdate.svg" Width="20" Height="20"/>
+                </Button>
+            </StackPanel>
+        </Border>
+        <ListView x:Name="FileListView" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding FileListItem}" SelectionMode="Extended">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding FileName}" Foreground="Blue" Cursor="Hand"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/NotePad_Launcher;component/Resources/app.ico"
+                         Width="16" Height="16" 
+                         Margin="0,0,5,0" 
+                         VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding FileName}" Foreground="Black">
+                        </TextBlock>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType=ListView}}" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu>
+                                <MenuItem Header="Переименовать"
+                                  Command="{Binding PlacementTarget.Tag.MenuRenameFileCommand,
+                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
+                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Удалить"
+                                  Command="{Binding PlacementTarget.Tag.DataContext.MenuDeleteFileCommand,
+                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
+                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                <MenuItem Header="Переместить"
+                                  Command="{Binding PlacementTarget.Tag.DataContext.MenuMoveFileCommand,
+                                                    RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
+                                                             RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Создать" Command="{Binding NewFileCreateCommand}"/>
+                    <MenuItem Header="Обновить" Command="{Binding UpdateCommand}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
         </ListView>
         <!--Canvas панели (две боковые и одна нижняя) для дизайна программы-->
         <Canvas Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Background="#F0F0F0" />
         <Canvas Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Background="#F0F0F0" />
-        <Canvas Grid.Column="0" Grid.Row="3"  Grid.ColumnSpan="3" Background="Gray" />
+        <Canvas Grid.Column="0" Grid.Row="4"  Grid.ColumnSpan="3" Background="Gray" />
         <!--#######################################################################################-->
     </Grid>
 </Window>

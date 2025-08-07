@@ -23,7 +23,6 @@ public class WindowService : IWindowService
             }
         }
 
-        // Создание окна через DI
         var window = App.ServiceProvider.GetRequiredService<TWindow>();
         _openWindows[windowType] = window;
 
@@ -37,5 +36,4 @@ public class WindowService : IWindowService
         var window = App.ServiceProvider.GetRequiredService<TWindow>();
         window.ShowDialog();
     }
-
 }

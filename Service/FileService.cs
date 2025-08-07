@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using Domain.IService;
 using Domain.Model;
@@ -38,8 +39,10 @@ namespace Service
         {
             var exePath = Assembly.GetExecutingAssembly().Location;
             var exeDirectory = Path.GetDirectoryName(exePath);
-            var documentsDirect = Path.Combine($@"{exeDirectory}/Documents");
+            var documentsDirect = Path.Combine(exeDirectory, "Documents");
+            var subdirectory = Path.Combine(documentsDirect, "Main");
             Directory.CreateDirectory(documentsDirect);
+            Directory.CreateDirectory(subdirectory);
         }
         public FileModel OpenFile(string pathFile)
         {
@@ -52,9 +55,9 @@ namespace Service
 
         }
 
-        public FileModel CreateFile(string DocsPath)
+        public FileModel CreateFile(string DocsPath, string FileName)
         {
-            string FileName = "New Text File.txt";
+            FileName = $"{FileName}.txt";
             string CreateFileInDirectory = Path.Combine(DocsPath, FileName);
             if (File.Exists(CreateFileInDirectory))
             {
@@ -105,7 +108,7 @@ namespace Service
                     File.WriteAllText(newFilePath, model.FileText);
                 }
 
-            }
+            }   
             else
             {
                 newFilePath = Path.Combine(DocsPath, model.FileName + ".txt");
@@ -143,7 +146,16 @@ namespace Service
                     FilePath = file,
                 }).ToList();
         }
-
+        public List<string> LoadFolderFile(string DocsPath)
+        {
+            string[] folderPath = Directory.GetDirectories(DocsPath);
+            List<string> folderNames = new List<string>();
+            foreach (var path in folderPath)
+            {
+                folderNames.Add(Path.GetFileName(path));
+            }
+            return folderNames;
+        }
         public void DeleteFile(string filePath)
         {
             File.Delete(filePath);
@@ -151,7 +163,7 @@ namespace Service
 
         public bool CheckTextChange(string pathFile, string fileText)
         {
-            if (string.IsNullOrEmpty(pathFile))
+            if (string.IsNullOrEmpty(pathFile) || !File.Exists(pathFile))
                 return true;
 
             var checkTextFromFile = File.ReadAllText(pathFile, Encoding.UTF8);
@@ -162,19 +174,10 @@ namespace Service
         {
             File.WriteAllText(pathFile, fileText);
         }
-
-        public string GetFileNameWithout(string pathFile)
-        {
-            return Path.GetFileNameWithoutExtension(pathFile);
-        }
-        public string GetFileName(string pathFile)
-        {
-            return Path.GetFileName(pathFile);
-        }
-
         public bool FileExists(string pathFile)
         {
             return File.Exists(pathFile);
         }
+        
     }
 }

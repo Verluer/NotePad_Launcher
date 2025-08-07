@@ -210,9 +210,9 @@ public class MainWindowVM : INotifyPropertyChanged
         _serviceFunctions = new ServiceFunctions();
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
-        _fileService.CreateDocumentsDirectory();
         if (App.Config.DocsPath == "FirstLaunch")
         {
+            _fileService.CreateDocumentsDirectory();
             string DocumentPath = _fileService.ExDirectoryFile("Documents");
             App.Config.DocsPath = DocumentPath;
             _configService.Save(App.Config);
@@ -249,13 +249,34 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         FileTextDocument.Text = newText;
     }
-    public void UpdateFileInfo(FileModel fileModel)
+    public void UpdateFileInfo(FileModel fileModel, bool deleteFile)
     {
         if (!CheckingSaveFile(CheckSaveFile))
         {
             return;
         }
-
+        if (deleteFile == true)
+        {
+            var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
+            if (result == MessageBoxResult.Yes)
+            {
+                if (FilePath == fileModel.FilePath)
+                {
+                    FileTextDocument.Text = string.Empty;
+                    _fileService.DeleteFile(fileModel.FilePath);
+                    FileName = string.Empty;
+                    FilePath = string.Empty;
+                    CheckSaveFile = true;
+                    return;
+                }
+                else
+                {
+                    _fileService.DeleteFile(fileModel.FilePath);
+                    return;
+                }
+            }
+            else return;
+        }
         CurrentFile = fileModel;
         FilePath = CurrentFile.FilePath;
         FileTextDocument.Text = CurrentFile.FileText;
@@ -356,8 +377,9 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             return;
         }
-
-        var nameFile = _fileService.CreateFile(App.Config.DocsPath);
+        string currectPathConfig = _fileDialog.InputTextDialog("Create New File", "Select create file folder:", "", false, true);
+        currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
+        var nameFile = _fileService.CreateFile(currectPathConfig, "NewFileText");
         FileName = nameFile.FileName;
         FileTextDocument.Text = string.Empty;
         FilePath = nameFile.FilePath;
@@ -375,15 +397,23 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             if(string.IsNullOrWhiteSpace(model.FileName))
             {
-                var tempModel = _fileService.CreateFile(App.Config.DocsPath);
+                var tempModel = _fileService.CreateFile(App.Config.DocsPath, "NewFileText");
                 model.FileName = tempModel.FileName;
                 model.FilePath = tempModel.FilePath;
                 FileName = tempModel.FileName;
             }
-            var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
+            string currectPathConfig = Path.GetDirectoryName(model.FilePath);
+            string testPathConfig = Path.GetDirectoryName(currectPathConfig);
+            if (App.Config.SaveSetting == "SaveDirectory" && App.Config.DocsPath != testPathConfig)
+            {
+                currectPathConfig = _fileDialog.InputTextDialog("Save File", "Select save folder:", "", false, true);
+                if (currectPathConfig == null) return;
+                currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
+            }
+            var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
-            _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);
+            _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}", $"{LocalizationService.Instance["MainMessageSavedTitle"]}");
         }
         else if(!string.IsNullOrWhiteSpace(model.FileName))
             {
@@ -404,7 +434,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             FilePath = selectedPath;
             _fileService.WriteAllText(FilePath, FileTextDocument.Text);
-            FileName = _fileService.GetFileNameWithout(FilePath);
+            FileName = Path.GetFileNameWithoutExtension(FilePath);
             CheckSaveFile = true;
             _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}:\n{FilePath}", LocalizationService.Instance["MainMessageSavedTitle"]);
         }
