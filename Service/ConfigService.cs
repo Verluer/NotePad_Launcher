@@ -19,7 +19,7 @@ namespace Service
         public AppConfigModel Load()
         {
             if (!File.Exists(ConfigFile))
-                return new AppConfigModel(); // значения по умолчанию
+                return new AppConfigModel();
 
             string json = File.ReadAllText(ConfigFile);
             return JsonSerializer.Deserialize<AppConfigModel>(json) ?? new AppConfigModel();

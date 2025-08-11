@@ -40,176 +40,88 @@ public class SearchWindowVM : INotifyPropertyChanged
     public string SearchPattern
     {
         get => _searchPattern;
-        set
-        {
-            if (_searchPattern != value)
-            {
-                _searchPattern = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _searchPattern, value);
     }
     private string _titleMethod;
     public string TitleMethod
     {
         get => _titleMethod;
-        set
-        {
-            if (_titleMethod != value)
-            {
-                _titleMethod = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _titleMethod, value);
     }
     private string _replacePattern;
     public string ReplacePattern
     {
         get => _replacePattern;
-        set
-        {
-            if (_replacePattern != value)
-            {
-                _replacePattern = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _replacePattern, value);
     }
     private string _selectedOption = "Down";
 
     public string SelectedOption
     {
         get { return _selectedOption; }
-        set
-        {
-            if (_selectedOption != value)
-            {
-                _selectedOption = value;
-                OnPropertyChanged(nameof(SelectedOption));
-            }
-        }
+        set => SetField(ref _selectedOption, value);
     }
     private bool _isRegisterAware = false;
 
     public bool IsRegisterAware
     {
         get => _isRegisterAware;
-        set
-        {
-            if (_isRegisterAware != value)
-            {
-                _isRegisterAware = value;
-                OnPropertyChanged(nameof(IsRegisterAware));
-            }
-        }
+        set => SetField(ref _isRegisterAware, value);
     }
     private bool _isTextFairing = false;
 
     public bool IsTextFairing
     {
         get => _isTextFairing;
-        set
-        {
-            if (_isTextFairing != value)
-            {
-                _isTextFairing = value;
-                OnPropertyChanged(nameof(IsTextFairing));
-            }
-        }
+        set => SetField(ref _isTextFairing, value);
     }
     private Thickness _buttonCloseMargin = new Thickness(0);
     public Thickness ButtonCloseMargin
     {
         get => _buttonCloseMargin;
-        set
-        {
-            _buttonCloseMargin = value;
-            OnPropertyChanged(nameof(ButtonCloseMargin));
-        }
+        set => SetField(ref _buttonCloseMargin, value);
     }
     private bool _isButtonReplaceVisible = true;
 
     public bool IsButtonReplaceVisible
     {
         get => _isButtonReplaceVisible;
-        set
-        {
-            if (_isButtonReplaceVisible != value)
-            {
-                _isButtonReplaceVisible = value;
-                OnPropertyChanged(nameof(IsButtonReplaceVisible));
-            }
-        }
+        set => SetField(ref _isButtonReplaceAllVisible, value);
     }
     private bool _isButtonReplaceAllVisible = true;
 
     public bool IsButtonReplaceAllVisible
     {
         get => _isButtonReplaceAllVisible;
-        set
-        {
-            if (_isButtonReplaceAllVisible != value)
-            {
-                _isButtonReplaceAllVisible = value;
-                OnPropertyChanged(nameof(IsButtonReplaceAllVisible));
-            }
-        }
+        set => SetField(ref _isButtonReplaceAllVisible, value);
     }
     private bool _isTextBlockReplaceVisible = true;
 
     public bool IsTextBlockReplaceVisible
     {
         get => _isTextBlockReplaceVisible;
-        set
-        {
-            if (_isTextBlockReplaceVisible != value)
-            {
-                _isTextBlockReplaceVisible = value;
-                OnPropertyChanged(nameof(IsTextBlockReplaceVisible));
-            }
-        }
+        set => SetField(ref _isTextBlockReplaceVisible, value);
     }
     private bool _isTextBoxReplaceVisible = true;
 
     public bool IsTextBoxReplaceVisible
     {
         get => _isTextBoxReplaceVisible;
-        set
-        {
-            if (_isTextBoxReplaceVisible != value)
-            {
-                _isTextBoxReplaceVisible = value;
-                OnPropertyChanged(nameof(IsTextBoxReplaceVisible));
-            }
-        }
+        set => SetField(ref _isTextBoxReplaceVisible, value);
     }
     private bool _isRadioButtonUpVisible = true;
 
     public bool IsRadioButtonUpVisible
     {
         get => _isRadioButtonUpVisible;
-        set
-        {
-            if (_isRadioButtonUpVisible != value)
-            {
-                _isRadioButtonUpVisible = value;
-                OnPropertyChanged(nameof(IsRadioButtonUpVisible));
-            }
-        }
+        set => SetField(ref _isRadioButtonUpVisible, value);
     }
     private bool _isRadioButtonDownVisible = true;
 
     public bool IsRadioButtonDownVisible
     {
         get => _isRadioButtonDownVisible;
-        set
-        {
-            if (_isRadioButtonDownVisible != value)
-            {
-                _isRadioButtonDownVisible = value;
-                OnPropertyChanged(nameof(IsRadioButtonDownVisible));
-            }
-        }
+        set => SetField(ref _isRadioButtonDownVisible, value);
     }
     private SearchReplaceMethod _selectedMethod;
     public SearchReplaceMethod SelectedMethod { get; }

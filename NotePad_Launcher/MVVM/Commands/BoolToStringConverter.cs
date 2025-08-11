@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace NotePad_Launcher.MVVM.Commands;
 
-public class OptionToBoolConverter : IValueConverter
+public class BoolToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

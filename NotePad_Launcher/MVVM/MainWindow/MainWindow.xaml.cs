@@ -3,17 +3,17 @@ using System.Windows.Input;
 using System.Windows.Shell;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
+using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.WindowsAPICodePack.Dialogs.Controls;
 using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private readonly IDataStorage _dataStorage;
+        private readonly MainWindowVM _viewModel;
         public MainWindow(IDataStorage dataStorage)
         {
             InitializeComponent();
@@ -29,8 +29,18 @@ namespace NotePad_Launcher
 
             _dataStorage = dataStorage;
             _dataStorage.SearchAction += TextFound;
+
+            var allHighlightings = HighlightingManager.Instance.HighlightingDefinitions;
+            foreach (var highlighting in allHighlightings)
+            {
+                _dataStorage.AllHighlightings.Add(highlighting.Name);
+            }
+
             var viewModel = App.ServiceProvider.GetRequiredService<MainWindowVM>();
             this.DataContext = viewModel;
+
+            _viewModel = viewModel;
+
             FileText.Document = viewModel.FileTextDocument;
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
@@ -38,6 +48,16 @@ namespace NotePad_Launcher
             {
                 FileText.WordWrap = viewModel.IsWordWrapEnabled;
             };
+            viewModel.UpdateSyntaxHighlightingAction = () =>
+            {
+                if(viewModel.IsSyntaxHighlightingEnabled) 
+                FileText.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition($"{App.Config.SyntaxHighlighting}");
+                else
+                {
+                    FileText.SyntaxHighlighting = null;
+                }
+            };
+
             _dataStorage.GetSelectionCallback = () =>
             {
                 var selection = FileText.TextArea.Selection;
@@ -54,6 +74,10 @@ namespace NotePad_Launcher
                 var offset = FileText.CaretOffset;
                 return offset;
             };
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _viewModel.UpdateSyntaxHighlightingAction?.Invoke();
         }
         private void OnMinimizeRequested()
         {

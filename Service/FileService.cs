@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using Domain.IService;
@@ -155,6 +156,20 @@ namespace Service
                 folderNames.Add(Path.GetFileName(path));
             }
             return folderNames;
+        }
+        public List<string> FindLocalization()
+        {
+            var exePath = Assembly.GetExecutingAssembly().Location;
+            var exeDirectory = Path.GetDirectoryName(exePath);
+            var folderLoc = Path.Combine("Resources", "Locales");
+            var directoryLoc = Path.Combine(exeDirectory, folderLoc);
+            string[] tempLocFiles = Directory.GetFiles(directoryLoc, "*.json");
+            List<string> locNames = new List<string>();
+            foreach (var locName in tempLocFiles)
+            {
+                locNames.Add(Path.GetFileNameWithoutExtension(locName));
+            }
+            return locNames;
         }
         public void DeleteFile(string filePath)
         {

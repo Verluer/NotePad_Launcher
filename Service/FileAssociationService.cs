@@ -29,7 +29,7 @@ public class FileAssociationService : IFileAssociationService
 
             using (var classKey = Registry.CurrentUser.CreateSubKey($@"Software\Classes\{fileType}"))
             {
-                classKey?.SetValue("", "Text Document for NotePad_Launcher");
+                classKey?.SetValue("", "Text Document");
 
                 using (var iconKey = classKey?.CreateSubKey("DefaultIcon"))
                     iconKey?.SetValue("", iconPath);

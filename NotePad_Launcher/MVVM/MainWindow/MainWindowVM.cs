@@ -1,10 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System.CodeDom.Compiler;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Domain.Enum;
 using Domain.IService;
 using Domain.Model;
@@ -25,6 +28,7 @@ namespace NotePad_Launcher.ViewModels.MainWindow;
 
 public class MainWindowVM : INotifyPropertyChanged
 {
+
     #region Variables
     private ICommand? _closeCommand;
     private ICommand? _minimizeCommand;
@@ -36,6 +40,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _fileListCommand;
     private ICommand? _deleteFileCommand;
     private ICommand? _toggleWordWrapCommand;
+    private ICommand? _toggleSyntaxHighlightingCommand;
     private ICommand? _logCommand;
     private ICommand? _encryptedMethodCommand;
     private ICommand? _movingGithubCommand;
@@ -43,12 +48,15 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _fontPickerCommand;
     private ICommand? _searchPatternCommand;
 
+    public event PropertyChangedEventHandler? PropertyChanged;
+
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
     public event Action<SearchReplaceMethod> SearchReplaceMethodExecuted;
 
     public Action UpdateWordWrapAction;
+    public Action UpdateSyntaxHighlightingAction;
 
     private readonly IFileService _fileService;
     private readonly IFileDialog _fileDialog;
@@ -63,14 +71,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public bool CheckSaveFile
     {
         get => _checkSaveFile;
-        set
-        {
-            if (_checkSaveFile != value)
-            {
-                _checkSaveFile = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _checkSaveFile, value);
     }
     private TextDocument _fileTextDocument;
     public TextDocument FileTextDocument
@@ -78,48 +79,31 @@ public class MainWindowVM : INotifyPropertyChanged
         get => _fileTextDocument;
         set
         {
-            if (_fileTextDocument != value)
+            if (!EqualityComparer<TextDocument>.Default.Equals(_fileTextDocument, value))
             {
                 if (_fileTextDocument != null)
-                {
                     _fileTextDocument.Changed -= OnDocumentChanged;
-                }
 
-                _fileTextDocument = value;
-
-                if (_fileTextDocument != null)
+                if (SetField(ref _fileTextDocument, value))
                 {
-                    _fileTextDocument.Changed += OnDocumentChanged;
+                    if (_fileTextDocument != null)
+                        _fileTextDocument.Changed += OnDocumentChanged;
                 }
-                OnPropertyChanged();
             }
+
         }
     }
     private string _fileName;
     public string FileName
     {
         get => _fileName;
-        set
-        {
-            if (_fileName != value)
-            {
-                _fileName = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _fileName, value);
     }
     private double _selectedFontSize = 14;
     public double SelectedFontSize
     {
         get => _selectedFontSize;
-        set
-        {
-            if (_selectedFontSize != value)
-            {
-                _selectedFontSize = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontSize, value);
     }
 
     private FontFamily _selectedFontFamily;
@@ -127,40 +111,19 @@ public class MainWindowVM : INotifyPropertyChanged
     public FontFamily SelectedFontFamily
     {
         get => _selectedFontFamily;
-        set
-        {
-            if (_selectedFontFamily != value)
-            {
-                _selectedFontFamily = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontFamily, value);
     }
     private FontStyle _selectedFontStyle;
     public FontStyle SelectedFontStyle
     {
         get => _selectedFontStyle;
-        set
-        {
-            if (_selectedFontStyle != value)
-            {
-                _selectedFontStyle = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontStyle, value);
     }
     private FontWeight _selectedFontWeight;
     public FontWeight SelectedFontWeight
     {
         get => _selectedFontWeight;
-        set
-        {
-            if (_selectedFontWeight != value)
-            {
-                _selectedFontWeight = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontWeight, value);
     }
 
     private bool _isWordWrapEnabled;
@@ -169,12 +132,25 @@ public class MainWindowVM : INotifyPropertyChanged
         get => _isWordWrapEnabled;
         set
         {
-            if (_isWordWrapEnabled != value)
+            if (SetField(ref _isWordWrapEnabled, value))
             {
-                _isWordWrapEnabled = value;
-                OnPropertyChanged();
-
                 UpdateWordWrapAction?.Invoke();
+                App.Config.WordWrap = IsWordWrapEnabled;
+                _configService.Save(App.Config);
+            }
+        }
+    }
+    private bool _isSyntaxHighlightingEnabled;
+    public bool IsSyntaxHighlightingEnabled
+    {
+        get => _isSyntaxHighlightingEnabled;
+        set
+        {
+            if (SetField(ref _isSyntaxHighlightingEnabled, value))
+            {
+                UpdateSyntaxHighlightingAction?.Invoke();
+                App.Config.SyntaxToggle = IsSyntaxHighlightingEnabled;
+                _configService.Save(App.Config);
             }
         }
     }
@@ -189,16 +165,8 @@ public class MainWindowVM : INotifyPropertyChanged
     public string StartupFilePath
     {
         get => _startupFilePath;
-        set
-        {
-            if (_startupFilePath != value)
-            {
-                _startupFilePath = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _startupFilePath, value);
     }
-    public event PropertyChangedEventHandler? PropertyChanged;
 
 
     #endregion
@@ -210,6 +178,7 @@ public class MainWindowVM : INotifyPropertyChanged
         _serviceFunctions = new ServiceFunctions();
         _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
+        _configService = App.ServiceProvider.GetRequiredService<IConfigService>();
         if (App.Config.DocsPath == "FirstLaunch")
         {
             _fileService.CreateDocumentsDirectory();
@@ -217,6 +186,10 @@ public class MainWindowVM : INotifyPropertyChanged
             App.Config.DocsPath = DocumentPath;
             _configService.Save(App.Config);
         }
+
+        IsSyntaxHighlightingEnabled = App.Config.SyntaxToggle;
+        IsWordWrapEnabled = App.Config.WordWrap;
+
         _dataStorage.GetTextCallback = () => FileTextDocument.Text;
         _dataStorage.TextUpdated += OnTextUpdated;
         SelectedFontFamily = new FontFamily("Arial");
@@ -232,12 +205,15 @@ public class MainWindowVM : INotifyPropertyChanged
             FileName = startFile.FileName;
             FileTextDocument.Text = string.Empty;
             FileTextDocument.Text = startFile.FileText;
-
         }
         _dataStorage.SelectionFileUpdated += UpdateFileInfo;
+        _dataStorage.UpdateSyntaxHighlighting += UpdateSyntax;
     }
     #region Functions
-
+    private void UpdateSyntax()
+    {
+        UpdateSyntaxHighlightingAction?.Invoke();
+    }
     private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)
     {
         SelectedFontFamily = fontFamily;
@@ -255,7 +231,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             return;
         }
-        if (deleteFile == true)
+        if (deleteFile)
         {
             var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
             if (result == MessageBoxResult.Yes)
@@ -326,9 +302,10 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand FileListCommand => _fileListCommand ??= new OtherRelayCommands(ExecuteFileList, CanExecute);
     public ICommand DeleteFileCommand => _deleteFileCommand ??= new OtherRelayCommands(ExecuteDeleteFile, CanExecute);
     public ICommand SearchPatternCommand => _searchPatternCommand ??= new OtherRelayCommands(ExecuteSearchPattern, CanExecute);
-    
-    
+
+
     public ICommand ToggleWordWrapCommand => _toggleWordWrapCommand ??= new OtherRelayCommands(ExecuteWordWrap, CanExecute);
+    public ICommand ToggleSyntaxHighlightingCommand => _toggleSyntaxHighlightingCommand ??= new OtherRelayCommands(ExecuteSyntaxHighlighting, CanExecute);
     public ICommand EncryptedMethodCommand => _encryptedMethodCommand ??= new OtherRelayCommands(ExecuteEncryptedMethod, CanExecute);
     public ICommand MovingGithubCommand => _movingGithubCommand ??= new OtherRelayCommands(ExecuteMovingGitHub, CanExecute);
     public ICommand ProgramInfCommand => _programInfCommand ??= new OtherRelayCommands(ExecuteProgramInf, CanExecute);
@@ -337,7 +314,6 @@ public class MainWindowVM : INotifyPropertyChanged
     #endregion
 
     #region Execute Button Parameter
-    // Действие (событие) кнопок
     private void ExecuteLogCommand(object? parameter)
     {
         _windowService.OpenWindowDialog<SettingsWindow>();
@@ -395,7 +371,7 @@ public class MainWindowVM : INotifyPropertyChanged
         };
         if (!string.IsNullOrWhiteSpace(model.FileText))
         {
-            if(string.IsNullOrWhiteSpace(model.FileName))
+            if (string.IsNullOrWhiteSpace(model.FileName))
             {
                 var tempModel = _fileService.CreateFile(App.Config.DocsPath, "NewFileText");
                 model.FileName = tempModel.FileName;
@@ -415,8 +391,8 @@ public class MainWindowVM : INotifyPropertyChanged
             CheckSaveFile = true;
             _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}", $"{LocalizationService.Instance["MainMessageSavedTitle"]}");
         }
-        else if(!string.IsNullOrWhiteSpace(model.FileName))
-            {
+        else if (!string.IsNullOrWhiteSpace(model.FileName))
+        {
             var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
@@ -442,7 +418,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private void ExecuteFileList(object? parameter)
     {
         _windowService.OpenWindow<FileListWindow>();
-        
+
     }
     private void ExecuteDeleteFile(object? parameter)
     {
@@ -472,7 +448,10 @@ public class MainWindowVM : INotifyPropertyChanged
     {
         IsWordWrapEnabled = !IsWordWrapEnabled;
     }
-
+    private void ExecuteSyntaxHighlighting(object? parameter)
+    {
+       IsSyntaxHighlightingEnabled = !IsSyntaxHighlightingEnabled;
+    }
     private void ExecuteEncryptedMethod(object? parameter)
     {
         if (parameter is EncryptionMethod method)

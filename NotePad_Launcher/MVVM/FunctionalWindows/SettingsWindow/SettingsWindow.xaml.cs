@@ -38,6 +38,8 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
 
             var viewModel = App.ServiceProvider.GetRequiredService<SettingsWindowVM>(); ;
             this.DataContext = viewModel;
+
+
             viewModel.MinimizeRequested += OnMinimizeRequested;
             viewModel.CloseRequested += OnCloseRequested;
         }

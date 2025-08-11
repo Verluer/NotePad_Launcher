@@ -11,7 +11,7 @@
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
         <commands:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <commands:OptionToBoolConverter x:Key="OptionToBoolConverter" />
+        <commands:BoolToStringConverter x:Key="BoolToStringConverter" />
         <ObjectDataProvider x:Key="LocService" ObjectType="{x:Type local:LocalizationService}" MethodName="get_Instance" />
     </Window.Resources>
     <Grid>
@@ -46,8 +46,8 @@
         </DockPanel>
         <Border Grid.Row="2" Grid.Column="1" CornerRadius="5" Background="#f0f0f0" BorderBrush="Gray" BorderThickness="1" Padding="0">
             <StackPanel>
-                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonGeneral]}" GroupName="ButtonSettings" Style="{StaticResource RoundedRadioButtonStyle}"  IsChecked="{Binding SelectedSettings, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=General}" />
-                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonTest]}" GroupName="ButtonSettings" Style="{StaticResource RoundedRadioButtonStyle}"  IsChecked="{Binding SelectedSettings, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Test}"  />
+                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonGeneral]}" GroupName="ButtonSettings" Style="{StaticResource RoundedRadioButtonStyle}"  IsChecked="{Binding SelectedSettings, Converter={StaticResource BoolToStringConverter}, ConverterParameter=General}" />
+                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonTest]}" GroupName="ButtonSettings" Style="{StaticResource RoundedRadioButtonStyle}"  IsChecked="{Binding SelectedSettings, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Test}"  />
             </StackPanel>
         </Border>
         <ScrollViewer Grid.Column="3" Grid.Row="2" VerticalScrollBarVisibility="Auto">
@@ -68,10 +68,33 @@
                     </Button>
                     </Grid>
                 </DockPanel>
-                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonGeneralSaveConf1]}" GroupName="ButtonSettings" IsChecked="{Binding SelectedSaveConf, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=SaveDirectory}" Margin="0,5,0,0"/>
-                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonGeneralSaveConf2]}" GroupName="ButtonSettings" IsChecked="{Binding SelectedSaveConf, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=SaveNormal}" Margin="0,5,0,0"/>
-                <ComboBox Width="150" ItemsSource="{Binding Language}" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"  Margin="0,15,0,0">
-                </ComboBox>
+                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonGeneralSaveConf1]}" GroupName="ButtonSaveSettings" IsChecked="{Binding SelectedSaveConf, Converter={StaticResource BoolToStringConverter}, ConverterParameter=SaveDirectory}" Margin="0,5,0,0"/>
+                <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SettingsRadioButtonGeneralSaveConf2]}" GroupName="ButtonSaveSettings" IsChecked="{Binding SelectedSaveConf, Converter={StaticResource BoolToStringConverter}, ConverterParameter=SaveNormal}" Margin="0,5,0,0"/>
+                <DockPanel LastChildFill="True" Margin="0,10,0,0">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Language:" Grid.Column="0"/>
+                        <ComboBox Grid.Column="2" ItemsSource="{Binding Language}" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"/>
+                    </Grid>
+                </DockPanel>
+                <DockPanel LastChildFill="True" Margin="0,10,0,0">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Syntax Highlighting:" Grid.Column="0"/>
+                        <ComboBox Grid.Column="2" ItemsSource="{Binding AllHighlightings}" SelectedItem="{Binding SelectedAllHighlightings, Mode=TwoWay}"/>
+                    </Grid>
+
+                </DockPanel>
                 <StackPanel.Visibility>
                     <Binding Path="IsStackPanelGeneralVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
                 </StackPanel.Visibility>

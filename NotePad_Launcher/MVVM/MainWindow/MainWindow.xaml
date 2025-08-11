@@ -7,6 +7,7 @@
         xmlns:enum="clr-namespace:Domain.Enum;assembly=Domain"
         xmlns:local="clr-namespace:NotePad_Launcher.ServiceUI"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
         Title="MainWindow" Height="450" Width="800"
         MinWidth="300" MinHeight="200"
         Style="{StaticResource WindowStyle}">
@@ -61,6 +62,7 @@
                 </MenuItem>
                 <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormat]}" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormatWordWrap]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding ToggleSyntaxHighlightingCommand}" IsChecked="{Binding IsSyntaxHighlightingEnabled, Mode=TwoWay}" Header="Syntax highlighting" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Command="{Binding FontPickerCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormatFont]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Header="Encryption" Style="{StaticResource MainWindowMenuItemStyle}">
                         <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.RSA}"  Header="RSA" Style="{StaticResource MainWindowMenuItemStyle}"/>

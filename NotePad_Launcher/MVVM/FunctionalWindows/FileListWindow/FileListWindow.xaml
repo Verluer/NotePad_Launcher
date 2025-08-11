@@ -108,7 +108,7 @@
                         <Setter.Value>
                             <ContextMenu>
                                 <MenuItem Header="Переименовать"
-                                  Command="{Binding PlacementTarget.Tag.MenuRenameFileCommand,
+                                  Command="{Binding PlacementTarget.Tag.DataContext.MenuRenameFileCommand,
                                                     RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
                                                              RelativeSource={RelativeSource AncestorType=ContextMenu}}" />

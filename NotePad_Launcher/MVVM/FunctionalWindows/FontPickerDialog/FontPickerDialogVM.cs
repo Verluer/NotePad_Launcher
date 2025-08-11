@@ -29,10 +29,8 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         get => _selectedFont;
         set
         {
-            if (_selectedFont != value)
+            if (SetField(ref _selectedFont, value))
             {
-                _selectedFont = value;
-                OnPropertyChanged();
                 LoadFontStylesWeights();
             }
         }
@@ -42,41 +40,20 @@ public class FontPickerDialogVM : INotifyPropertyChanged
     public TextBlock SelectedFontStyle
     {
         get => _selectedFontStyle;
-        set
-        {
-            if (_selectedFontStyle != value)
-            {
-                _selectedFontStyle = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontStyle, value);
     }
 
     private TextBlock _selectedFontWeight;
     public TextBlock SelectedFontWeight
     {
         get => _selectedFontWeight;
-        set
-        {
-            if (_selectedFontWeight != value)
-            {
-                _selectedFontWeight = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontWeight, value);
     }
     private double _selectedFontSize;
     public double SelectedFontSize
     {
         get => _selectedFontSize;
-        set
-        {
-            if (_selectedFontSize != value)
-            {
-                _selectedFontSize = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetField(ref _selectedFontSize, value);
     }
 
     public FontPickerDialogVM(IDataStorage stringSerivce)

@@ -10,7 +10,7 @@
         MinWidth="400" MinHeight="150" MaxWidth="400" MaxHeight="150"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
-        <commands:OptionToBoolConverter x:Key="OptionToBoolConverter" />
+        <commands:BoolToStringConverter x:Key="BoolToStringConverter" />
         <commands:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <ObjectDataProvider x:Key="LocService" ObjectType="{x:Type local:LocalizationService}" MethodName="get_Instance" />
         </Window.Resources>
@@ -67,12 +67,12 @@
             <Button Content="{Binding Source={StaticResource LocService}, Path=[SearchButtonCancel]}" Command="{Binding CloseCommand}" FontSize="12" Height="22" Width="75" Margin="{Binding ButtonCloseMargin}"/>
         </StackPanel>
         <DockPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,15">
-            <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SearchRadioButtonUp]}" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Up}" Margin="0,0,10,0">
+            <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SearchRadioButtonUp]}" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Up}" Margin="0,0,10,0">
                 <RadioButton.Visibility>
                     <Binding Path="IsRadioButtonUpVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
                 </RadioButton.Visibility>
             </RadioButton>
-            <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SearchRadioButtonDown]}" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource OptionToBoolConverter}, ConverterParameter=Down}">
+            <RadioButton Content="{Binding Source={StaticResource LocService}, Path=[SearchRadioButtonDown]}" VerticalAlignment="Center" IsChecked="{Binding SelectedOption, Converter={StaticResource BoolToStringConverter}, ConverterParameter=Down}">
                 <RadioButton.Visibility>
                     <Binding Path="IsRadioButtonDownVisible"  Converter="{StaticResource BoolToVisibilityConverter}" />
                 </RadioButton.Visibility>

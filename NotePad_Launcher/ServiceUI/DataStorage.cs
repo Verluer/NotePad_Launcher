@@ -15,7 +15,13 @@ public class DataStorage : IDataStorage
     public EncryptionMethod CurrentMethod { get; set; }
     public SearchReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
+    public List<string> AllHighlightings { get; set; } = new List<string>();
 
+    public event Action? UpdateSyntaxHighlighting;
+    public void PushUpdatedSyntax()
+    {
+        UpdateSyntaxHighlighting?.Invoke();
+    }
     #endregion
     #region Передача измененной строки
     public event Action<string> TextUpdated;

@@ -45,12 +45,9 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
             get => _selectedFolder;
             set
             {
-                if (_selectedFolder != value)
+                if (SetField(ref _selectedFolder, value))
                 {
-                    _selectedFolder = value;
-                    OnPropertyChanged(nameof(SelectedFolder));
-                    if (IsComboBoxVisible = true)
-                        Result = value;
+                    if (IsComboBoxVisible = true) Result = value;
                 }
             }
         }
@@ -58,40 +55,19 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
         public int SelectedIndex
         {
             get => _selectedIndex;
-            set
-            {
-                if (_selectedIndex != value)
-                {
-                    _selectedIndex = value;
-                    OnPropertyChanged(nameof(SelectedIndex));
-                }
-            }
+            set => SetField(ref _selectedIndex, value);
         }
         private string _title;
         public string Title
         {
             get => _title;
-            set
-            {
-                if (_title != value)
-                {
-                    _title = value;
-                    OnPropertyChanged();
-                }
-            }
+            set => SetField(ref _title, value);
         }
         private string _message;
         public string Message
         {
             get => _message;
-            set
-            {
-                if (_message != value)
-                {
-                    _message = value;
-                    OnPropertyChanged();
-                }
-            }
+            set => SetField(ref _message, value);
         }
         private string _inputText;
         public string InputText
@@ -99,10 +75,8 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
             get => _inputText;
             set
             {
-                if (_inputText != value)
+                if (SetField(ref _inputText, value))
                 {
-                    _inputText = value;
-                    OnPropertyChanged();
                     if(IsTextBoxVisible = true) Result = value;
                 }
             }
@@ -112,28 +86,14 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
         public bool IsTextBoxVisible
         {
             get => _isTextBoxVisible;
-            set
-            {
-                if (_isTextBoxVisible != value)
-                {
-                    _isTextBoxVisible = value;
-                    OnPropertyChanged(nameof(IsTextBoxVisible));
-                }
-            }
+            set => SetField(ref _isTextBoxVisible, value);
         }
         private bool _isComboBoxVisible = true;
 
         public bool IsComboBoxVisible
         {
             get => _isComboBoxVisible;
-            set
-            {
-                if (_isComboBoxVisible != value)
-                {
-                    _isComboBoxVisible = value;
-                    OnPropertyChanged(nameof(IsComboBoxVisible));
-                }
-            }
+            set => SetField(ref _isComboBoxVisible, value);
         }
         public string Result { get; set; } = "";
         public InputTextDialogVM(string title, string message, string inputText, bool isTextBox, bool isComboBox)

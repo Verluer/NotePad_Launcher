@@ -73,91 +73,55 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     public string MethodName
     {
         get => _methodName;
-        set
-        {
-            _methodName = value;
-            OnPropertyChanged(nameof(MethodName));
-        }
+        set => SetField(ref _methodName, value);
     }
     private string _textBlockValue1;
     public string TextBlockValue1
     {
         get => _textBlockValue1;
-        set
-        {
-            _textBlockValue1 = value;
-            OnPropertyChanged(nameof(TextBlockValue1));
-        }
+        set => SetField(ref _textBlockValue1, value);
     }
     private string _textBlockValue2;
     public string TextBlockValue2
     {
         get => _textBlockValue2;
-        set
-        {
-            _textBlockValue2 = value;
-            OnPropertyChanged(nameof(TextBlockValue2));
-        }
+        set => SetField(ref _textBlockValue2, value);
     }
     private string _textBlockValue3;
     public string TextBlockValue3
     {
         get => _textBlockValue3;
-        set
-        {
-            _textBlockValue3 = value;
-            OnPropertyChanged(nameof(TextBlockValue3));
-        }
+        set => SetField(ref _textBlockValue3, value);
     }
     private string _textBlockValue4;
     public string TextBlockValue4
     {
         get => _textBlockValue4;
-        set
-        {
-            _textBlockValue4 = value;
-            OnPropertyChanged(nameof(TextBlockValue4));
-        }
+        set => SetField(ref _textBlockValue4, value);
     }
     private string _textBlockValue5;
     public string TextBlockValue5
     {
         get => _textBlockValue5;
-        set
-        {
-            _textBlockValue1 = value;
-            OnPropertyChanged(nameof(TextBlockValue5));
-        }
+        set => SetField(ref _textBlockValue5, value);
     }
     private string _textBlockCloseKey;
     public string TextBlockCloseKey
     {
         get => _textBlockCloseKey;
-        set
-        {
-            _textBlockCloseKey = value;
-            OnPropertyChanged(nameof(TextBlockCloseKey));
-        }
+        set => SetField(ref _textBlockCloseKey, value);
     }
     private string _textBlockOpenKey;
     public string TextBlockOpenKey
     {
         get => _textBlockOpenKey;
-        set
-        {
-            _textBlockOpenKey = value;
-            OnPropertyChanged(nameof(TextBlockOpenKey));
-        }
+        set => SetField(ref _textBlockOpenKey, value);
     }
     private string _textBlockCloseKey1;
     public string TextBlockCloseKey1
     {
         get => _textBlockCloseKey1;
-        set
-        {
-            _textBlockCloseKey1 = value;
-            OnPropertyChanged(nameof(TextBlockCloseKey1));
-        }
+        set => SetField(ref _textBlockCloseKey1, value);
     }
     #endregion
     #region TextBox
@@ -249,98 +213,49 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     public bool IsElement2Visible
     {
         get => _isElement2Visible;
-        set
-        {
-            if (_isElement2Visible != value)
-            {
-                _isElement2Visible = value;
-                OnPropertyChanged(nameof(IsElement2Visible));
-            }
-        }
+        set => SetField(ref _isElement2Visible, value);
     }
     private bool _isTextBlock3Visible = true;
 
     public bool IsTextBlock3Visible
     {
         get => _isTextBlock3Visible;
-        set
-        {
-            if (_isTextBlock3Visible != value)
-            {
-                _isTextBlock3Visible = value;
-                OnPropertyChanged(nameof(IsTextBlock3Visible));
-            }
-        }
+        set => SetField(ref _isTextBlock3Visible, value);
     }
     private bool _isTextBoxValue3Visible = true;
 
     public bool IsTextBoxValue3Visible
     {
         get => _isTextBoxValue3Visible;
-        set
-        {
-            if (_isTextBoxValue3Visible != value)
-            {
-                _isTextBoxValue3Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxValue3Visible));
-            }
-        }
+        set => SetField(ref _isTextBoxValue3Visible, value);
     }
     private bool _isTextBoxValue4Visible = true;
 
     public bool IsTextBoxValue4Visible
     {
         get => _isTextBoxValue4Visible;
-        set
-        {
-            if (_isTextBoxValue4Visible != value)
-            {
-                _isTextBoxValue4Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxValue4Visible));
-            }
-        }
+        set => SetField(ref _isTextBoxValue4Visible, value);
     }
     private bool _isTextBoxValue5Visible = true;
 
     public bool IsTextBoxValue5Visible
     {
         get => _isTextBoxValue5Visible;
-        set
-        {
-            if (_isTextBoxValue5Visible != value)
-            {
-                _isTextBoxValue5Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxValue5Visible));
-            }
-        }
+        set => SetField(ref _isTextBoxValue5Visible, value);
     }
     private bool _isTextBoxCloseKey2Visible = true;
 
     public bool IsTextBoxCloseKey2Visible
     {
         get => _isTextBoxCloseKey2Visible;
-        set
-        {
-            if (_isTextBoxCloseKey2Visible != value)
-            {
-                _isTextBoxCloseKey2Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxCloseKey2Visible));
-            }
-        }
+        set => SetField(ref _isTextBoxCloseKey2Visible, value);
     }
     private bool _isTextBoxCloseKey3Visible = true;
 
     public bool IsTextBoxCloseKey3Visible
     {
         get => _isTextBoxCloseKey3Visible;
-        set
-        {
-            if (_isTextBoxCloseKey3Visible != value)
-            {
-                _isTextBoxCloseKey3Visible = value;
-                OnPropertyChanged(nameof(IsTextBoxCloseKey3Visible));
-            }
-        }
+        set => SetField(ref _isTextBoxCloseKey3Visible, value);
     }
     #endregion
     private void RSAUI()

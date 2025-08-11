@@ -26,6 +26,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         private readonly IDataStorage _dataStorage;
         private readonly IConfigService _configService;
         private readonly IFileDialog _fileDialog;
+        private readonly IFileService _fileService;
         public event Action? MinimizeRequested;
         public event Action? CloseRequested;
         private ICommand? _closeCommand;
@@ -50,28 +51,14 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         public string TextBoxDocumentDirect
         {
             get => _textBoxDocumentDirect;
-            set
-            {
-                if (_textBoxDocumentDirect != value)
-                {
-                    _textBoxDocumentDirect = value;
-                    OnPropertyChanged();
-                }
-            }
+            set => SetField(ref _textBoxDocumentDirect, value);
         }
         private bool _isStackPanelGeneralVisible = true;
 
         public bool IsStackPanelGeneralVisible
         {
             get => _isStackPanelGeneralVisible;
-            set
-            {
-                if (_isStackPanelGeneralVisible != value)
-                {
-                    _isStackPanelGeneralVisible = value;
-                    OnPropertyChanged(nameof(IsStackPanelGeneralVisible));
-                }
-            }
+            set => SetField(ref _isStackPanelGeneralVisible, value);
         }
         private string _selectedSettings;
         public string SelectedSettings
@@ -79,11 +66,15 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             get => _selectedSettings;
             set
             {
-                if (_selectedSettings != value)
+                if (SetField(ref _selectedSettings, value))
                 {
-                    _selectedSettings = value;
-                    OnPropertyChanged(nameof(SelectedSettings));
-                    if (value == "General") IsStackPanelGeneralVisible = true;
+                    if (value == "General") 
+                    {
+                        if (IsStackPanelGeneralVisible == false)
+                        {
+                            IsStackPanelGeneralVisible = true;
+                        }
+;                    }
                     if (value == "Test") IsStackPanelGeneralVisible = false;
                 }
             }
@@ -94,10 +85,8 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             get => _selectedSaveConf;
             set
             {
-                if (_selectedSaveConf != value)
+                if (SetField(ref _selectedSaveConf, value))
                 {
-                    _selectedSaveConf = value;
-                    OnPropertyChanged(nameof(SelectedSaveConf));
                     if (value == "SaveDirectory") ;
                     if (value == "SaveNormal") ;
                 }
@@ -107,28 +96,38 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         public string SelectedLanguage
         {
             get => _selectedLanguage;
-            set
-            {
-                _selectedLanguage = value;
-                OnPropertyChanged(nameof(SelectedLanguage));
-            }
+            set => SetField(ref _selectedLanguage, value);
         }
-
-        public List<string> Language { get; } = new List<string>
-    {
-        "en",
-        "ua",
-        "ru"
-    };
-        public SettingsWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService)
+        private string _selectedAllHighlightings;
+        public string SelectedAllHighlightings
+        {
+            get => _selectedAllHighlightings;
+            set => SetField(ref _selectedAllHighlightings, value);
+        }
+        public List<string> Language { get; } = new List<string>();
+        public List<string> AllHighlightings { get; } = new List<string>();
+        public SettingsWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService, IFileService fileService)
         {
             _configService = configService;
             _dataStorage = dataStorage;
             _fileDialog = fileDialog;
+            _fileService = fileService;
+            LoadSettingsGeneral();
+        }
+        private void LoadSettingsGeneral()
+        {
+            SelectedSettings = "General";
+
+            Language.Clear();
+            Language.AddRange(_fileService.FindLocalization());
+
+            AllHighlightings.Clear();
+            AllHighlightings.AddRange(_dataStorage.AllHighlightings);
+
             TextBoxDocumentDirect = App.Config.DocsPath;
             SelectedSaveConf = App.Config.SaveSetting;
             SelectedLanguage = App.Config.Language;
-
+            SelectedAllHighlightings = App.Config.SyntaxHighlighting;
         }
         public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
         public ICommand MinimizeCommand => _minimizeCommand ??= new OtherRelayCommands(ExecuteMinimizeCommand, CanExecute);
@@ -147,6 +146,8 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             App.Config.DocsPath = TextBoxDocumentDirect;
             App.Config.SaveSetting = SelectedSaveConf;
             App.Config.Language = SelectedLanguage;
+            App.Config.SyntaxHighlighting = SelectedAllHighlightings;
+            _dataStorage.PushUpdatedSyntax();
             _configService.Save(App.Config);
             LocalizationService.Instance.LoadLanguage(SelectedLanguage);
             CloseRequested?.Invoke();

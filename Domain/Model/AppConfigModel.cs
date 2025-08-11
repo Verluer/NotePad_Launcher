@@ -11,5 +11,8 @@ namespace Domain.Model
         public string DocsPath { get; set; } = @"FirstLaunch";
         public string SaveSetting { get; set; } = "SaveNormal";
         public string Language { get; set; } = "en";
+        public string SyntaxHighlighting { get; set; } = "C#";
+        public bool SyntaxToggle { get; set; } = false;
+        public bool WordWrap { get; set; } = false;
     }
 }

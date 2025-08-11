@@ -27,6 +27,10 @@ public interface IDataStorage
     EncryptionMethod CurrentMethod { get; set; }
     SearchReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
+    public List<string> AllHighlightings { get; set; }
+
+    public event Action? UpdateSyntaxHighlighting;
+    public void PushUpdatedSyntax();
 
     public event Action<FileModel, bool> SelectionFileUpdated;
     public void PushUpdatedSelectionFile(FileModel selectionFile, bool deleteFile);
