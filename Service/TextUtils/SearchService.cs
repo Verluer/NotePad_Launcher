@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using Domain.IService;
+using Domain.IService.ITextUtils;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace Service;
+namespace Service.TextUtils;
 
 public class SearchService : ISearchService
 {
@@ -10,7 +10,7 @@ public class SearchService : ISearchService
     {
         var options = isRegisterAware ? RegexOptions.None : RegexOptions.IgnoreCase;
         var regex = new Regex(pattern, options);
-       var matches = regex.Matches(fileText);
+        var matches = regex.Matches(fileText);
         return matches;
     }
     public string ReplaceText(string fileText, int startIndex, int length, string patternReplace)
@@ -24,7 +24,7 @@ public class SearchService : ISearchService
 
         if (isRegisterAware == false)
         {
-           resultReplaceAll = Regex.Replace(fileText, $"{pattern}", $"{patternReplace}", RegexOptions.IgnoreCase);
+            resultReplaceAll = Regex.Replace(fileText, $"{pattern}", $"{patternReplace}", RegexOptions.IgnoreCase);
         }
         else
         {

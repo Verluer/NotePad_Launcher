@@ -14,12 +14,19 @@ namespace NotePad_Launcher;
 
 public class FileDialog : IFileDialog
 {
+    private readonly ILocalizationService _localizationService;
+
+    public FileDialog(ILocalizationService someDependency)
+    {
+        _localizationService = someDependency;
+    }
     public string OpenTextFileDialog(string pathToClose, string extension)
     {
+
         var openFileDialog = new OpenFileDialog();
         if (extension == "txt")
         {
-            openFileDialog.Filter = $"{LocalizationService.Instance["ClassFileDialogTextFileFilter"]}(*.txt)|*.txt";
+            openFileDialog.Filter = $"{_localizationService["ClassFileDialogTextFileFilter"]}(*.txt)|*.txt";
         }
         else if (extension == null)
         {
@@ -36,8 +43,8 @@ public class FileDialog : IFileDialog
     {
         var saveFileDialog = new SaveFileDialog
         {
-            Title = LocalizationService.Instance["ClassFileDialogSaveFileTitle"],
-            Filter = $"{LocalizationService.Instance["ClassFileDialogTextFileFilter"]} (*.txt)|*.txt|Все файлы (*.*)|*.*",
+            Title = _localizationService["ClassFileDialogSaveFileTitle"],
+            Filter = $"{_localizationService["ClassFileDialogTextFileFilter"]} (*.txt)|*.txt|Все файлы (*.*)|*.*",
             DefaultExt = ".txt",
             FileName = FileName
         };
@@ -49,7 +56,7 @@ public class FileDialog : IFileDialog
 
         return null;
     }
-    public string FolderFileDialog(string initialPath = null, Window owner = null)
+    public string FolderFileDialog(string initialPath = null)
     {
         var dialog = new CommonOpenFileDialog
         {
@@ -57,7 +64,7 @@ public class FileDialog : IFileDialog
             IsFolderPicker = true,
             InitialDirectory = initialPath
         };
-
+        var owner = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
 
         if (dialog.ShowDialog(owner) == CommonFileDialogResult.Ok)
         {

@@ -1,5 +1,6 @@
 ﻿using Domain.Enum;
-using Domain.IService;
+using Domain.IService.IFileSystem;
+using Domain.IService.ISystemApp;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.IServiceUI;
@@ -26,7 +27,8 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         private readonly IDataStorage _dataStorage;
         private readonly IConfigService _configService;
         private readonly IFileDialog _fileDialog;
-        private readonly IFileService _fileService;
+        private readonly IFileSystemManager _fileSystemManager;
+        private readonly ILocalizationService _localizationService;
         public event Action? MinimizeRequested;
         public event Action? CloseRequested;
         private ICommand? _closeCommand;
@@ -106,12 +108,14 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
         }
         public List<string> Language { get; } = new List<string>();
         public List<string> AllHighlightings { get; } = new List<string>();
-        public SettingsWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService, IFileService fileService)
+        public SettingsWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, IConfigService configService, IFileSystemManager fileSystemManager, 
+            ILocalizationService localization)
         {
             _configService = configService;
             _dataStorage = dataStorage;
             _fileDialog = fileDialog;
-            _fileService = fileService;
+            _fileSystemManager = fileSystemManager;
+            _localizationService = localization;
             LoadSettingsGeneral();
         }
         private void LoadSettingsGeneral()
@@ -119,7 +123,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             SelectedSettings = "General";
 
             Language.Clear();
-            Language.AddRange(_fileService.FindLocalization());
+            Language.AddRange(_fileSystemManager.FindLocalization());
 
             AllHighlightings.Clear();
             AllHighlightings.AddRange(_dataStorage.AllHighlightings);
@@ -149,13 +153,13 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             App.Config.SyntaxHighlighting = SelectedAllHighlightings;
             _dataStorage.PushUpdatedSyntax();
             _configService.Save(App.Config);
-            LocalizationService.Instance.LoadLanguage(SelectedLanguage);
+            _localizationService.LoadLanguage(SelectedLanguage);
             CloseRequested?.Invoke();
         }
         private void ExecuteOpenFolderCommand(object? parameter)
         {
             var owner = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-            TextBoxDocumentDirect = _fileDialog.FolderFileDialog(App.Config.DocsPath, owner);
+            TextBoxDocumentDirect = _fileDialog.FolderFileDialog(App.Config.DocsPath);
         }
         private bool CanExecute(object? parameter) => true;
 

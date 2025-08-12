@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Domain.IService;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms.VisualStyles;
@@ -12,6 +11,8 @@ using System.Windows;
 using System;
 using NotePad_Launcher.ServiceUI;
 using Domain.Model;
+using Domain.IService.ITextUtils;
+using Domain.IService.ISystemApp;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 
@@ -125,12 +126,11 @@ public class SearchWindowVM : INotifyPropertyChanged
     }
     private SearchReplaceMethod _selectedMethod;
     public SearchReplaceMethod SelectedMethod { get; }
-    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog)
+    public SearchWindowVM(IDataStorage dataStorage, IFileDialog fileDialog, ISearchService searchService)
     {
-        _searchService = App.ServiceProvider.GetRequiredService<ISearchService>();
+        _searchService = searchService;
         _dataStorage = dataStorage;
         SelectedMethod = _dataStorage.searchReplaceMethod;
-        _serviceFunctions = new ServiceFunctions();
         _fileDialog = fileDialog;
         switch (SelectedMethod)
         {
@@ -191,7 +191,7 @@ public class SearchWindowVM : INotifyPropertyChanged
 
         if (matches.Count == 0)
         {
-            _fileDialog.ShowMessage($"Не удалось найти {SearchPattern}", "Error");
+            _fileDialog.ShowMessage($"Could not find {SearchPattern}", "Error");
             return null;
         }
 
@@ -232,7 +232,7 @@ public class SearchWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    _fileDialog.ShowMessage($"Достигнут конец документа", "Inf");
+                    _fileDialog.ShowMessage($"Reached the end of the document", "Inf");
                     return null;
                 }
             }
@@ -256,7 +256,7 @@ public class SearchWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    _fileDialog.ShowMessage($"Достигнуто начало документа", "Inf");
+                    _fileDialog.ShowMessage($"The beginning of the document has been reached.", "Inf");
                     return null;
                 }
             }

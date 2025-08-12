@@ -9,10 +9,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Domain.Enum;
-using Domain.IService;
+using Domain.IService.IFileSystem;
+using Domain.IService.ISystemApp;
+using Domain.IService.ITextUtils;
+using Domain.IService.IValidation;
 using Domain.Model;
 using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.MVVM.Commands;
 using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
@@ -20,6 +24,7 @@ using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.ServiceUI;
 using Service;
+using Service.FileSystem;
 using FontFamily = System.Windows.Media.FontFamily;
 using FontStyle = System.Windows.FontStyle;
 
@@ -52,20 +57,23 @@ public class MainWindowVM : INotifyPropertyChanged
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
+    public event Action? CloseRequested;
+
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
     public event Action<SearchReplaceMethod> SearchReplaceMethodExecuted;
 
-    public Action UpdateWordWrapAction;
-    public Action UpdateSyntaxHighlightingAction;
+    public event Action? UpdateWordWrapRequested;
+    public event Action? UpdateSyntaxHighlightingRequested;
 
-    private readonly IFileService _fileService;
+    private readonly IFileSystemManager _fileSystemManager;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
     private readonly IDataStorage _dataStorage;
-    private readonly IFileAssociationService _fileAssociationService;
     private readonly IWindowService _windowService;
     private readonly IConfigService _configService;
-
+    private readonly IValidationService _validationService;
+    private readonly ILocalizationService _localizationService;
+    private readonly ITextService _textService;
     private bool _checkSaveFile = true;
     public string FilePath;
     public bool CheckSaveFile
@@ -134,7 +142,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             if (SetField(ref _isWordWrapEnabled, value))
             {
-                UpdateWordWrapAction?.Invoke();
+                UpdateWordWrapRequested?.Invoke();
                 App.Config.WordWrap = IsWordWrapEnabled;
                 _configService.Save(App.Config);
             }
@@ -148,7 +156,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             if (SetField(ref _isSyntaxHighlightingEnabled, value))
             {
-                UpdateSyntaxHighlightingAction?.Invoke();
+                UpdateSyntax();
                 App.Config.SyntaxToggle = IsSyntaxHighlightingEnabled;
                 _configService.Save(App.Config);
             }
@@ -170,19 +178,22 @@ public class MainWindowVM : INotifyPropertyChanged
 
 
     #endregion
-    public MainWindowVM()
+    public MainWindowVM(ILocalizationService localizationService, IWindowService windowService, IFileDialog fileDialog,
+        IDataStorage dataStorage, IConfigService configService, IValidationService validationService, ITextService textService, IFileSystemManager fileSystemManager)
     {
-        _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
-        _windowService = App.ServiceProvider.GetRequiredService<IWindowService>();
-        _fileDialog = App.ServiceProvider.GetRequiredService<IFileDialog>();
-        _serviceFunctions = new ServiceFunctions();
-        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
-        _fileAssociationService = App.ServiceProvider.GetRequiredService<IFileAssociationService>();
-        _configService = App.ServiceProvider.GetRequiredService<IConfigService>();
+        _fileSystemManager = fileSystemManager;
+        _windowService = windowService;
+        _fileDialog = fileDialog;
+        _dataStorage = dataStorage;
+        _configService = configService;
+        _validationService = validationService;
+        _localizationService = localizationService;
+        _textService = textService;
+
         if (App.Config.DocsPath == "FirstLaunch")
         {
-            _fileService.CreateDocumentsDirectory();
-            string DocumentPath = _fileService.ExDirectoryFile("Documents");
+            _fileSystemManager.CreateDocumentsDirectory();
+            string DocumentPath = _fileSystemManager.ExDirectoryFile("Documents");
             App.Config.DocsPath = DocumentPath;
             _configService.Save(App.Config);
         }
@@ -196,11 +207,11 @@ public class MainWindowVM : INotifyPropertyChanged
         _dataStorage.GetFontFamilySizeCallback = () => (SelectedFontSize, SelectedFontFamily, SelectedFontStyle, SelectedFontWeight);
         _dataStorage.FamilySizeUpdated += OnFamilySizeUpdated;
         FileTextDocument = new TextDocument();
-        _fileAssociationService.RegisterTxtFileAssociation();
         StartupFilePath = _dataStorage.StartupFilePath;
+
         if (string.IsNullOrEmpty(FilePath) && !string.IsNullOrEmpty(StartupFilePath))
         {
-            var startFile = _fileService.OpenFile(StartupFilePath);
+            var startFile = _fileSystemManager.OpenFile(StartupFilePath);
             FilePath = startFile.FilePath;
             FileName = startFile.FileName;
             FileTextDocument.Text = string.Empty;
@@ -208,11 +219,12 @@ public class MainWindowVM : INotifyPropertyChanged
         }
         _dataStorage.SelectionFileUpdated += UpdateFileInfo;
         _dataStorage.UpdateSyntaxHighlighting += UpdateSyntax;
+
     }
     #region Functions
     private void UpdateSyntax()
     {
-        UpdateSyntaxHighlightingAction?.Invoke();
+        UpdateSyntaxHighlightingRequested?.Invoke();
     }
     private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)
     {
@@ -233,13 +245,13 @@ public class MainWindowVM : INotifyPropertyChanged
         }
         if (deleteFile)
         {
-            var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
+            var result = _fileDialog.ShowYesNoDialog(_localizationService["MainMessageConfirmDelete"], "");
             if (result == MessageBoxResult.Yes)
             {
                 if (FilePath == fileModel.FilePath)
                 {
                     FileTextDocument.Text = string.Empty;
-                    _fileService.DeleteFile(fileModel.FilePath);
+                    _fileSystemManager.FileDelete(fileModel.FilePath);
                     FileName = string.Empty;
                     FilePath = string.Empty;
                     CheckSaveFile = true;
@@ -247,7 +259,7 @@ public class MainWindowVM : INotifyPropertyChanged
                 }
                 else
                 {
-                    _fileService.DeleteFile(fileModel.FilePath);
+                    _fileSystemManager.FileDelete(fileModel.FilePath);
                     return;
                 }
             }
@@ -260,7 +272,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void OnDocumentChanged(object? sender, EventArgs e)
     {
-        CheckSaveFile = _fileService.CheckTextChange(FilePath, FileTextDocument.Text);
+        CheckSaveFile = _textService.CheckTextChange(FilePath, FileTextDocument.Text);
     }
 
     public bool CheckingSaveFile(bool saveFile)
@@ -268,7 +280,7 @@ public class MainWindowVM : INotifyPropertyChanged
         if (!saveFile)
         {
             var result = _fileDialog.ShowYesNoDialog(
-                $"{LocalizationService.Instance["MainMessageNotSaved"]}", "");
+                $"{_localizationService["MainMessageNotSaved"]}", "");
 
             return result == MessageBoxResult.Yes;
         }
@@ -320,7 +332,7 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteCloseCommand(object? parameter)
     {
-        Application.Current.Shutdown();
+        CloseRequested?.Invoke();
     }
     private void ExecuteMinimizeCommand(object? parameter)
     {
@@ -340,7 +352,7 @@ public class MainWindowVM : INotifyPropertyChanged
         FilePath = _fileDialog.OpenTextFileDialog(FilePath, "txt");
         if (string.IsNullOrEmpty(FilePath)) return;
         var filePath = FilePath;
-        var openFile = _fileService.OpenFile(filePath);
+        var openFile = _fileSystemManager.OpenFile(filePath);
         FilePath = openFile.FilePath;
         FileName = openFile.FileName;
         FileTextDocument.Text = string.Empty;
@@ -355,7 +367,7 @@ public class MainWindowVM : INotifyPropertyChanged
         }
         string currectPathConfig = _fileDialog.InputTextDialog("Create New File", "Select create file folder:", "", false, true);
         currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
-        var nameFile = _fileService.CreateFile(currectPathConfig, "NewFileText");
+        var nameFile = _fileSystemManager.CreateFile(currectPathConfig, "NewFileText");
         FileName = nameFile.FileName;
         FileTextDocument.Text = string.Empty;
         FilePath = nameFile.FilePath;
@@ -373,7 +385,7 @@ public class MainWindowVM : INotifyPropertyChanged
         {
             if (string.IsNullOrWhiteSpace(model.FileName))
             {
-                var tempModel = _fileService.CreateFile(App.Config.DocsPath, "NewFileText");
+                var tempModel = _fileSystemManager.CreateFile(App.Config.DocsPath, "NewFileText");
                 model.FileName = tempModel.FileName;
                 model.FilePath = tempModel.FilePath;
                 FileName = tempModel.FileName;
@@ -386,21 +398,21 @@ public class MainWindowVM : INotifyPropertyChanged
                 if (currectPathConfig == null) return;
                 currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
             }
-            var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
+            var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
-            _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}", $"{LocalizationService.Instance["MainMessageSavedTitle"]}");
+            _fileDialog.ShowMessage($"{_localizationService["MainMessageSaved"]}", $"{_localizationService["MainMessageSavedTitle"]}");
         }
         else if (!string.IsNullOrWhiteSpace(model.FileName))
         {
-            var saveFile = _fileService.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
+            var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
             FilePath = saveFile.FilePath;
             CheckSaveFile = true;
-            _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageSaved"], LocalizationService.Instance["MainMessageSavedTitle"]);
+            _fileDialog.ShowMessage(_localizationService["MainMessageSaved"], _localizationService["MainMessageSavedTitle"]);
         }
         else
         {
-            _fileDialog.ShowMessage(LocalizationService.Instance["MainMessageTextNull"], LocalizationService.Instance["MainMessageSavedTitle"]);
+            _fileDialog.ShowMessage(_localizationService["MainMessageTextNull"], _localizationService["MainMessageSavedTitle"]);
         }
     }
     private void ExecuteSaveFileDialog(object? parameter)
@@ -409,10 +421,10 @@ public class MainWindowVM : INotifyPropertyChanged
         if (!string.IsNullOrEmpty(selectedPath))
         {
             FilePath = selectedPath;
-            _fileService.WriteAllText(FilePath, FileTextDocument.Text);
+            _fileSystemManager.WriteAllText(FilePath, FileTextDocument.Text);
             FileName = Path.GetFileNameWithoutExtension(FilePath);
             CheckSaveFile = true;
-            _fileDialog.ShowMessage($"{LocalizationService.Instance["MainMessageSaved"]}:\n{FilePath}", LocalizationService.Instance["MainMessageSavedTitle"]);
+            _fileDialog.ShowMessage($"{_localizationService["MainMessageSaved"]}:\n{FilePath}", _localizationService["MainMessageSavedTitle"]);
         }
     }
     private void ExecuteFileList(object? parameter)
@@ -422,13 +434,13 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteDeleteFile(object? parameter)
     {
-        if (_fileService.FileExists(FilePath))
+        if (_validationService.FileExists(FilePath))
         {
-            var result = _fileDialog.ShowYesNoDialog(LocalizationService.Instance["MainMessageConfirmDelete"], "");
+            var result = _fileDialog.ShowYesNoDialog(_localizationService["MainMessageConfirmDelete"], "");
             if (result == MessageBoxResult.Yes)
             {
                 FileTextDocument.Text = string.Empty;
-                _fileService.DeleteFile(FilePath);
+                _fileSystemManager.FileDelete(FilePath);
                 FileName = string.Empty;
                 FilePath = string.Empty;
                 CheckSaveFile = true;

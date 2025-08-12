@@ -1,4 +1,4 @@
-﻿using Domain.IService;
+﻿using Domain.IService.IFileSystem;
 using NotePad_Launcher.IServiceUI;
 using System;
 using System.Collections.Generic;
@@ -16,15 +16,16 @@ namespace NotePad_Launcher.ServiceUI
 {
     public class LocalizationService : ILocalizationService
     {
-        private readonly IFileService _fileService;
+        private readonly IDirectoryService _directoryService;
 
         private Dictionary<string, string> _translations = new Dictionary<string, string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         public static LocalizationService Instance { get; private set; }
-        public LocalizationService(IFileService fileService)
+        public LocalizationService(IDirectoryService directoryService)
         {
-            _fileService = fileService;
+            _directoryService = directoryService;
+
             Instance = this;
         }
 
@@ -35,7 +36,7 @@ namespace NotePad_Launcher.ServiceUI
         
         public void LoadLanguage(string langCode)
         {
-            var resourcesDirectory = _fileService.ExDirectoryFile("Resources\\Locales");
+            var resourcesDirectory = _directoryService.ExDirectoryFile("Resources\\Locales");
             var path = Path.Combine($@"{resourcesDirectory}", $"{langCode}.json");
             if (!File.Exists(path)) return;
 

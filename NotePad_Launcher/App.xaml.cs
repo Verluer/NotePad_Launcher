@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
-using Domain.IService;
 using Domain.IService.IEncryption;
 using NotePad_Launcher.MVVM.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
-using Service;
 using Service.Encryption;
 using NotePad_Launcher.ViewModels.MainWindow;
 using NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
@@ -19,6 +17,15 @@ using SharpVectors.Converters;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using Domain.Model;
 using NotePad_Launcher.MVVM.DialogWindows.InputTextDialog;
+using System;
+using Service.FileSystem;
+using Service.TextUtils;
+using Service.SystemApp;
+using Domain.IService.ITextUtils;
+using Domain.IService.ISystemApp;
+using Domain.IService.IFileSystem;
+using Service.Validation;
+using Domain.IService.IValidation;
 
 namespace NotePad_Launcher
 {
@@ -42,21 +49,45 @@ namespace NotePad_Launcher
             ConfigureServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
-
-            var _ = ServiceProvider.GetRequiredService<ILocalizationService>();
             if (e.Args.Length > 0)
             {
-                string filePath = e.Args[0];
-                var dataStorage = ServiceProvider.GetRequiredService<IDataStorage>();
-                dataStorage.StartupFilePath = filePath;
+                LoadServices(ServiceProvider, e.Args.Length, e.Args[0]);
             }
-            var configService = ServiceProvider.GetRequiredService<IConfigService>();
-            Config = configService.Load();
+            else
+            {
+                LoadServices(ServiceProvider, 0, null);
+            }
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-            LocalizationService.Instance.LoadLanguage(App.Config.Language);
             mainWindow.Show();
         }
+        private static void LoadServices(IServiceProvider serviceProvider, int eArgsLength, string eArgs)
+        {
+            var configService = serviceProvider.GetRequiredService<IConfigService>();
+            Config = configService.Load();
 
+            var localization = serviceProvider.GetRequiredService<ILocalizationService>();
+            localization.LoadLanguage(App.Config.Language);
+
+            var dataStorage = serviceProvider.GetRequiredService<IDataStorage>();
+            if (eArgsLength > 0)
+            {
+                string filePath = eArgs;
+                dataStorage.StartupFilePath = filePath;
+            }
+            var fileService = serviceProvider.GetRequiredService<IFileService>();
+            var windowService = serviceProvider.GetRequiredService<IWindowService>();
+            var fileDialog = serviceProvider.GetRequiredService<IFileDialog>();
+            var validationService = serviceProvider.GetRequiredService<IValidationService>();
+            var directoryService = serviceProvider.GetRequiredService<IDirectoryService>();
+            var textService = serviceProvider.GetRequiredService<ITextService>();
+            var fileSystemCore = serviceProvider.GetRequiredService<IFileCoreService>();
+            var fileSystemManager = serviceProvider.GetRequiredService<IFileSystemManager>();
+
+            var fileAssociationService = serviceProvider.GetRequiredService<IFileAssociationService>();
+            fileAssociationService.RegisterTxtFileAssociation();
+
+
+        }
         private static void ConfigureServices(ServiceCollection services)
         {
             // Регистрация сервайс-логики
@@ -67,6 +98,11 @@ namespace NotePad_Launcher
             services.AddSingleton<IECCService, ECCService>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IConfigService, ConfigService>();
+            services.AddSingleton<IValidationService, ValidationService>();
+            services.AddSingleton<IDirectoryService, DirectoryService>();
+            services.AddSingleton<ITextService, TextService>();
+            services.AddSingleton<IFileCoreService, FileCoreService>();
+            services.AddSingleton<IFileSystemManager, FileSystemManager>();
             // Регистрация UI-логики
             services.AddSingleton<IDataStorage, DataStorage>();
             services.AddSingleton<IFileDialog, FileDialog>();

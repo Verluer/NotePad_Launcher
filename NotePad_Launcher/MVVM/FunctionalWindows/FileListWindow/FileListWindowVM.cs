@@ -1,5 +1,4 @@
-﻿using Domain.IService;
-using Domain.Model;
+﻿using Domain.Model;
 using System;
 using System.IO;
 using System.Collections.ObjectModel;
@@ -15,15 +14,19 @@ using System.Windows.Controls;
 using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using NotePad_Launcher.ServiceUI;
 using System.Collections;
+using Domain.IService.IFileSystem;
+using Domain.IService.IValidation;
+using Service.FileSystem;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 
 public class FileListWindowVM : INotifyPropertyChanged
 
 {
-    private readonly IFileService _fileService;
+    private readonly IFileSystemManager _fileSystemManager;
     private readonly IFileDialog _fileDialog;
     private readonly IDataStorage _dataStorage;
+    private readonly IValidationService _validationService;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -68,17 +71,19 @@ public class FileListWindowVM : INotifyPropertyChanged
         get => _selectedIndex;
         set => SetField(ref _selectedIndex, value);
     }
-    public FileListWindowVM(IFileService service, IFileDialog fileDialog, IDataStorage dataStorage)
+    public FileListWindowVM(IFileSystemManager fileSystemManager, IFileDialog fileDialog, IDataStorage dataStorage, IValidationService validationService)
     {
-        _fileService = service;
+        _fileSystemManager = fileSystemManager;
         _fileDialog = fileDialog;
+        _validationService = validationService;
+
         UploadFolder(0);
         _dataStorage = dataStorage;
     }
     public void UploadFolder(int selectedIndex)
     {
         if (FolderFileString != null) FolderFileString.Clear();
-        List<string> folderNames = _fileService.LoadFolderFile(App.Config.DocsPath);
+        List<string> folderNames = _fileSystemManager.LoadFolderFile(App.Config.DocsPath);
         foreach (var folderName in folderNames)
         {
             FolderFileString.Add(folderName);
@@ -103,7 +108,7 @@ public class FileListWindowVM : INotifyPropertyChanged
         try
         {
             var pathFile = Path.Combine(App.Config.DocsPath, nameFolder);
-            var files = _fileService.GetTextFiles(pathFile); 
+            var files = _fileSystemManager.GetTextFiles(pathFile); 
 
             if (FileListItem != null) FileListItem.Clear();
 
@@ -134,7 +139,7 @@ public class FileListWindowVM : INotifyPropertyChanged
     private void ExecuteFolderCommand(object? parameter)
     {
         string selectedPath = Path.Combine(App.Config.DocsPath, SelectedFolder);
-        if (Directory.Exists(selectedPath))
+        if (_validationService.DirectoryExists(selectedPath))
         {
             System.Diagnostics.Process.Start("explorer.exe", selectedPath);
         }
@@ -144,22 +149,22 @@ public class FileListWindowVM : INotifyPropertyChanged
         string nameFolder = _fileDialog.InputTextDialog("Create New Folder", "Enter names for the new folder-directory:", "NewFolder", true, false);
         if (nameFolder == null) return;
         string pathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}");
-        if (!Directory.Exists(pathFolder))
+        if (!_validationService.DirectoryExists(pathFolder))
         {
-            Directory.CreateDirectory(pathFolder);
+            _fileSystemManager.DirectoryCreate(pathFolder);
             UploadFolder(SelectedIndex);
-            MessageBox.Show($"Folder successfully created {pathFolder}");
+            _fileDialog.ShowMessage($"Folder successfully created {pathFolder}", "Created Folder");
             return;
         }
         int i = 1;
         while (true)
         {
             string tempPathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}{i}");
-            if (!Directory.Exists(tempPathFolder))
+            if (!_validationService.DirectoryExists(tempPathFolder))
             {
-                Directory.CreateDirectory(tempPathFolder);  
+                _fileSystemManager.DirectoryCreate(tempPathFolder);  
                 UploadFolder(SelectedIndex);
-                MessageBox.Show($"Folder successfully created {tempPathFolder}");
+                _fileDialog.ShowMessage($"Folder successfully created {tempPathFolder}", "Created Folder");
                 break;
             }
             i++;
@@ -170,7 +175,7 @@ public class FileListWindowVM : INotifyPropertyChanged
         string selectedPath = Path.Combine(App.Config.DocsPath, SelectedFolder);
         string fileName = _fileDialog.InputTextDialog("Create text file", "Enter a name for the text file:", "NewTextFile", true, false);
         if (fileName == null) return;
-        _fileService.CreateFile(selectedPath, fileName);
+        _fileSystemManager.CreateFile(selectedPath, fileName);
         UploadFolder(SelectedIndex);
     }
     private void ExecuteFolderEditNameCommand(object? parameter)
@@ -180,12 +185,12 @@ public class FileListWindowVM : INotifyPropertyChanged
         string oldPathFolder = Path.Combine(App.Config.DocsPath, SelectedFolder);
         string pathFolder = Path.Combine(App.Config.DocsPath, $"{nameFolder}");
 
-        if (!Directory.Exists(pathFolder))
+        if (!_validationService.DirectoryExists(pathFolder))
         {
-            Directory.Move(oldPathFolder, pathFolder);
+            _fileSystemManager.DirectoryMove(oldPathFolder, pathFolder);
             UploadFolder(SelectedIndex);
         }
-        else MessageBox.Show("Such a folder already exists.");
+        else _fileDialog.ShowMessage("Such a folder already exists.", "Folder Already Exists");
 
     }
     private void ExecuteFolderDeleteCommand(object? parameter)
@@ -195,7 +200,7 @@ public class FileListWindowVM : INotifyPropertyChanged
 
         if (result == MessageBoxResult.Yes)
         {
-            Directory.Delete(pathFolder, true);
+            _fileSystemManager.DirectoryDelete(pathFolder, true);
             UploadFolder(0);
         }
         else return;
@@ -225,7 +230,7 @@ public class FileListWindowVM : INotifyPropertyChanged
         }
         else
         {
-            MessageBox.Show("Error");
+            return;
         }
     }
     private void ExecuteBackFolderCommand(object? parameter)
@@ -247,7 +252,7 @@ public class FileListWindowVM : INotifyPropertyChanged
         }
         else
         {
-            MessageBox.Show("Error");
+            return;
         }
     }
 
@@ -262,12 +267,12 @@ public class FileListWindowVM : INotifyPropertyChanged
                 if (newName == null) { return; }
                 var directoryPath = Path.GetDirectoryName(model.FilePath);
                 var newPath = Path.Combine(directoryPath, $"{newName}.txt");
-                File.Move(model.FilePath, newPath);
+                _fileSystemManager.FileMove(model.FilePath, newPath);
                 UploadFolder(SelectedIndex);
             }
         }
         else
-        { MessageBox.Show("Error"); }
+        { _fileDialog.ShowMessage("error loading renaming elements", "Error"); }
     }
     private void ExecuteMenuDeleteFileCommand(object? parameter)
     {
@@ -280,7 +285,7 @@ public class FileListWindowVM : INotifyPropertyChanged
                 UploadFolder(SelectedIndex);
             }
         }
-        else { MessageBox.Show("Error"); }
+        else { _fileDialog.ShowMessage("error loading removal items", "Error"); }
     }
     private void ExecuteMenuMoveFileCommand(object? parameter)
     {
@@ -289,12 +294,11 @@ public class FileListWindowVM : INotifyPropertyChanged
             var itemsFileModel = list.Cast<FileModel>().ToList();
             foreach (var model in itemsFileModel)
             {
-                var owner = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-                var result = _fileDialog.FolderFileDialog(App.Config.DocsPath, owner);
+                var result = _fileDialog.FolderFileDialog(App.Config.DocsPath);
                 if (result == null) return;
                 var name = Path.GetFileName(model.FilePath);
                 var newPath = Path.Combine(result, name);
-                File.Move(model.FilePath, newPath);
+                _fileSystemManager.FileMove(model.FilePath, newPath);
                 UploadFolder(SelectedIndex);
             }
         }

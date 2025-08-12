@@ -1,4 +1,4 @@
-﻿using Domain.IService;
+﻿using Domain.IService.IFileSystem;
 using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.Commands;
 using Service;
@@ -29,7 +29,7 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
             OnPropertyChanged(propertyName);
             return true;
         }
-        private readonly IFileService _fileService;
+        private readonly IFileSystemManager _fileSystemManager;
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private ICommand? _closeCommand;
@@ -98,7 +98,7 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
         public string Result { get; set; } = "";
         public InputTextDialogVM(string title, string message, string inputText, bool isTextBox, bool isComboBox)
         {
-            _fileService = App.ServiceProvider.GetRequiredService<IFileService>();
+            _fileSystemManager = App.ServiceProvider.GetRequiredService<IFileSystemManager>();
             Title = title;
             InputText = inputText;
             Message = message;
@@ -113,7 +113,7 @@ namespace NotePad_Launcher.MVVM.DialogWindows.InputTextDialog
         public void UploadFolder()
         {
             if (FolderFileString != null) FolderFileString.Clear();
-            List<string> folderNames = _fileService.LoadFolderFile(App.Config.DocsPath);
+            List<string> folderNames = _fileSystemManager.LoadFolderFile(App.Config.DocsPath);
             foreach (var folderName in folderNames)
             {
                 FolderFileString.Add(folderName);

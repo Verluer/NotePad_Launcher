@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Domain.IService;
 using Domain.Model;
-using Domain.IService;
+using Domain.IService.ISystemApp;
 
-namespace Service
+namespace Service.SystemApp
 {
     public class ConfigService : IConfigService
     {

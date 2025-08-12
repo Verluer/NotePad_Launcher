@@ -7,12 +7,12 @@ using Service.Encryption;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.Commands;
 using Service;
 using NotePad_Launcher.ViewModels;
+using Domain.IService.ISystemApp;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 
@@ -43,8 +43,6 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     {
         _dataStorage = dataStorage;
         SelectedMethod = _dataStorage.CurrentMethod;
-        _serviceFunctions = new ServiceFunctions();
-        _dataStorage = App.ServiceProvider.GetRequiredService<IDataStorage>();
         _rsaService = new RSAService();
         _elgamalService = new ElgamalService();
         _rabinaService = new RabinaService();

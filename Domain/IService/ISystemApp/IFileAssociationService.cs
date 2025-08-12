@@ -1,4 +1,4 @@
-﻿namespace Domain.IService;
+﻿namespace Domain.IService.ISystemApp;
 
 public interface IFileAssociationService
 {

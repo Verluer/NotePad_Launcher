@@ -44,11 +44,12 @@ namespace NotePad_Launcher
             FileText.Document = viewModel.FileTextDocument;
             viewModel.MaximizeRequested += OnMaximizeRequested;
             viewModel.MinimizeRequested += OnMinimizeRequested;
-            viewModel.UpdateWordWrapAction = () =>
+            viewModel.CloseRequested += OnCloseRequested;
+            viewModel.UpdateWordWrapRequested += () =>
             {
                 FileText.WordWrap = viewModel.IsWordWrapEnabled;
             };
-            viewModel.UpdateSyntaxHighlightingAction = () =>
+            viewModel.UpdateSyntaxHighlightingRequested += () =>
             {
                 if(viewModel.IsSyntaxHighlightingEnabled) 
                 FileText.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition($"{App.Config.SyntaxHighlighting}");
@@ -77,7 +78,7 @@ namespace NotePad_Launcher
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _viewModel.UpdateSyntaxHighlightingAction?.Invoke();
+            _dataStorage.PushUpdatedSyntax();
         }
         private void OnMinimizeRequested()
         {
@@ -88,7 +89,14 @@ namespace NotePad_Launcher
         {
             this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
         }
+        private void OnCloseRequested()
+        {
+            Application.Current.Shutdown();
+        }
+        private void OnUpdateWordWrapRequested()
+        {
 
+        }
         private void HeadLine_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)

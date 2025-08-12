@@ -17,7 +17,7 @@ public class FontPickerDialogVM : INotifyPropertyChanged
     private ICommand? _closeCommand;
     private ICommand? _confirmCommand;
     public event Action? CloseRequested;
-    private readonly IDataStorage _stringService;
+    private readonly IDataStorage _dataStorage;
     public ObservableCollection<FontFamily> Fonts { get; }
     public ObservableCollection<TextBlock> FontStyles { get; }
     public ObservableCollection<TextBlock> FontWeights { get; }
@@ -56,14 +56,14 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         set => SetField(ref _selectedFontSize, value);
     }
 
-    public FontPickerDialogVM(IDataStorage stringSerivce)
+    public FontPickerDialogVM(IDataStorage dataStorage)
     {
-        _stringService = stringSerivce;
+        _dataStorage = dataStorage;
         Fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies.OrderBy(f => f.Source));
         FontStyles = new ObservableCollection<TextBlock>();
         FontWeights = new ObservableCollection<TextBlock>();
         FontSizes = new ObservableCollection<double> { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72 };
-        var (fontSize, fontFamily, fontStyle, fontWeight) = _stringService.GetFontFamilySizeCallback();
+        var (fontSize, fontFamily, fontStyle, fontWeight) = _dataStorage.GetFontFamilySizeCallback();
         if (Fonts.Any())
         {
             SelectedFontSize = fontSize;
@@ -147,7 +147,7 @@ public class FontPickerDialogVM : INotifyPropertyChanged
     }
     private void ExecuteConfirmCommand(object? parameter)
     {
-        _stringService.PushUpdatedFamilySize(SelectedFontSize, SelectedFont, SelectedFontStyle.FontStyle, SelectedFontWeight.FontWeight);
+        _dataStorage.PushUpdatedFamilySize(SelectedFontSize, SelectedFont, SelectedFontStyle.FontStyle, SelectedFontWeight.FontWeight);
         CloseRequested?.Invoke();
     }
     private bool CanExecute(object? parameter) => true;

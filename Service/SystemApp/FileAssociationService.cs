@@ -1,9 +1,9 @@
 ﻿using Microsoft.Win32;
 using System.IO;
 using System.Runtime.InteropServices;
-using Domain.IService;
+using Domain.IService.ISystemApp;
 
-namespace Service;
+namespace Service.SystemApp;
 
 public class FileAssociationService : IFileAssociationService
 {
@@ -44,7 +44,7 @@ public class FileAssociationService : IFileAssociationService
                     shellKey?.SetValue("", $"\"{exePath}\" \"%1\"");
             }
 
-            SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
+            SHChangeNotify(0x08000000, 0x0000, nint.Zero, nint.Zero);
         }
         catch
         {
@@ -66,6 +66,6 @@ public class FileAssociationService : IFileAssociationService
     }
 
     [DllImport("shell32.dll")]
-    private static extern void SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
+    private static extern void SHChangeNotify(int eventId, int flags, nint item1, nint item2);
 
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Domain.IService;
+namespace Domain.IService.ITextUtils;
 
 public interface ISearchService
 {

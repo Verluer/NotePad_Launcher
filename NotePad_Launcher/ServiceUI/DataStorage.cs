@@ -23,6 +23,7 @@ public class DataStorage : IDataStorage
         UpdateSyntaxHighlighting?.Invoke();
     }
     #endregion
+
     #region Передача измененной строки
     public event Action<string> TextUpdated;
 
