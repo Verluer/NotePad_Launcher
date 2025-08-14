@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using System;
@@ -18,9 +19,7 @@ using System.Windows.Shell;
 
 namespace NotePad_Launcher.MVVM.FontPickerDialog
 {
-    /// <summary>
-    /// Логика взаимодействия для FontPickerDialog.xaml
-    /// </summary>
+    [RegisterService(ServiceLifetime.Transient, asSelf: true)]
     public partial class FontPickerDialog : Window
     {
         public FontPickerDialog()

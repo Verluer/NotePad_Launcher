@@ -1,11 +1,15 @@
 ﻿
 using System.Windows;
 using System.Windows.Media;
+using Domain.Attributes;
 using Domain.Enum;
+using Domain.IService.ISystemApp;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NotePad_Launcher;
 
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IDataStorage))]
 public class DataStorage : IDataStorage
 {
     #region хранение данных

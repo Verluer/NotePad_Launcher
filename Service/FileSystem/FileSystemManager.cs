@@ -1,6 +1,9 @@
-﻿using Domain.IService.IFileSystem;
+﻿using Domain.Attributes;
+using Domain.IService.IFileSystem;
+using Domain.IService.ISystemApp;
 using Domain.IService.IValidation;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Service.FileSystem
 {
+    [RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IFileSystemManager))]
     public class FileSystemManager : IFileSystemManager
     {
         private readonly IDirectoryService _directoryService;

@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shell;
+using Domain.Attributes;
 using Domain.IService;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +14,7 @@ using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
 {
-    /// <summary>
-    /// Логика взаимодействия для FileListWindow.xaml
-    /// </summary>
+    [RegisterService(ServiceLifetime.Transient, asSelf: true)]
     public partial class FileListWindow : Window
     {
         private readonly IDataStorage _dataStorage;

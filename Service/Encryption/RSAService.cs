@@ -2,9 +2,13 @@
 using Domain.Model;
 using System.Numerics;
 using Domain;
+using Domain.Attributes;
+using Domain.IService.ISystemApp;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Service.Encryption;
 
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IRSAService))]
 public class RSAService : IRSAService
 {
     #region private

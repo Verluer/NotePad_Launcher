@@ -1,4 +1,7 @@
-﻿using Domain.IService.IFileSystem;
+﻿using Domain.Attributes;
+using Domain.IService.IFileSystem;
+using Domain.IService.ISystemApp;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.IServiceUI;
 using System;
 using System.Collections.Generic;
@@ -14,6 +17,7 @@ using System.Windows.Media;
 
 namespace NotePad_Launcher.ServiceUI
 {
+    [RegisterService(ServiceLifetime.Singleton, serviceType: typeof(ILocalizationService))]
     public class LocalizationService : ILocalizationService
     {
         private readonly IDirectoryService _directoryService;

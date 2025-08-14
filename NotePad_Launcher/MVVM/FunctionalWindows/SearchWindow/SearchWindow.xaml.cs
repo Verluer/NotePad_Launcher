@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,7 @@ using System.Windows.Shell;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow
 {
-    /// <summary>
-    /// Логика взаимодействия для SearchWindow.xaml
-    /// </summary>
+    [RegisterService(ServiceLifetime.Transient, asSelf: true)]
     public partial class SearchWindow : Window
     {
         public SearchWindow()

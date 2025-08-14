@@ -1,6 +1,9 @@
-﻿using Domain.IService.IFileSystem;
+﻿using Domain.Attributes;
+using Domain.IService.IFileSystem;
+using Domain.IService.ISystemApp;
 using Domain.IService.IValidation;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Service.FileSystem
 {
+    [RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IDirectoryService))]
     public class DirectoryService : IDirectoryService
     {
         private readonly IValidationService _validationService;

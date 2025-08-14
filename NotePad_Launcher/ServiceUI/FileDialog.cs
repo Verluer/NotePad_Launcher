@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Domain.Attributes;
 using Domain.IService;
+using Domain.IService.ISystemApp;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
@@ -12,6 +14,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace NotePad_Launcher;
 
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IFileDialog))]
 public class FileDialog : IFileDialog
 {
     private readonly ILocalizationService _localizationService;

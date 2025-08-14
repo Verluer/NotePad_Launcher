@@ -2,13 +2,16 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Domain.Attributes;
 using Domain.IService.IFileSystem;
 using Domain.IService.ISystemApp;
 using Domain.IService.IValidation;
 using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Service.FileSystem
 {
+    [RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IFileService))]
     public class FileService : IFileService
     {
         private readonly IValidationService _validationService;

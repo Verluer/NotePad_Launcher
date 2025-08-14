@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Attributes;
+using Domain.IService.ISystemApp;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
 namespace NotePad_Launcher;
-
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IWindowService))]
 public class WindowService : IWindowService
 {
     private readonly Dictionary<Type, Window> _openWindows = new();

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Domain.Attributes;
 using Domain.Enum;
 using Domain.IService.IFileSystem;
 using Domain.IService.ISystemApp;
@@ -31,6 +32,7 @@ using FontStyle = System.Windows.FontStyle;
 
 namespace NotePad_Launcher.ViewModels.MainWindow;
 
+[RegisterService(ServiceLifetime.Singleton, asSelf: true)]
 public class MainWindowVM : INotifyPropertyChanged
 {
 

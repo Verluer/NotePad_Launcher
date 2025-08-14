@@ -1,9 +1,13 @@
 ﻿using System.Text.RegularExpressions;
+using Domain.Attributes;
+using Domain.IService.ISystemApp;
 using Domain.IService.ITextUtils;
+using Microsoft.Extensions.DependencyInjection;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Service.TextUtils;
 
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(ISearchService))]
 public class SearchService : ISearchService
 {
     public MatchCollection SearchPattern(string fileText, string pattern, bool isRegisterAware)

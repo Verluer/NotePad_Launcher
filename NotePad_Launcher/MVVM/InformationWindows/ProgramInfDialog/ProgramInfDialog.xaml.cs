@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
 using NotePad_Launcher.ViewModels.MainWindow;
 using System;
@@ -18,9 +19,7 @@ using System.Windows.Shell;
 
 namespace NotePad_Launcher.MVVM.ProgramInfDialog
 {
-    /// <summary>
-    /// Логика взаимодействия для ProgramInfDialog.xaml
-    /// </summary>
+    [RegisterService(ServiceLifetime.Transient, asSelf: true)]
     public partial class ProgramInfDialog : Window
     {
         public ProgramInfDialog()

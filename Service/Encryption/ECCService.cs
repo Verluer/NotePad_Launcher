@@ -2,9 +2,13 @@
 using Domain.IService.IEncryption;
 using Domain.Model;
 using Domain;
+using Domain.Attributes;
+using Domain.IService.ISystemApp;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Service.Encryption;
 
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IECCService))]
 public class ECCService : IECCService
 {
     public class ECCParameters //P-192, кривая рекомендуемая NIST

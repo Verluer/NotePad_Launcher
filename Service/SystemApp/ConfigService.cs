@@ -5,9 +5,12 @@ using System.Text;
 using System.Text.Json;
 using Domain.Model;
 using Domain.IService.ISystemApp;
+using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Service.SystemApp
 {
+    [RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IConfigService))]
     public class ConfigService : IConfigService
     {
         private static readonly string FolderPath =

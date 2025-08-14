@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Domain.Attributes;
+using Domain.Enum;
 using Domain.IService.IFileSystem;
 using Domain.IService.ISystemApp;
 using Domain.Model;
@@ -19,6 +20,7 @@ using System.Windows.Input;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
 {
+    [RegisterService(ServiceLifetime.Transient, asSelf: true)]
     public class SettingsWindowVM : INotifyPropertyChanged
     {
 

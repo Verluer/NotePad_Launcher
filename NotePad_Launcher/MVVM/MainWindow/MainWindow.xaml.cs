@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shell;
+using Domain.Attributes;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -10,6 +11,7 @@ using NotePad_Launcher.ViewModels.MainWindow;
 
 namespace NotePad_Launcher
 {
+    [RegisterService(ServiceLifetime.Singleton, asSelf: true)]
     public partial class MainWindow : Window
     {
         private readonly IDataStorage _dataStorage;

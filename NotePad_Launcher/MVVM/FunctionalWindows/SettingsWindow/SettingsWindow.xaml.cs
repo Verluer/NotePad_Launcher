@@ -1,4 +1,5 @@
-﻿using Domain.IService;
+﻿using Domain.Attributes;
+using Domain.IService;
 using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using System;
@@ -18,9 +19,7 @@ using System.Windows.Shell;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
 {
-    /// <summary>
-    /// Логика взаимодействия для SettingsWindow.xaml
-    /// </summary>
+    [RegisterService(ServiceLifetime.Transient, asSelf: true)]
     public partial class SettingsWindow : Window
     {
         public SettingsWindow()

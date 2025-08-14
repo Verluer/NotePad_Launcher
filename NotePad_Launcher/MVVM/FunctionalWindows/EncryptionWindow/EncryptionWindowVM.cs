@@ -13,9 +13,11 @@ using NotePad_Launcher.MVVM.Commands;
 using Service;
 using NotePad_Launcher.ViewModels;
 using Domain.IService.ISystemApp;
+using Domain.Attributes;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 
+[RegisterService(ServiceLifetime.Transient, asSelf: true)]
 public class EncryptionWindowVM : INotifyPropertyChanged
 {
     private readonly IRSAService _rsaService;

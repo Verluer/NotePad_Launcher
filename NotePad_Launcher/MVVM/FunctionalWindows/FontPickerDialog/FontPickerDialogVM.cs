@@ -8,9 +8,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using NotePad_Launcher.MVVM.Commands;
+using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 
+[RegisterService(ServiceLifetime.Transient, asSelf: true)]
 public class FontPickerDialogVM : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;

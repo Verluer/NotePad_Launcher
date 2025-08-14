@@ -17,9 +17,12 @@ using System.Collections;
 using Domain.IService.IFileSystem;
 using Domain.IService.IValidation;
 using Service.FileSystem;
+using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 
+[RegisterService(ServiceLifetime.Transient, asSelf: true)]
 public class FileListWindowVM : INotifyPropertyChanged
 
 {

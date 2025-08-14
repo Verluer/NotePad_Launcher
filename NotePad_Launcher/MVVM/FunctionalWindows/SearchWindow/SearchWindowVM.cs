@@ -13,9 +13,11 @@ using NotePad_Launcher.ServiceUI;
 using Domain.Model;
 using Domain.IService.ITextUtils;
 using Domain.IService.ISystemApp;
+using Domain.Attributes;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 
+[RegisterService(ServiceLifetime.Transient, asSelf: true)]
 public class SearchWindowVM : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;

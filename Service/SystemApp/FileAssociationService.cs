@@ -2,9 +2,11 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Domain.IService.ISystemApp;
+using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Service.SystemApp;
-
+[RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IFileAssociationService))]
 public class FileAssociationService : IFileAssociationService
 {
     public void RegisterTxtFileAssociation()

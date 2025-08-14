@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Shell;
+using Domain.Attributes;
 using Domain.Enum;
 using Domain.IService.IEncryption;
 using Domain.Model;
@@ -14,9 +15,7 @@ using static ICSharpCode.AvalonEdit.Document.TextDocumentWeakEventManager;
 
 namespace NotePad_Launcher
 {
-    /// <summary>
-    /// Логика взаимодействия для EncryptionWindow.xaml
-    /// </summary>
+    [RegisterService(ServiceLifetime.Transient, asSelf:true)]
     public partial class EncryptionWindow : Window
     {
         public EncryptionWindow()

@@ -6,9 +6,12 @@ using NotePad_Launcher.MVVM.Commands;
 using NotePad_Launcher.ServiceUI;
 using Domain.Model;
 using Domain.IService;
+using Domain.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
 
+[RegisterService(ServiceLifetime.Transient, asSelf: true)]
 public class ProgramInfDialogVM : INotifyPropertyChanged
 {
     private ICommand? _closeCommand;

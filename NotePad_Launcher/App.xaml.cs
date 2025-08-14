@@ -26,6 +26,7 @@ using Domain.IService.ISystemApp;
 using Domain.IService.IFileSystem;
 using Service.Validation;
 using Domain.IService.IValidation;
+using System.Reflection;
 
 namespace NotePad_Launcher
 {
@@ -45,6 +46,10 @@ namespace NotePad_Launcher
             var services = new ServiceCollection();
 
             System.Threading.Tasks.Task.Run(() => PreloadSvgIcons());
+
+            services.AddServicesWithAttributes(
+            Assembly.GetExecutingAssembly(),
+            typeof(ServiceCollectionExtensions).Assembly);
 
             ConfigureServices(services);
 
@@ -90,43 +95,6 @@ namespace NotePad_Launcher
         }
         private static void ConfigureServices(ServiceCollection services)
         {
-            // Регистрация сервайс-логики
-            services.AddSingleton<IFileService, FileService>();
-            services.AddSingleton<IRSAService, RSAService>();
-            services.AddSingleton<IElgamalService, ElgamalService>();
-            services.AddSingleton<IRabinaService, RabinaService>();
-            services.AddSingleton<IECCService, ECCService>();
-            services.AddSingleton<ISearchService, SearchService>();
-            services.AddSingleton<IConfigService, ConfigService>();
-            services.AddSingleton<IValidationService, ValidationService>();
-            services.AddSingleton<IDirectoryService, DirectoryService>();
-            services.AddSingleton<ITextService, TextService>();
-            services.AddSingleton<IFileCoreService, FileCoreService>();
-            services.AddSingleton<IFileSystemManager, FileSystemManager>();
-            // Регистрация UI-логики
-            services.AddSingleton<IDataStorage, DataStorage>();
-            services.AddSingleton<IFileDialog, FileDialog>();
-            services.AddSingleton<IDataStorage, DataStorage>();
-            services.AddSingleton<IFileAssociationService, FileAssociationService>();
-            services.AddSingleton<IWindowService, WindowService>();
-            services.AddSingleton<ILocalizationService, LocalizationService>();
-            // Регистрация ViewModels
-            services.AddSingleton<MainWindowVM>();
-            services.AddTransient<FileListWindowVM>();
-            services.AddTransient<EncryptionWindowVM>();
-            services.AddTransient<ProgramInfDialogVM>();
-            services.AddTransient<FontPickerDialogVM>();
-            services.AddTransient<SearchWindowVM>();
-            services.AddTransient<SettingsWindowVM>();
-            // Регистрация окон
-            services.AddSingleton<MainWindow>();
-            services.AddTransient<EncryptionWindow>();
-            services.AddTransient<FileListWindow>();
-            services.AddTransient<ProgramInfDialog>();
-            services.AddTransient<FontPickerDialog>();
-            services.AddTransient<SearchWindow>();
-            services.AddTransient<SettingsWindow>();
-            // Регистрация диалогов 
             services.AddTransient<InputTextDialogVM>(sp =>
             { 
                 throw new InvalidOperationException("Use factory method to create InputTextDialogVM with parameters.");

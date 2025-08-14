@@ -1,4 +1,7 @@
-﻿using Domain.IService.IFileSystem;
+﻿using Domain.Attributes;
+using Domain.IService.IFileSystem;
+using Domain.IService.ISystemApp;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Service.FileSystem
 {
+    [RegisterService(ServiceLifetime.Singleton, serviceType: typeof(IFileCoreService))]
     public class FileCoreService : IFileCoreService
     {
         public string ExDirectoryApp()
