@@ -97,10 +97,19 @@ public class FileDialog : IFileDialog
         var vm = factory(title, message, inputText, isTextBox, isComboBox);
 
         var dialog = new InputTextDialog { DataContext = vm };
-        var result = dialog.ShowDialog();
-        if (result == true)
-            return vm.Result;
-        else
-            return null;
+        try
+        {
+            var result = dialog.ShowDialog();
+            if (result == true)
+                return vm.Result;
+            else
+                return null;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.ToString());
+            throw;
+        }
+
     }
 }

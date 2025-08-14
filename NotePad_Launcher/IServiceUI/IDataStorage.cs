@@ -32,6 +32,9 @@ public interface IDataStorage
     public event Action? UpdateSyntaxHighlighting;
     public void PushUpdatedSyntax();
 
+    public event Action? UpdateWordWrap;
+    public void PushUpdatedWordWrap();
+
     public event Action<FileModel, bool> SelectionFileUpdated;
     public void PushUpdatedSelectionFile(FileModel selectionFile, bool deleteFile);
 }

@@ -59,6 +59,7 @@
                 <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEdit]}" Style="{StaticResource MainWindowMenuItemStyle}">
                     <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:FindReplaceMethod.Find}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditSearch]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:FindReplaceMethod.Replace}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditReplace]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding ClearCommand}" CommandParameter="{x:Static enum:FindReplaceMethod.Replace}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditClear]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
                 <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormat]}" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormatWordWrap]}" Style="{StaticResource MainWindowMenuItemStyle}"/>

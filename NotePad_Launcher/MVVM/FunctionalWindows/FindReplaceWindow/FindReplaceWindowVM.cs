@@ -92,7 +92,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.FindReplaceWindow
         public bool IsButtonReplaceVisible
         {
             get => _isButtonReplaceVisible;
-            set => SetField(ref _isButtonReplaceAllVisible, value);
+            set => SetField(ref _isButtonReplaceVisible, value);
         }
         private bool _isButtonReplaceAllVisible = true;
 
@@ -153,6 +153,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.FindReplaceWindow
         {
             IsButtonReplaceVisible = false;
             IsButtonReplaceAllVisible = false;
+            IsButtonReplaceVisible = false;
             ButtonCloseMargin = new Thickness(0, 10, 0, 0);
             IsTextBlockReplaceVisible = false;
             IsTextBoxReplaceVisible = false;
@@ -291,11 +292,21 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.FindReplaceWindow
 
         private void ExecuteSearchCommand(object? parameter)
         {
+            if (string.IsNullOrEmpty(SearchPattern))
+            {
+                _fileDialog.ShowMessage("Input find pattern", "Error");
+                return;
+            }
             ReplaceMatch = Search();
             if (SelectedOption == "Up") ReplaceMatch = Search();
         }
         private void ExecuteReplaceCommand(object? parameter)
         {
+            if(string.IsNullOrEmpty(SearchPattern))
+            {
+                _fileDialog.ShowMessage("Input find pattern", "Error");
+                return;
+            }
             var (areaIndex, areaLength) = _dataStorage.GetSelectionCallback();
             var fileText = _dataStorage.GetTextCallback();
             string areaText = fileText.Substring(areaIndex, areaLength);
@@ -311,6 +322,11 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.FindReplaceWindow
         }
         private void ExecuteReplaceAllCommand(object? parameter)
         {
+            if (string.IsNullOrEmpty(SearchPattern))
+            {
+                _fileDialog.ShowMessage("Input find pattern", "Error");
+                return;
+            }
             var fileText = _dataStorage.GetTextCallback();
             string resultReplaceAll = _searchService.ReplaceAllText(fileText, SearchPattern, ReplacePattern, IsRegisterAware);
             _dataStorage.PushUpdatedText(resultReplaceAll);

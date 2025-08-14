@@ -54,6 +54,7 @@ public class MainWindowVM : INotifyPropertyChanged
     private ICommand? _programInfCommand;
     private ICommand? _fontPickerCommand;
     private ICommand? _searchPatternCommand;
+    private ICommand? _clearCommand;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -221,12 +222,17 @@ public class MainWindowVM : INotifyPropertyChanged
         }
         _dataStorage.SelectionFileUpdated += UpdateFileInfo;
         _dataStorage.UpdateSyntaxHighlighting += UpdateSyntax;
+        _dataStorage.UpdateWordWrap += UpdateWordWrap;
 
     }
     #region Functions
     private void UpdateSyntax()
     {
         UpdateSyntaxHighlightingRequested?.Invoke();
+    }
+    private void UpdateWordWrap()
+    {
+        UpdateWordWrapRequested?.Invoke();
     }
     private void OnFamilySizeUpdated(double fontSize, FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight)
     {
@@ -316,6 +322,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public ICommand FileListCommand => _fileListCommand ??= new OtherRelayCommands(ExecuteFileList, CanExecute);
     public ICommand DeleteFileCommand => _deleteFileCommand ??= new OtherRelayCommands(ExecuteDeleteFile, CanExecute);
     public ICommand SearchPatternCommand => _searchPatternCommand ??= new OtherRelayCommands(ExecuteSearchPattern, CanExecute);
+    public ICommand ClearCommand => _clearCommand ??= new OtherRelayCommands(ExecuteClear, CanExecute);
 
 
     public ICommand ToggleWordWrapCommand => _toggleWordWrapCommand ??= new OtherRelayCommands(ExecuteWordWrap, CanExecute);
@@ -383,22 +390,22 @@ public class MainWindowVM : INotifyPropertyChanged
             FileName = FileName,
             FilePath = FilePath
         };
+        string currectPathConfig = Path.GetDirectoryName(model.FilePath);
+        string testPathConfig = Path.GetDirectoryName(currectPathConfig);
+        if (App.Config.SaveSetting == "SaveDirectory" && App.Config.DocsPath != testPathConfig || string.IsNullOrEmpty(model.FilePath))
+        {
+            currectPathConfig = _fileDialog.InputTextDialog("Save File", "Select save folder:", "", false, true);
+            if (currectPathConfig == null) return;
+            currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
+        }
         if (!string.IsNullOrWhiteSpace(model.FileText))
         {
             if (string.IsNullOrWhiteSpace(model.FileName))
             {
-                var tempModel = _fileSystemManager.CreateFile(App.Config.DocsPath, "NewFileText");
+                var tempModel = _fileSystemManager.CreateFile(currectPathConfig, "NewFileText");
                 model.FileName = tempModel.FileName;
                 model.FilePath = tempModel.FilePath;
                 FileName = tempModel.FileName;
-            }
-            string currectPathConfig = Path.GetDirectoryName(model.FilePath);
-            string testPathConfig = Path.GetDirectoryName(currectPathConfig);
-            if (App.Config.SaveSetting == "SaveDirectory" && App.Config.DocsPath != testPathConfig)
-            {
-                currectPathConfig = _fileDialog.InputTextDialog("Save File", "Select save folder:", "", false, true);
-                if (currectPathConfig == null) return;
-                currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
             }
             var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
@@ -407,8 +414,9 @@ public class MainWindowVM : INotifyPropertyChanged
         }
         else if (!string.IsNullOrWhiteSpace(model.FileName))
         {
-            var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, App.Config.DocsPath);
+            var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
+            FileName = saveFile.FileName;
             CheckSaveFile = true;
             _fileDialog.ShowMessage(_localizationService["MainMessageSaved"], _localizationService["MainMessageSavedTitle"]);
         }
@@ -457,6 +465,17 @@ public class MainWindowVM : INotifyPropertyChanged
             SearchReplaceMethodExecuted?.Invoke(method);
             _windowService.OpenWindow<FindReplaceWindow>();
         }
+    }
+    private void ExecuteClear(object? parameter)
+    {
+        if (!CheckingSaveFile(CheckSaveFile))
+        {
+            return;
+        }
+        FileTextDocument.Text = string.Empty;
+        FileName = string.Empty;
+        FilePath = string.Empty;
+        CheckSaveFile = true;
     }
     private void ExecuteWordWrap(object? parameter)
     {

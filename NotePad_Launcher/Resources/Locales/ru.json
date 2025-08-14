@@ -9,6 +9,7 @@
   "MainMenuItemEdit": "Правка",
   "MainMenuItemEditSearch": "Найти",
   "MainMenuItemEditReplace": "Заменить",
+  "MainMenuItemEditClear": "Очистить",
   "MainMenuItemFormat": "Формат",
   "MainMenuItemFormatWordWrap": "Перенос по строкам",
   "MainMenuItemFormatFont": "Шрифт",

@@ -8,6 +8,7 @@ using Domain.IService.ISystemApp;
 using Domain.IService.IValidation;
 using Domain.Model;
 using Microsoft.Extensions.DependencyInjection;
+using Service.SystemApp;
 
 namespace Service.FileSystem
 {
@@ -17,11 +18,13 @@ namespace Service.FileSystem
         private readonly IValidationService _validationService;
         private readonly IFileCoreService _fileCoreService;
         private readonly IDirectoryService _directoryService;
-        public FileService(IValidationService validationService, IDirectoryService directoryService, IFileCoreService fileSystemCore)
+        private readonly IConfigService _configService;
+        public FileService(IValidationService validationService, IDirectoryService directoryService, IFileCoreService fileSystemCore, IConfigService configService)
         {
             _validationService = validationService;
             _fileCoreService = fileSystemCore;
             _directoryService = directoryService;
+            _configService = configService;
         }
         public FileModel OpenFile(string pathFile)
         {
@@ -35,15 +38,14 @@ namespace Service.FileSystem
         }
         public FileModel CreateFile(string DocsPath, string FileName)
         {
-            FileName = $"{FileName}.txt";
-            string CreateFileInDirectory = Path.Combine(DocsPath, FileName);
+            string CreateFileInDirectory = Path.Combine(DocsPath, FileName + ".txt");
             if (_validationService.FileExists(CreateFileInDirectory))
             {
                 int i = 1;
                 while (_validationService.FileExists(CreateFileInDirectory))
                 {
-                    FileName = $"New Text File({i}).txt";
-                    CreateFileInDirectory = Path.Combine(DocsPath, FileName);
+                    string tempFileName = $"{FileName}({i}).txt";
+                    CreateFileInDirectory = Path.Combine(DocsPath, tempFileName);
                     i++;
                     if (!_validationService.FileExists(CreateFileInDirectory))
                     {
@@ -71,44 +73,63 @@ namespace Service.FileSystem
                     newFilePath = Path.Combine(Path.GetDirectoryName(model.FilePath), model.FileName + ".txt");
                     if (model.FilePath != newFilePath)
                     {
+                        if (_validationService.FileExists(newFilePath))
+                        {
+                            newFilePath = GetUniqueFilePath(newFilePath, model.FileName, model.FilePath);
+                        }
                         _fileCoreService.FileDelete(model.FilePath);
                     }
-                    _fileCoreService.WriteAllText(newFilePath, model.FileText);
                 }
                 else if (SaveSetting == "SaveDirectory")
                 {
                     newFilePath = Path.Combine(DocsPath, model.FileName + ".txt");
                     if (model.FilePath != newFilePath)
                     {
+                        if (_validationService.FileExists(newFilePath))
+                        {
+                            newFilePath = GetUniqueFilePath(newFilePath, model.FileName, model.FilePath);
+                        }
                         _fileCoreService.FileDelete(model.FilePath);
-                    }
-                    _fileCoreService.WriteAllText(newFilePath, model.FileText);
+                    }      
                 }
+               _fileCoreService.WriteAllText(newFilePath, model.FileText);
 
             }
             else
             {
                 newFilePath = Path.Combine(DocsPath, model.FileName + ".txt");
                 if (_validationService.FileExists(newFilePath))
-                {
-                    int i = 1;
-                    while (_validationService.FileExists(newFilePath))
-                    {
-                        model.FileName = $"{model.FileName}({i}).txt";
-                        newFilePath = Path.Combine(DocsPath, model.FileName);
-                        i++;
-                        if (!_validationService.FileExists(newFilePath))
-                        {
-                            break;
-                        }
-                    }
-                }
+                newFilePath = GetUniqueFilePath(newFilePath, model.FileName, DocsPath);
                 _fileCoreService.WriteAllText(newFilePath, model.FileText);
             }
             return new FileModel
             {
-                FilePath = newFilePath
+                FilePath = newFilePath,
+                FileName = Path.GetFileNameWithoutExtension(newFilePath)
             };
+        }
+        private string GetUniqueFilePath(string fileName, string newFilePath, string filePath)
+        {
+            int i = 1;
+            while (_validationService.FileExists(newFilePath))
+            {
+                fileName = Path.GetFileNameWithoutExtension(fileName);
+                string tempFileName = $"{fileName}({i}).txt";
+                if (Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                {
+                    newFilePath = Path.Combine(Path.GetDirectoryName(filePath), tempFileName);
+                }
+                else
+                {
+                    newFilePath = Path.Combine(filePath, tempFileName);
+                }
+                i++;
+                if (!_validationService.FileExists(newFilePath))
+                {
+                    break;
+                }
+            }
+            return newFilePath;
         }
         public void LogMessage(string message, string DocPath)
         {

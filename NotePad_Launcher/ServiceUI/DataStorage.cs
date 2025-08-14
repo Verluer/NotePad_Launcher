@@ -26,6 +26,11 @@ public class DataStorage : IDataStorage
     {
         UpdateSyntaxHighlighting?.Invoke();
     }
+    public event Action? UpdateWordWrap;
+    public void PushUpdatedWordWrap()
+    {
+        UpdateWordWrap?.Invoke();
+    }
     #endregion
 
     #region Передача измененной строки

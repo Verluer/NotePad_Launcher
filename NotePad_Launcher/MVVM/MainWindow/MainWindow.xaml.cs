@@ -81,6 +81,7 @@ namespace NotePad_Launcher
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _dataStorage.PushUpdatedSyntax();
+            _dataStorage.PushUpdatedWordWrap();
         }
         private void OnMinimizeRequested()
         {

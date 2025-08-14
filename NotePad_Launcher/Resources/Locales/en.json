@@ -9,6 +9,7 @@
   "MainMenuItemEdit": "Edit",
   "MainMenuItemEditSearch": "Find",
   "MainMenuItemEditReplace": "Replace",
+  "MainMenuItemEditClear": "Clear",
   "MainMenuItemFormat": "Format",
   "MainMenuItemFormatWordWrap": "WordWrap",
   "MainMenuItemFormatFont": "Font",
