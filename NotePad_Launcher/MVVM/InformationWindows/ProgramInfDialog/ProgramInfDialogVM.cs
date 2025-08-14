@@ -8,6 +8,7 @@ using Domain.Model;
 using Domain.IService;
 using Domain.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.IServiceUI;
 
 namespace NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
 
@@ -15,9 +16,19 @@ namespace NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
 public class ProgramInfDialogVM : INotifyPropertyChanged
 {
     private ICommand? _closeCommand;
+
+    private readonly ILocalizationService _localizationService;
+
     public event Action? CloseRequested;
 
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    private string _title;
+    public string Title
+    {
+        get => _title;
+        set => SetField(ref _title, value);
+    }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
@@ -32,8 +43,10 @@ public class ProgramInfDialogVM : INotifyPropertyChanged
         return true;
     }
 
-    public ProgramInfDialogVM()
+    public ProgramInfDialogVM(ILocalizationService localizationService)
     {
+        _localizationService = localizationService;
+        Title = _localizationService["ProgramInfTitle"];
     }
     public ICommand CloseCommand => _closeCommand ??= new OtherRelayCommands(ExecuteCloseCommand, CanExecute);
     private void ExecuteCloseCommand(object? parameter)

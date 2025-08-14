@@ -1,8 +1,8 @@
 ﻿namespace Domain.Enum;
 
-public enum SearchReplaceMethod
+public enum FindReplaceMethod
 {
     None = 0,
-    Search = 1,
+    Find = 1,
     Replace = 2
 }

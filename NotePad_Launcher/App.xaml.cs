@@ -1,32 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
-using Domain.IService.IEncryption;
-using NotePad_Launcher.MVVM.FontPickerDialog;
-using NotePad_Launcher.MVVM.ProgramInfDialog;
-using Service.Encryption;
-using NotePad_Launcher.ViewModels.MainWindow;
-using NotePad_Launcher.MVVM.InformationWindows.ProgramInfDialog;
-using NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
-using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
-using NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
-using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
-using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
-using NotePad_Launcher.IServiceUI;
-using NotePad_Launcher.ServiceUI;
-using SharpVectors.Converters;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
-using Domain.Model;
-using NotePad_Launcher.MVVM.DialogWindows.InputTextDialog;
-using System;
-using Service.FileSystem;
-using Service.TextUtils;
-using Service.SystemApp;
-using Domain.IService.ITextUtils;
+﻿using Domain.IService.IFileSystem;
 using Domain.IService.ISystemApp;
-using Domain.IService.IFileSystem;
-using Service.Validation;
+using Domain.IService.ITextUtils;
 using Domain.IService.IValidation;
+using Domain.Model;
+using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.IServiceUI;
+using NotePad_Launcher.MVVM.DialogWindows.InputTextDialog;
+using Service.SystemApp;
+using SharpVectors.Converters;
 using System.Reflection;
+using System.Windows;
 
 namespace NotePad_Launcher
 {

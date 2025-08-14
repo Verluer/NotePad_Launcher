@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:NotePad_Launcher.MVVM.DialogWindows.InputTextDialog"
         xmlns:commands="clr-namespace:NotePad_Launcher.MVVM.Commands"
         mc:Ignorable="d"
-        Title="InputTextDialog" Height="150" Width="350" MaxWidth="350" MaxHeight="150" MinHeight="150" MinWidth="350" 
+        Title="{Binding Title}" Height="150" Width="350" MaxWidth="350" MaxHeight="150" MinHeight="150" MinWidth="350" 
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
         <commands:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>

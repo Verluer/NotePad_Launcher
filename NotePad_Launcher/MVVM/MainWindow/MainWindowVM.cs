@@ -20,7 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NotePad_Launcher.IServiceUI;
 using NotePad_Launcher.MVVM.Commands;
 using NotePad_Launcher.MVVM.FontPickerDialog;
-using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
+using NotePad_Launcher.MVVM.FunctionalWindows.FindReplaceWindow;
 using NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow;
 using NotePad_Launcher.MVVM.ProgramInfDialog;
 using NotePad_Launcher.ServiceUI;
@@ -62,7 +62,7 @@ public class MainWindowVM : INotifyPropertyChanged
     public event Action? CloseRequested;
 
     public event Action<EncryptionMethod> EncryptedMethodExecuted;
-    public event Action<SearchReplaceMethod> SearchReplaceMethodExecuted;
+    public event Action<FindReplaceMethod> SearchReplaceMethodExecuted;
 
     public event Action? UpdateWordWrapRequested;
     public event Action? UpdateSyntaxHighlightingRequested;
@@ -451,11 +451,11 @@ public class MainWindowVM : INotifyPropertyChanged
     }
     private void ExecuteSearchPattern(object? parameter)
     {
-        if (parameter is SearchReplaceMethod method)
+        if (parameter is FindReplaceMethod method)
         {
             _dataStorage.searchReplaceMethod = method;
             SearchReplaceMethodExecuted?.Invoke(method);
-            _windowService.OpenWindow<SearchWindow>();
+            _windowService.OpenWindow<FindReplaceWindow>();
         }
     }
     private void ExecuteWordWrap(object? parameter)

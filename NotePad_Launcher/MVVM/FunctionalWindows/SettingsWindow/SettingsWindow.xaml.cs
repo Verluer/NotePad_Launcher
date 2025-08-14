@@ -1,7 +1,6 @@
 ﻿using Domain.Attributes;
 using Domain.IService;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow;
 using System;
 using System.Collections.Generic;
 using System.Linq;

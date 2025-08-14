@@ -50,7 +50,12 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             OnPropertyChanged(propertyName);
             return true;
         }
-
+        private string _title;
+        public string Title
+        {
+            get => _title;
+            set => SetField(ref _title, value);
+        }
         private string _textBoxDocumentDirect;
         public string TextBoxDocumentDirect
         {
@@ -118,6 +123,8 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SettingsWindow
             _fileDialog = fileDialog;
             _fileSystemManager = fileSystemManager;
             _localizationService = localization;
+
+            Title = _localizationService["SettingsTitle"];
             LoadSettingsGeneral();
         }
         private void LoadSettingsGeneral()

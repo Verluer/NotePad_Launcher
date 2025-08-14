@@ -25,7 +25,7 @@ public interface IDataStorage
     public Func<(int index, int length)> GetSelectionCallback { get; set; }
     public Func<int> GetCaretOffset { get; set; }
     EncryptionMethod CurrentMethod { get; set; }
-    SearchReplaceMethod searchReplaceMethod { get; set; }
+    FindReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
     public List<string> AllHighlightings { get; set; }
 

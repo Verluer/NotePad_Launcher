@@ -17,7 +17,7 @@ public class DataStorage : IDataStorage
     public Func<(int index, int length)> GetSelectionCallback { get; set; }
     public Func<int> GetCaretOffset { get; set; }
     public EncryptionMethod CurrentMethod { get; set; }
-    public SearchReplaceMethod searchReplaceMethod { get; set; }
+    public FindReplaceMethod searchReplaceMethod { get; set; }
     public string StartupFilePath { get; set; }
     public List<string> AllHighlightings { get; set; } = new List<string>();
 

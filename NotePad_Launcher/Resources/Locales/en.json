@@ -25,6 +25,7 @@
   "ClassFileDialogSaveFileTitle": "Save as",
   "ClassFileDialogSaveFileName": "New File",
 
+  "SettingsTitle": " Settings",
   "SettingsRadioButtonGeneral": "General",
   "SettingsTextBlockGeneralMain": "Main parameters",
   "SettingsTextBlockGeneralDirectory": "Document\nDirectory:",
@@ -34,18 +35,38 @@
   "SettingsButtonSave": "Save",
   "SettingsButtonCancel": "Cancel",
 
-  "SearchTextBlock1": "What:",
-  "SearchTextBlock2": "With:",
-  "SearchButtonFind": "Find Next",
-  "SearchButtonReplace": "Replace",
-  "SearchButtonReplaceAll": "Replace All",
-  "SearchButtonCancel": "Cancel",
-  "SearchButtonOk": "Ok",
-  "SearchCheckBoxRegisterAware": "Match case",
-  "SearchCheckBoxWrapAround": "Wrap around",
-  "SearchRadioButtonUp": "Up",
-  "SearchRadioButtonDown": "Down",
+  "FindTitle": " Find",
+  "ReplaceTitle":  " Replace",
+  "FindReplaceTextBlock1": "What:",
+  "FindReplaceTextBlock2": "With:",
+  "FindReplaceButtonFind": "Find Next",
+  "FindReplaceButtonReplace": "Replace",
+  "FindReplaceButtonReplaceAll": "Replace All",
+  "FindReplaceButtonCancel": "Cancel",
+  "FindReplaceButtonOk": "Ok",
+  "FindReplaceCheckBoxRegisterAware": "Match case",
+  "FindReplaceCheckBoxWrapAround": "Wrap around",
+  "FindReplaceRadioButtonUp": "Up",
+  "FindReplaceRadioButtonDown": "Down",
 
-  "AboutText": "Name: NotePad Launcher\nVersion: Beta\nDeveloper: Verluer\nCreation Date: 24.03.2025\n\nThis application was created solely for educational purposes to practice programming skills.\nIt is not intended for commercial use and is distributed \"as is\" without any warranties.\n\nAll rights to the code and algorithms belong to the author."
+  "FileListTitle": " File List",
+  "FileListButtonDeleteDirectory": "Delete Directory",
+  "FileListButtonOpenExplorer": "Open Explorer",
+  "FileListButtonCreateDirectory": "Create Directory",
+  "FileListButtonCreateTxtFile": "Create text file",
+  "FileListButtonEditNameDirectory": "Edit name Directory",
+  "FileListButtonRefresh": "Refresh",
+  "FileListContextMenuMoveFile": "Move file",
+  "FileListContextMenuDeleteFile": "Delete file",
+  "FileListContextMenuEditNameFile": "Edit name file",
+
+  "FontPickerTitle": " Font",
+  "FontPickerTextBlockFont": "Font",
+  "FontPickerTextBlockFontStyle": "Style",
+  "FontPickerTextBlockFontSize": "Size",
+  "FontPickerTextBlockFontWeight": "Weight",
+  
+  "ProgramInfTitle": " Information",
+  "ProgramInfAboutText": "Name: NotePad Launcher\nVersion: Beta\nDeveloper: Verluer\nCreation Date: 24.03.2025\n\nThis application was created solely for educational purposes to practice programming skills.\nIt is not intended for commercial use and is distributed \"as is\" without any warranties.\n\nAll rights to the code and algorithms belong to the author."
 
 }

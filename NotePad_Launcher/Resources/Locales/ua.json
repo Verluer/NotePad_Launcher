@@ -25,6 +25,7 @@
   "ClassFileDialogSaveFileTitle": "Зберегти як",
   "ClassFileDialogSaveFileName": "Новий файл",
 
+  "SettingsTitle": " Налаштування",
   "SettingsRadioButtonGeneral": "Загальні",
   "SettingsTextBlockGeneralMain": "Основні параметри",
   "SettingsTextBlockGeneralDirectory": "Директорія\nДокументів:",
@@ -34,19 +35,39 @@
   "SettingsButtonSave": "Зберігти",
   "SettingsButtonCancel": "Скасувати",
 
-  "SearchTextBlock1": "Що:",
-  "SearchTextBlock2": "Чим:",
-  "SearchButtonFind": "Знайти далі",
-  "SearchButtonReplace": "Замінити",
-  "SearchButtonReplaceAll": "Замінити все",
-  "SearchButtonCancel": "Скасувати",
-  "SearchButtonOk": "ОК",
-  "SearchCheckBoxRegisterAware": "Враховувати регістр",
-  "SearchCheckBoxWrapAround": "Обтікання тексту",
-  "SearchRadioButtonUp": "Вгору",
-  "SearchRadioButtonDown": "Вниз",
+  "FindTitle": " Знайти",
+  "ReplaceTitle": " Замінити",
+  "FindReplaceTextBlock1": "Що:",
+  "FindReplaceTextBlock2": "Чим:",
+  "FindReplaceButtonFind": "Знайти далі",
+  "FindReplaceButtonReplace": "Замінити",
+  "FindReplaceButtonReplaceAll": "Замінити все",
+  "FindReplaceButtonCancel": "Скасувати",
+  "FindReplaceButtonOk": "ОК",
+  "FindReplaceCheckBoxRegisterAware": "Враховувати регістр",
+  "FindReplaceCheckBoxWrapAround": "Обтікання тексту",
+  "FindReplaceRadioButtonUp": "Вгору",
+  "FindReplaceRadioButtonDown": "Вниз",
 
-  "AboutText": "Назва: NotePad Launcher\nВерсія: Beta\nРозробник: Verluer\nДата створення: 24.03.2025\n\nЦей застосунок створено виключно з навчальною метою для вдосконалення навичок програмування.\nВін не призначений для комерційного використання та розповсюджується \"як є\" без будь-яких гарантій.\n\nУсі права на код і алгоритми належать автору."
+  "FileListTitle": " Список файлів",
+  "FileListButtonDeleteDirectory": "Видалити папку",
+  "FileListButtonOpenExplorer": "Відкрити Провідник",
+  "FileListButtonCreateDirectory": "Створити папку",
+  "FileListButtonCreateTxtFile": "Створити текстовий файл",
+  "FileListButtonEditNameDirectory": "Перейменувати папку",
+  "FileListButtonRefresh": "Оновити",
+  "FileListContextMenuMoveFile": "Перемістити файл",
+  "FileListContextMenuDeleteFile": "Видалити файл",
+  "FileListContextMenuEditNameFile": "Перейменувати файл",
+
+  "FontPickerTitle": " Шрифт",
+  "FontPickerTextBlockFont": "Шрифт",
+  "FontPickerTextBlockFontStyle": "Накреслення",
+  "FontPickerTextBlockFontSize": "Розмір",
+  "FontPickerTextBlockFontWeight": "Товщина",
+
+  "ProgramInfTitle": " Відомості",
+  "ProgramInfAboutText": "Назва: NotePad Launcher\nВерсія: Beta\nРозробник: Verluer\nДата створення: 24.03.2025\n\nЦей застосунок створено виключно з навчальною метою для вдосконалення навичок програмування.\nВін не призначений для комерційного використання та розповсюджується \"як є\" без будь-яких гарантій.\n\nУсі права на код і алгоритми належать автору."
 
 
 }

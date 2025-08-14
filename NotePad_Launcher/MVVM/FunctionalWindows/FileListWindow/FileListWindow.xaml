@@ -4,14 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:commands="clr-namespace:NotePad_Launcher.MVVM.Commands"
-        xmlns:local="clr-namespace:NotePad_Launcher"
+        xmlns:local="clr-namespace:NotePad_Launcher.ServiceUI"
         xmlns:svg="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
         x:Name="FileList"
-        Title="FileListWindow" Height="450" Width="350"
+        Title="{Binding Title}" Height="450" Width="350"
         MinWidth="250" MinHeight="350" MaxWidth="350" MaxHeight="450"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
+        <ObjectDataProvider x:Key="LocService" ObjectType="{x:Type local:LocalizationService}" MethodName="get_Instance" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -29,7 +30,7 @@
 
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
             <Image DockPanel.Dock="Left"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Source="pack://application:,,,/NotePad_Launcher;component/Resources/app.ico"/>
-            <TextBlock Text=" FileList" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
+            <TextBlock Text="{Binding Title}" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ButtonHeadStyle}">
@@ -50,9 +51,9 @@
             <ComboBox HorizontalContentAlignment="Center" ItemsSource="{Binding FolderFileString}" SelectedItem="{Binding SelectedFolder}"  SelectedIndex="{Binding SelectedIndex}">
                 <ComboBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Удалить каталог" Command="{Binding FolderDeleteCommand}" />
-                        <MenuItem Header="Переименовать каталог" Command="{Binding FolderEditNameCommand}" />
-                        <MenuItem Header="Создать каталог" Command="{Binding NewFolderCreateCommand}"/>
+                        <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListButtonDeleteDirectory]}" Command="{Binding FolderDeleteCommand}" />
+                        <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListButtonEditNameDirectory]}" Command="{Binding FolderEditNameCommand}" />
+                        <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListButtonCreateDirectory]}" Command="{Binding NewFolderCreateCommand}"/>
                     </ContextMenu>
                 </ComboBox.ContextMenu>
             </ComboBox>
@@ -65,22 +66,22 @@
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Background="#F0F0F0" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button  Command="{Binding FolderCommand}" ToolTip="Проводник" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                <Button  Command="{Binding FolderCommand}" ToolTip="{Binding Source={StaticResource LocService}, Path=[FileListButtonOpenExplorer]}" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
                     <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/Explorer.svg" Width="20" Height="20"/>
                 </Button>
-                <Button  Command="{Binding NewFolderCreateCommand}" ToolTip="Создать новый каталог" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                <Button  Command="{Binding NewFolderCreateCommand}" ToolTip="{Binding Source={StaticResource LocService}, Path=[FileListButtonCreateDirectory]}" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
                     <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FolderAdd.svg" Width="20" Height="20"/>
                 </Button>
-                <Button  Command="{Binding NewFileCreateCommand}" ToolTip="Создать новый текстовой файл" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                <Button  Command="{Binding NewFileCreateCommand}" ToolTip="{Binding Source={StaticResource LocService}, Path=[FileListButtonCreateTxtFile]}" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
                     <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/TxtFileAdd.svg" Width="20" Height="20"/>
                 </Button>
-                <Button  Command="{Binding FolderEditNameCommand}" ToolTip="Изменил название выбранного каталога" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                <Button  Command="{Binding FolderEditNameCommand}" ToolTip="{Binding Source={StaticResource LocService}, Path=[FileListButtonEditNameDirectory]}" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
                     <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FolderEdit.svg" Width="20" Height="20"/>
                 </Button>
-                <Button  Command="{Binding FolderDeleteCommand}" ToolTip="Удалить выбранный каталог" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
+                <Button  Command="{Binding FolderDeleteCommand}" ToolTip="{Binding Source={StaticResource LocService}, Path=[FileListButtonDeleteDirectory]}" BorderThickness="1"  BorderBrush="Gray" Background="#F0F0F0" MinWidth="25">
                     <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FolderDelete.svg" Width="20" Height="20"/>
                 </Button>
-                <Button  Command="{Binding UpdateCommand}" ToolTip="Обновить окно" BorderThickness="1" BorderBrush="Gray" Background="#F0F0F0" MinWidth="25" MaxWidth="25">
+                <Button  Command="{Binding UpdateCommand}" ToolTip="{Binding Source={StaticResource LocService}, Path=[FileListButtonRefresh]}" BorderThickness="1" BorderBrush="Gray" Background="#F0F0F0" MinWidth="25" MaxWidth="25">
                     <svg:SvgViewbox Source="pack://application:,,,/Resources/Svg/FileUpdate.svg" Width="20" Height="20"/>
                 </Button>
             </StackPanel>
@@ -107,17 +108,17 @@
                     <Setter Property="ContextMenu">
                         <Setter.Value>
                             <ContextMenu>
-                                <MenuItem Header="Переименовать"
+                                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListContextMenuEditNameFile]}"
                                   Command="{Binding PlacementTarget.Tag.DataContext.MenuRenameFileCommand,
                                                     RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
                                                              RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                <MenuItem Header="Удалить"
+                                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListContextMenuDeleteFile]}"
                                   Command="{Binding PlacementTarget.Tag.DataContext.MenuDeleteFileCommand,
                                                     RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
                                                              RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                <MenuItem Header="Переместить"
+                                <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListContextMenuMoveFile]}"
                                   Command="{Binding PlacementTarget.Tag.DataContext.MenuMoveFileCommand,
                                                     RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding PlacementTarget.Tag.SelectedItems,
@@ -130,8 +131,8 @@
             </ListView.ItemContainerStyle>
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Создать" Command="{Binding NewFileCreateCommand}"/>
-                    <MenuItem Header="Обновить" Command="{Binding UpdateCommand}"/>
+                    <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListButtonCreateTxtFile]}" Command="{Binding NewFileCreateCommand}"/>
+                    <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[FileListButtonRefresh]}" Command="{Binding UpdateCommand}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>

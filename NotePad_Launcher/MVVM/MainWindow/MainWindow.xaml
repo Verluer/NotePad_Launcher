@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:NotePad_Launcher.ServiceUI"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Title="MainWindow" Height="450" Width="800"
+        Title="NotePad Launcher" Height="450" Width="800"
         MinWidth="300" MinHeight="200"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
@@ -57,8 +57,8 @@
                     <MenuItem Command="{Binding DeleteFileCommand}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFileDelete]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
                 <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEdit]}" Style="{StaticResource MainWindowMenuItemStyle}">
-                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:SearchReplaceMethod.Search}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditSearch]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
-                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:SearchReplaceMethod.Replace}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditReplace]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:FindReplaceMethod.Find}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditSearch]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                    <MenuItem Command="{Binding SearchPatternCommand}" CommandParameter="{x:Static enum:FindReplaceMethod.Replace}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemEditReplace]}" Style="{StaticResource MainWindowMenuItemStyle}"/>
                 </MenuItem>
                 <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormat]}" Style="{StaticResource MainWindowMenuItemStyle}" >
                     <MenuItem Command="{Binding ToggleWordWrapCommand}" IsChecked="{Binding IsWordWrapEnabled, Mode=TwoWay}" Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemFormatWordWrap]}" Style="{StaticResource MainWindowMenuItemStyle}"/>

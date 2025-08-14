@@ -1,27 +1,18 @@
 ﻿using Domain.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Shell;
 
-namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow
+namespace NotePad_Launcher.MVVM.FunctionalWindows.FindReplaceWindow
 {
+    /// <summary>
+    /// Логика взаимодействия для FindReplaceWindow.xaml
+    /// </summary>
     [RegisterService(ServiceLifetime.Transient, asSelf: true)]
-    public partial class SearchWindow : Window
+    public partial class FindReplaceWindow : Window
     {
-        public SearchWindow()
+        public FindReplaceWindow()
         {
             InitializeComponent();
 
@@ -34,7 +25,7 @@ namespace NotePad_Launcher.MVVM.FunctionalWindows.SearchWindow
 
             WindowChrome.SetWindowChrome(this, chrome);
 
-            var viewModel = App.ServiceProvider.GetRequiredService<SearchWindowVM>(); ;
+            var viewModel = App.ServiceProvider.GetRequiredService<FindReplaceWindowVM>(); ;
             this.DataContext = viewModel;
             viewModel.MinimizeRequested += OnMinimizeRequested;
             viewModel.CloseRequested += OnCloseRequested;

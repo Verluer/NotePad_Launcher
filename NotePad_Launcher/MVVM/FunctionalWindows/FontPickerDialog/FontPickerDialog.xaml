@@ -3,11 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:NotePad_Launcher.MVVM.FontPickerDialog"
+        xmlns:local="clr-namespace:NotePad_Launcher.ServiceUI"
         mc:Ignorable="d"
-        Title="FontPickerDialog" Height="400" Width="450"
+        Title="{Binding Title}" Height="400" Width="450"
         MaxWidth="450" MaxHeight="400" MinHeight="400" MinWidth="450"
-    Style="{StaticResource WindowStyle}">
+        Style="{StaticResource WindowStyle}">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="LocService" ObjectType="{x:Type local:LocalizationService}" MethodName="get_Instance" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
@@ -21,7 +24,7 @@
             <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4" Background="{StaticResource HeadColor}" LastChildFill="false" Height="30"  MouseDown="HeadLine_MouseDown">
-            <TextBlock Text=" Font" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
+            <TextBlock Text="{Binding Title}" DockPanel.Dock="Left" FontSize="16" Foreground="WhiteSmoke" Height="26"/>
             <Button DockPanel.Dock="Right" Command="{Binding CloseCommand}" Content="✖">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource ButtonHeadStyle}">
@@ -35,12 +38,12 @@
             </Button>
         </DockPanel>
         <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom">
-            <TextBlock Text="Font" Height="20" Width="160"/>
+            <TextBlock Text="{Binding Source={StaticResource LocService}, Path=[FontPickerTextBlockFont]}" Height="20" Width="160"/>
             <TextBox Text="{Binding SelectedFont, Mode=TwoWay}" Height="20" Width="160"/>
             <ListBox VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="80" Width="160" ItemsSource="{Binding Fonts}" SelectedItem="{Binding SelectedFont, Mode=TwoWay}" />
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom">
-            <TextBlock Text="Font Style" Height="20" Width="120"/>
+            <TextBlock Text="{Binding Source={StaticResource LocService}, Path=[FontPickerTextBlockFontStyle]}" Height="20" Width="120"/>
             <TextBox Text="{Binding SelectedFontStyle.Text, Mode=TwoWay}"  Height="20" Width="120"/>
             <ListBox VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="80" Width="120" ItemsSource="{Binding FontStyles}" SelectedItem="{Binding SelectedFontStyle, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
@@ -51,7 +54,7 @@
             </ListBox>
         </StackPanel>
         <StackPanel Grid.Column="0" Grid.Row="2" VerticalAlignment="Bottom">
-            <TextBlock Text="Font Weight" Height="20" Width="120"/>
+            <TextBlock Text="{Binding Source={StaticResource LocService}, Path=[FontPickerTextBlockFontWeight]}" Height="20" Width="120"/>
             <TextBox Text="{Binding SelectedFontWeight.Text, Mode=TwoWay}"  Height="20" Width="120"/>
             <ListBox VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="80" Width="120" ItemsSource="{Binding FontWeights}" SelectedItem="{Binding SelectedFontWeight, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
@@ -62,7 +65,7 @@
             </ListBox>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Bottom">
-            <TextBlock Text="Size" Height="20" Width="50"/>
+            <TextBlock Text="{Binding Source={StaticResource LocService}, Path=[FontPickerTextBlockFontSize]}" Height="20" Width="50"/>
             <TextBox Text="{Binding SelectedFontSize, Mode=TwoWay}" Height="20" Width="50"/>
             <ListBox  HorizontalAlignment="Center" Height="80" Width="50" ItemsSource="{Binding FontSizes}" SelectedItem="{Binding SelectedFontSize, Mode=TwoWay}" />
         </StackPanel>

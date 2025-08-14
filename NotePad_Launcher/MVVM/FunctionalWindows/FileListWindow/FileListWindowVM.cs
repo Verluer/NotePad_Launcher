@@ -19,6 +19,7 @@ using Domain.IService.IValidation;
 using Service.FileSystem;
 using Domain.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.IServiceUI;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.FileListWindow;
 
@@ -30,6 +31,7 @@ public class FileListWindowVM : INotifyPropertyChanged
     private readonly IFileDialog _fileDialog;
     private readonly IDataStorage _dataStorage;
     private readonly IValidationService _validationService;
+    private readonly ILocalizationService _localizationService;
 
     public event Action? MaximizeRequested;
     public event Action? MinimizeRequested;
@@ -55,7 +57,12 @@ public class FileListWindowVM : INotifyPropertyChanged
     public ObservableCollection<FileModel> FileListItem { get; set; } = new ObservableCollection<FileModel>();
 
     public ObservableCollection<string> FolderFileString { get; set; } = new ObservableCollection<string>();
-
+    private string _title;
+    public string Title
+    {
+        get => _title;
+        set => SetField(ref _title, value);
+    }
     private string _selectedFolder;
     public string SelectedFolder
     {
@@ -74,14 +81,19 @@ public class FileListWindowVM : INotifyPropertyChanged
         get => _selectedIndex;
         set => SetField(ref _selectedIndex, value);
     }
-    public FileListWindowVM(IFileSystemManager fileSystemManager, IFileDialog fileDialog, IDataStorage dataStorage, IValidationService validationService)
+    public FileListWindowVM(IFileSystemManager fileSystemManager, IFileDialog fileDialog, IDataStorage dataStorage, IValidationService validationService,
+        ILocalizationService localizationService)
     {
         _fileSystemManager = fileSystemManager;
         _fileDialog = fileDialog;
         _validationService = validationService;
-
-        UploadFolder(0);
+        _localizationService = localizationService;
         _dataStorage = dataStorage;
+
+        Title = _localizationService["FileListTitle"];
+         
+        UploadFolder(0);
+
     }
     public void UploadFolder(int selectedIndex)
     {

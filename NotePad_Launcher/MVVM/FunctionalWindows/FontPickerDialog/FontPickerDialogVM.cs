@@ -10,6 +10,7 @@ using System.Windows.Media.Media3D;
 using NotePad_Launcher.MVVM.Commands;
 using Domain.Attributes;
 using Microsoft.Extensions.DependencyInjection;
+using NotePad_Launcher.IServiceUI;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.FontPickerDialog;
 
@@ -21,6 +22,7 @@ public class FontPickerDialogVM : INotifyPropertyChanged
     private ICommand? _confirmCommand;
     public event Action? CloseRequested;
     private readonly IDataStorage _dataStorage;
+    private readonly ILocalizationService _localizationService;
     public ObservableCollection<FontFamily> Fonts { get; }
     public ObservableCollection<TextBlock> FontStyles { get; }
     public ObservableCollection<TextBlock> FontWeights { get; }
@@ -52,6 +54,13 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         get => _selectedFontWeight;
         set => SetField(ref _selectedFontWeight, value);
     }
+    private string _title;
+    public string Title
+    {
+        get => _title;
+        set => SetField(ref _title, value);
+    }
+  
     private double _selectedFontSize;
     public double SelectedFontSize
     {
@@ -59,32 +68,38 @@ public class FontPickerDialogVM : INotifyPropertyChanged
         set => SetField(ref _selectedFontSize, value);
     }
 
-    public FontPickerDialogVM(IDataStorage dataStorage)
+    public FontPickerDialogVM(IDataStorage dataStorage, ILocalizationService localizationService)
     {
         _dataStorage = dataStorage;
+        _localizationService = localizationService;
+
         Fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies.OrderBy(f => f.Source));
         FontStyles = new ObservableCollection<TextBlock>();
         FontWeights = new ObservableCollection<TextBlock>();
         FontSizes = new ObservableCollection<double> { 8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 72 };
+
         var (fontSize, fontFamily, fontStyle, fontWeight) = _dataStorage.GetFontFamilySizeCallback();
+
+        Title = _localizationService["FontPickerTitle"];
+
         if (Fonts.Any())
         {
             SelectedFontSize = fontSize;
             SelectedFont = fontFamily;
-            TextBlock textBlockStyle = new TextBlock
+            for (int i = 0; i < FontStyles.Count; i++)
             {
-                Text = fontStyle.ToString(),
-                FontStyle = fontStyle
-            };
-            FontStyles.Add(textBlockStyle);
-            SelectedFontStyle = textBlockStyle;
-            TextBlock textBlockWeight = new TextBlock
+                if (FontStyles[i].FontStyle == fontStyle)
+                {
+                    SelectedFontStyle = FontStyles[i];
+                }
+            }
+            for (int i = 0; i < FontWeights.Count; i++)
             {
-                Text = fontWeight.ToString(),
-                FontWeight = fontWeight
-            };
-            FontWeights.Add(textBlockWeight);
-            SelectedFontWeight = textBlockWeight;
+                if (FontWeights[i].FontWeight == fontWeight)
+                {
+                    SelectedFontWeight = FontWeights[i];
+                }
+            }
         }
     }
     private void LoadFontStylesWeights()
