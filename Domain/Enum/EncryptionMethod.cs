@@ -6,5 +6,6 @@ public enum EncryptionMethod
     RSA = 1,
     Elgamal = 2,
     Rabina = 3,
-    ECC = 4
+    ECC = 4,
+    LFSR = 5
 }

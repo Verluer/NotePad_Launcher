@@ -12,7 +12,7 @@ namespace Domain.IService.IFileSystem
         public FileModel OpenFile(string pathFile);
         public FileModel CreateFile(string DocsPath, string FileName);
         public FileModel SaveFile(FileModel model, string SaveSetting, string DocsPath);
-        public void LogMessage(string message, string DocPath);
+        public void LogMessage(string message);
 
         public string ExDirectoryFile(string Folder);
         public void CreateDocumentsDirectory();

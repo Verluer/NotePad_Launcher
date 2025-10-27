@@ -41,24 +41,14 @@ namespace Service.FileSystem
             string CreateFileInDirectory = Path.Combine(DocsPath, FileName + ".txt");
             if (_validationService.FileExists(CreateFileInDirectory))
             {
-                int i = 1;
-                while (_validationService.FileExists(CreateFileInDirectory))
-                {
-                    string tempFileName = $"{FileName}({i}).txt";
-                    CreateFileInDirectory = Path.Combine(DocsPath, tempFileName);
-                    i++;
-                    if (!_validationService.FileExists(CreateFileInDirectory))
-                    {
-                        break;
-                    }
-                }
+                CreateFileInDirectory = GetUniqueFilePath(FileName, CreateFileInDirectory, DocsPath);
             }
 
             _fileCoreService.FileCreate(CreateFileInDirectory);
 
             return new FileModel
             {
-                FileName = Path.GetFileNameWithoutExtension(FileName),
+                FileName = Path.GetFileNameWithoutExtension(CreateFileInDirectory),
                 FilePath = CreateFileInDirectory,
             };
         }
@@ -66,7 +56,7 @@ namespace Service.FileSystem
         public FileModel SaveFile(FileModel model, string SaveSetting, string DocsPath)
         {
             string newFilePath = null;
-            if (model.FilePath != null)
+            if (!string.IsNullOrWhiteSpace(model.FilePath))
             {
                 if (SaveSetting == "SaveNormal")
                 {
@@ -131,12 +121,11 @@ namespace Service.FileSystem
             }
             return newFilePath;
         }
-        public void LogMessage(string message, string DocPath)
+        public void LogMessage(string message)
         {
-            var folderArr = _directoryService.LoadFolderFile(DocPath);
-            var documentsPath = _directoryService.ExDirectoryFile(DocPath);
-            var directoryApp = _fileCoreService.ExDirectoryApp();
-            string logFilePath = Path.Combine(directoryApp.ToString(), Path.Combine(Path.Combine(documentsPath,folderArr[0]),"log.txt"));
+            AppConfigModel config = _configService.Load();
+            var folderArr = _directoryService.LoadFolderFile(config.DocsPath);
+            string logFilePath = Path.Combine(Path.Combine(config.DocsPath,folderArr[0]),"log.txt");
             File.AppendAllText(logFilePath, DateTime.Now + ": " + message + Environment.NewLine);
         }
     }

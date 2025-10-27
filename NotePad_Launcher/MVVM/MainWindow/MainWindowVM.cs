@@ -223,7 +223,6 @@ public class MainWindowVM : INotifyPropertyChanged
         _dataStorage.SelectionFileUpdated += UpdateFileInfo;
         _dataStorage.UpdateSyntaxHighlighting += UpdateSyntax;
         _dataStorage.UpdateWordWrap += UpdateWordWrap;
-
     }
     #region Functions
     private void UpdateSyntax()
@@ -392,15 +391,25 @@ public class MainWindowVM : INotifyPropertyChanged
         };
         string currectPathConfig = Path.GetDirectoryName(model.FilePath);
         string testPathConfig = Path.GetDirectoryName(currectPathConfig);
+
         if (App.Config.SaveSetting == "SaveDirectory" && App.Config.DocsPath != testPathConfig || string.IsNullOrEmpty(model.FilePath))
         {
-            currectPathConfig = _fileDialog.InputTextDialog("Save File", "Select save folder:", "", false, true);
-            if (currectPathConfig == null) return;
-            currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
+            try
+            {
+                currectPathConfig = _fileDialog.InputTextDialog("Save File", "Select save folder:", "", false, true);
+                if (currectPathConfig == null) return;
+                currectPathConfig = Path.Combine(App.Config.DocsPath, currectPathConfig);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
         if (!string.IsNullOrWhiteSpace(model.FileText))
         {
-            if (string.IsNullOrWhiteSpace(model.FileName))
+            try
+            {
+                if (string.IsNullOrWhiteSpace(model.FileName))
             {
                 var tempModel = _fileSystemManager.CreateFile(currectPathConfig, "NewFileText");
                 model.FileName = tempModel.FileName;
@@ -409,17 +418,30 @@ public class MainWindowVM : INotifyPropertyChanged
             }
             var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
+            FileName = saveFile.FileName;
             CheckSaveFile = true;
             _fileDialog.ShowMessage($"{_localizationService["MainMessageSaved"]}", $"{_localizationService["MainMessageSavedTitle"]}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
         else if (!string.IsNullOrWhiteSpace(model.FileName))
         {
-            var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
+            try
+            {
+                var saveFile = _fileSystemManager.SaveFile(model, App.Config.SaveSetting, currectPathConfig);
             FilePath = saveFile.FilePath;
             FileName = saveFile.FileName;
             CheckSaveFile = true;
             _fileDialog.ShowMessage(_localizationService["MainMessageSaved"], _localizationService["MainMessageSavedTitle"]);
         }
+            catch (Exception ex)
+            {
+            MessageBox.Show(ex.ToString());
+        }
+    }
         else
         {
             _fileDialog.ShowMessage(_localizationService["MainMessageTextNull"], _localizationService["MainMessageSavedTitle"]);

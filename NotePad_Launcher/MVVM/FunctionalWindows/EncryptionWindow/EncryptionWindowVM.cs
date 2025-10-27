@@ -24,6 +24,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly IElgamalService _elgamalService;
     private readonly IRabinaService _rabinaService;
     private readonly IECCService _eccService;
+    private readonly ILFSRService _lFSRService;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -49,6 +50,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _elgamalService = new ElgamalService();
         _rabinaService = new RabinaService();
         _eccService = new ECCService();
+        _lFSRService = new LFSRService();
         _fileDialog = fileDialog;
         TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
@@ -64,6 +66,9 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 break;
             case EncryptionMethod.ECC:
                 ECCUI();
+                break;
+            case EncryptionMethod.LFSR:
+                LFSRUI();
                 break;
             default:
                 break;
@@ -208,6 +213,14 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     }
     #endregion
     #region BoolElement
+    private bool _isElement1Visible = true;
+
+    public bool IsElement1Visible
+    {
+        get => _isElement1Visible;
+        set => SetField(ref _isElement1Visible, value);
+    }
+
     private bool _isElement2Visible = true;
 
     public bool IsElement2Visible
@@ -221,6 +234,13 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     {
         get => _isTextBlock3Visible;
         set => SetField(ref _isTextBlock3Visible, value);
+    }
+    private bool _isTextBlockCloseKeyVisible = true;
+
+    public bool IsTextBlockCloseKeyVisible
+    {
+        get => _isTextBlockCloseKeyVisible;
+        set => SetField(ref _isTextBlockCloseKeyVisible, value);
     }
     private bool _isTextBoxValue3Visible = true;
 
@@ -243,6 +263,13 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         get => _isTextBoxValue5Visible;
         set => SetField(ref _isTextBoxValue5Visible, value);
     }
+    private bool _isTextBoxCloseKey1Visible = true;
+
+    public bool IsTextBoxCloseKey1Visible
+    {
+        get => _isTextBoxCloseKey1Visible;
+        set => SetField(ref _isTextBoxCloseKey1Visible, value);
+    }
     private bool _isTextBoxCloseKey2Visible = true;
 
     public bool IsTextBoxCloseKey2Visible
@@ -256,6 +283,12 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     {
         get => _isTextBoxCloseKey3Visible;
         set => SetField(ref _isTextBoxCloseKey3Visible, value);
+    }
+    private bool _isButtonDigitalVisible = true;
+    public bool IsButtonDigitalVisible
+    {
+        get => _isButtonDigitalVisible;
+        set => SetField(ref _isButtonDigitalVisible, value);
     }
     #endregion
     private void RSAUI()
@@ -295,7 +328,20 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         IsTextBoxValue5Visible = false;
         IsTextBoxCloseKey2Visible = false;
         IsTextBoxCloseKey3Visible = false;
-
+    }
+    private void LFSRUI()
+    {
+        MethodName = "LFSR Encryption";
+        IsButtonDigitalVisible = false;
+        TextBlockValue1 = "Enter the length of the register (1-64):";
+        TextBlockValue2 = "Enter seed (hex):";
+        TextBlockValue3 = "Enter tapMask (hex):";
+        IsTextBlockCloseKeyVisible = false;
+        IsTextBoxValue4Visible = false;
+        IsTextBoxValue5Visible = false;
+        IsTextBoxCloseKey1Visible = false;
+        IsTextBoxCloseKey2Visible = false;
+        IsTextBoxCloseKey3Visible = false;
     }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
@@ -404,6 +450,17 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 };
                 result = _eccService.Encryption(model);
                 TextBoxValue3 = result.PrimeE;
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
+            case EncryptionMethod.LFSR:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //Length of the register
+                    PrimeQ = TextBoxValue2, //Seed
+                    PrimeE = TextBoxValue3, //tapMask
+                };
+                result = _lFSRService.Encryption(model);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
@@ -527,6 +584,17 @@ public class EncryptionWindowVM : INotifyPropertyChanged
 
                 };
                 result = _eccService.Decryption(model);
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
+            case EncryptionMethod.LFSR:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //Length of the register
+                    PrimeQ = TextBoxValue2, //Seed
+                    PrimeE = TextBoxValue3, //tapMask
+                };
+                result = _lFSRService.Decryption(model);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:

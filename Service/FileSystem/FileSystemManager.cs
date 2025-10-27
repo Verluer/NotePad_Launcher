@@ -40,9 +40,9 @@ namespace Service.FileSystem
         {
             return _fileService.CreateFile(DocsPath, FileName);
         }
-        public void LogMessage(string message, string DocPath)
+        public void LogMessage(string message)
         {
-            _fileService.LogMessage(message, DocPath);
+            _fileService.LogMessage(message);
         }
         #endregion
         #region DirectoryService

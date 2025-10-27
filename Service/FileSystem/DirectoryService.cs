@@ -19,6 +19,7 @@ namespace Service.FileSystem
     {
         private readonly IValidationService _validationService;
         private readonly IFileCoreService _fileCoreService;
+        
         public DirectoryService(IValidationService validationService, IFileCoreService fileSystemCore)
         {
             _validationService = validationService;
@@ -40,6 +41,7 @@ namespace Service.FileSystem
                 {
                     break;
                 }
+                counter++;
             }
             return resourcesDirectory;
         }
@@ -66,6 +68,8 @@ namespace Service.FileSystem
         }
         public List<string> LoadFolderFile(string DocsPath)
         {
+            if (!Directory.GetDirectories(DocsPath).Any())
+                _fileCoreService.DirectoryCreate(Path.Combine(DocsPath, "Main"));
             return Directory.GetDirectories(DocsPath)
                 .Select(path => Path.GetFileName(path))
                 .ToList();
