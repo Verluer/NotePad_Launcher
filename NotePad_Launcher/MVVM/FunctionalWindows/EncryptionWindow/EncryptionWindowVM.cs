@@ -25,6 +25,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly IRabinaService _rabinaService;
     private readonly IECCService _eccService;
     private readonly ILFSRService _lFSRService;
+    private readonly IG28147Service _g28147Service;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -51,6 +52,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _rabinaService = new RabinaService();
         _eccService = new ECCService();
         _lFSRService = new LFSRService();
+        _g28147Service = new G28147Service();
         _fileDialog = fileDialog;
         TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
@@ -69,6 +71,9 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 break;
             case EncryptionMethod.LFSR:
                 LFSRUI();
+                break;
+            case EncryptionMethod.G28147:
+                G28147UI();
                 break;
             default:
                 break;
@@ -291,6 +296,16 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         set => SetField(ref _isButtonDigitalVisible, value);
     }
     #endregion
+    #region ComboBox
+    private string _selectedMode;
+    public string SelectedMode
+    {
+        get => _selectedMode;
+        set => SetField(ref _selectedMode, value);
+    }
+
+    public List<string> Mode { get; set; }
+    #endregion
     private void RSAUI()
     {
         MethodName = "RSA Encryption";
@@ -337,6 +352,23 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         TextBlockValue2 = "Enter seed (hex):";
         TextBlockValue3 = "Enter tapMask (hex):";
         IsTextBlockCloseKeyVisible = false;
+        IsTextBoxValue4Visible = false;
+        IsTextBoxValue5Visible = false;
+        IsTextBoxCloseKey1Visible = false;
+        IsTextBoxCloseKey2Visible = false;
+        IsTextBoxCloseKey3Visible = false;
+    }
+    private void G28147UI()
+    {
+        MethodName = "G28147 Encryption";
+        IsButtonDigitalVisible = false;
+        TextBlockValue1 = "Enter the encryption key (32 bytes in hex):";   // ключ
+        TextBlockValue2 = "Enter the initialization vector (8 bytes in hex):"; // IV
+        Mode = new List<string> { "ECB", "GAMMA", "CFB" };
+        SelectedMode = Mode[0];
+        IsTextBlock3Visible = false;
+        IsTextBlockCloseKeyVisible = false;
+        IsTextBoxValue3Visible = false;
         IsTextBoxValue4Visible = false;
         IsTextBoxValue5Visible = false;
         IsTextBoxCloseKey1Visible = false;
@@ -461,6 +493,17 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     PrimeE = TextBoxValue3, //tapMask
                 };
                 result = _lFSRService.Encryption(model);
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
+            case EncryptionMethod.G28147:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //Key HEX 64
+                    PrimeQ = TextBoxValue2, //IV
+                    PrimeE = SelectedMode, //Mode
+                };
+                result = _g28147Service.Encryption(model);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
@@ -595,6 +638,17 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     PrimeE = TextBoxValue3, //tapMask
                 };
                 result = _lFSRService.Decryption(model);
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
+            case EncryptionMethod.G28147:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //Key HEX 64
+                    PrimeQ = TextBoxValue2, //IV
+                    PrimeE = SelectedMode, //Mode
+                };
+                result = _g28147Service.Decryption(model);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
