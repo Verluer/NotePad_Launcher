@@ -72,6 +72,7 @@
                         <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.ECC}"  Header="ECC" Style="{StaticResource MainWindowMenuItemStyle}"/>
                         <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.LFSR}"  Header="LFSR" Style="{StaticResource MainWindowMenuItemStyle}"/>
                         <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.G28147}"  Header="G28147" Style="{StaticResource MainWindowMenuItemStyle}"/>
+                        <MenuItem Command="{Binding EncryptedMethodCommand}" CommandParameter="{x:Static enum:EncryptionMethod.AES}"  Header="AES" Style="{StaticResource MainWindowMenuItemStyle}"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding Source={StaticResource LocService}, Path=[MainMenuItemHelp]}" Style="{StaticResource MainWindowMenuItemStyle}" >

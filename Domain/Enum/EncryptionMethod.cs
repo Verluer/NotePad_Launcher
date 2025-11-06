@@ -8,5 +8,6 @@ public enum EncryptionMethod
     Rabina = 3,
     ECC = 4,
     LFSR = 5,
-    G28147 = 6
+    G28147 = 6,
+    AES = 7,
 }

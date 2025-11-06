@@ -31,6 +31,14 @@ public class FileDialog : IFileDialog
         {
             openFileDialog.Filter = $"{_localizationService["ClassFileDialogTextFileFilter"]}(*.txt)|*.txt";
         }
+        if (extension == "pem")
+        {
+            openFileDialog.Filter = $"PemFile:(*.pem)|*.pem";
+        }
+        if (extension == "json")
+        {
+            openFileDialog.Filter = $"JsonFile:(*.json)|*.json";
+        }
         else if (extension == null)
         {
         }
@@ -40,7 +48,7 @@ public class FileDialog : IFileDialog
             return openFileDialog.FileName;
         }
 
-        return pathToClose;
+        return null;
     }
     public string SaveFileDialog(string pathToClose, string FileName)
     {

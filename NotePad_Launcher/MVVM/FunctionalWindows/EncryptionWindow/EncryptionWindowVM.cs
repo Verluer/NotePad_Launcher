@@ -26,6 +26,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly IECCService _eccService;
     private readonly ILFSRService _lFSRService;
     private readonly IG28147Service _g28147Service;
+    private readonly IAESService _aESService;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -39,7 +40,21 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private ICommand? _encryptionCommand;
     private ICommand? _digitalSignatureCommand;
     private ICommand? _decryptionCommand;
+    private ICommand? _generateCommand;
+    private ICommand? _getPath1Command;
+    private ICommand? _getPath2Command;
+    private ICommand? _getPath3Command;
+    private ICommand? _getPath4Command;
+    private ICommand? _getPath5Command;
+    private ICommand? _getPath6Command;
+
     private string _methodName;
+    private string pathPrivateKeyEnRSA;
+    private string pathPublicKeyEnRSA;
+    private string pathPrivateKeySigRSA;
+    private string pathPublicKeySigRSA;
+    private string pathMetaData;
+
     private EncryptionMethod _selectedMethod;
     public EncryptionMethod SelectedMethod { get; }
     private readonly IDataStorage _dataStorage;
@@ -53,6 +68,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _eccService = new ECCService();
         _lFSRService = new LFSRService();
         _g28147Service = new G28147Service();
+        _aESService = new AESService();
         _fileDialog = fileDialog;
         TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
@@ -74,6 +90,9 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 break;
             case EncryptionMethod.G28147:
                 G28147UI();
+                break;
+            case EncryptionMethod.AES:
+                AESUI();
                 break;
             default:
                 break;
@@ -114,6 +133,24 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     {
         get => _textBlockValue5;
         set => SetField(ref _textBlockValue5, value);
+    }
+    private string _textBlockValue6;
+    public string TextBlockValue6
+    {
+        get => _textBlockValue6;
+        set => SetField(ref _textBlockValue6, value);
+    }
+    private string _textBlockValue7;
+    public string TextBlockValue7
+    {
+        get => _textBlockValue7;
+        set => SetField(ref _textBlockValue7, value);
+    }
+    private string _textBlockValue8;
+    public string TextBlockValue8
+    {
+        get => _textBlockValue8;
+        set => SetField(ref _textBlockValue8, value);
     }
     private string _textBlockCloseKey;
     public string TextBlockCloseKey
@@ -186,6 +223,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
             OnPropertyChanged(nameof(TextBoxValue5));
         }
     }
+
     private string _textBoxCloseKey1;
     public string TextBoxCloseKey1
     {
@@ -289,11 +327,47 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         get => _isTextBoxCloseKey3Visible;
         set => SetField(ref _isTextBoxCloseKey3Visible, value);
     }
+    private bool _isComboBoxVisible = false;
+    public bool IsComboBoxVisible
+    {
+        get => _isComboBoxVisible;
+        set => SetField(ref _isComboBoxVisible, value);
+    }
     private bool _isButtonDigitalVisible = true;
     public bool IsButtonDigitalVisible
     {
         get => _isButtonDigitalVisible;
         set => SetField(ref _isButtonDigitalVisible, value);
+    }
+    private bool _isButtonValue3Visible = false;
+    public bool IsButtonValue3Visible
+    {
+        get => _isButtonValue3Visible;
+        set => SetField(ref _isButtonValue3Visible, value);
+    }
+    private bool _isElement4Visible = false;
+    public bool IsElement4Visible
+    {
+        get => _isElement4Visible;
+        set => SetField(ref _isElement4Visible, value);
+    }
+    private bool _isElement5Visible = false;
+    public bool IsElement5Visible
+    {
+        get => _isElement5Visible;
+        set => SetField(ref _isElement5Visible, value);
+    }
+    private bool _isElement6Visible = false;
+    public bool IsElement6Visible
+    {
+        get => _isElement6Visible;
+        set => SetField(ref _isElement6Visible, value);
+    }
+    private bool _isButtonGenerateVisible = false;
+    public bool IsButtonGenerateVisible
+    {
+        get => _isButtonGenerateVisible;
+        set => SetField(ref _isButtonGenerateVisible, value);
     }
     #endregion
     #region ComboBox
@@ -365,6 +439,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         TextBlockValue1 = "Enter the encryption key (32 bytes in hex):";   // ключ
         TextBlockValue2 = "Enter the initialization vector (8 bytes in hex):"; // IV
         Mode = new List<string> { "ECB", "GAMMA", "CFB" };
+        IsComboBoxVisible = true;
         SelectedMode = Mode[0];
         IsTextBlock3Visible = false;
         IsTextBlockCloseKeyVisible = false;
@@ -373,6 +448,30 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         IsTextBoxValue5Visible = false;
         IsTextBoxCloseKey1Visible = false;
         IsTextBoxCloseKey2Visible = false;
+        IsTextBoxCloseKey3Visible = false;
+    }
+    private void AESUI()
+    {
+        MethodName = "AES Encryption";
+        IsButtonDigitalVisible = false;
+        TextBlockValue1 = "Enter password (optional)";
+        TextBlockValue2 = "Enter a name for the encryption files";
+        TextBlockValue3 = "Select where to save encrypted files";
+        TextBlockValue4 = "Select a private key (rec) for decryption (.pem)";
+        TextBlockValue5 = "Select a public key (sig) for decryption (.pem)";
+        TextBlockValue6 = "Select a MetaData (.json)";
+        TextBlockValue7 = "Select a public key (rec) for encryption (.pem)";
+        TextBlockValue8 = "Select a private key (sig) for encryption (.pem)";
+        IsButtonValue3Visible = true;
+        IsElement4Visible = true;
+        IsElement5Visible = true;
+        IsElement6Visible = true;
+        IsButtonGenerateVisible = true;
+        IsTextBoxValue4Visible = false;
+        IsTextBoxValue5Visible = false;
+        IsTextBlockCloseKeyVisible = false;
+        IsTextBoxCloseKey1Visible = false;
+        IsTextBoxCloseKey2Visible= false;
         IsTextBoxCloseKey3Visible = false;
     }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -393,6 +492,13 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     public ICommand EncryptionCommand => _encryptionCommand ??= new OtherRelayCommands(ExecuteEncryptionCommand, CanExecute);
     public ICommand DigitalSignatureCommand => _digitalSignatureCommand ??= new OtherRelayCommands(ExecuteDigitalSignatureCommand, CanExecute);
     public ICommand DecryptionCommand => _decryptionCommand ??= new OtherRelayCommands(ExecuteDecryptionCommand, CanExecute);
+    public ICommand GenerateCommand => _generateCommand ??= new OtherRelayCommands(ExecuteGenerateCommand, CanExecute);
+    public ICommand GetPath1Command => _getPath1Command ??= new OtherRelayCommands(ExecuteGetPath1Command, CanExecute);
+    public ICommand GetPath2Command => _getPath2Command ??= new OtherRelayCommands(ExecuteGetPath2Command, CanExecute);
+    public ICommand GetPath3Command => _getPath3Command ??= new OtherRelayCommands(ExecuteGetPath3Command, CanExecute);
+    public ICommand GetPath4Command => _getPath4Command ??= new OtherRelayCommands(ExecuteGetPath4Command, CanExecute);
+    public ICommand GetPath5Command => _getPath5Command ??= new OtherRelayCommands(ExecuteGetPath5Command, CanExecute);
+    public ICommand GetPath6Command => _getPath6Command ??= new OtherRelayCommands(ExecuteGetPath6Command, CanExecute);
     private void ExecuteCloseCommand(object? parameter)
     {
         CloseRequested?.Invoke();
@@ -405,6 +511,66 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     {
         MaximizeRequested?.Invoke();
     }
+    private void ExecuteGetPath1Command(object? parameter)
+    {
+        var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        TextBoxValue3 = _fileDialog.FolderFileDialog(App.Config.DocsPath);
+    }
+    private void ExecuteGetPath2Command(object? parameter)
+    {
+        var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        pathPrivateKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+        if (pathPrivateKeyEnRSA != null)
+        {
+            TextBlockValue4 = "Private key (rec) selected";
+        }
+    }
+    private void ExecuteGetPath3Command(object? parameter)
+    {
+        var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        pathPublicKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+        if (pathPublicKeySigRSA != null)
+        {
+            TextBlockValue5 = "Publick key (sig) selected";
+        }
+    }
+    private void ExecuteGetPath4Command(object? parameter)
+    {
+        var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        pathMetaData = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "json");
+        if (pathMetaData != null)
+        {
+            TextBlockValue6 = "MetaData selected";
+        }
+    }
+    private void ExecuteGetPath5Command(object? parameter)
+    {
+        var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        pathPublicKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+        if (pathPublicKeyEnRSA != null)
+        {
+            TextBlockValue7 = "Publick key (rec) selected";
+        }
+    }
+    private void ExecuteGetPath6Command(object? parameter)
+    {
+        var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+        pathPrivateKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+        if (pathPrivateKeySigRSA != null)
+        {
+            TextBlockValue8 = "Private key (sig) selected";
+        }
+    }
+    private void ExecuteGenerateCommand(object? parameter)
+    {
+        if (TextBoxValue2 != null && TextBoxValue3 != null)
+        {
+            using var recipientRsa = _rsaService.CreateRsaKeyPair(2048, TextBoxValue3, "rec", TextBoxValue2); // RSA отримувача
+            using var signerRsa = _rsaService.CreateRsaKeyPair(2048, TextBoxValue3, "sig", TextBoxValue2); // RSA підписанта
+        }
+        else _fileDialog.ShowMessage("Enter name and where save", "Error");
+    }
+
     private void ExecuteEncryptionCommand(object? parameter)
     {
         var FileText = _dataStorage.GetTextCallback();
@@ -425,6 +591,9 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 result = _rsaService.Encryption(model);
                 TextBlockCloseKey = $"Close key: {result.CloseKeyD},{result.ModulusN}";
                 TextBlockOpenKey = $"Open key: {result.PrimeE},{result.ModulusN}";
+                TextBoxCloseKey1 = result.CloseKeyD;
+                TextBoxCloseKey2 = result.ModulusN;
+                TextBoxValue4 = result.ModulusN;
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.Elgamal:
@@ -506,6 +675,18 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 result = _g28147Service.Encryption(model);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
+            case EncryptionMethod.AES:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //password
+                    PrimeQ = TextBoxValue2, //name-base
+                    PrimeE = TextBoxValue3, //path
+                };
+                result = _aESService.Encryption(model, pathPublicKeyEnRSA, pathPrivateKeySigRSA);
+                _aESService.SaveEncryptedBundle(TextBoxValue3, TextBoxValue2, result);
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
             default:
                 break;
         }
@@ -537,10 +718,14 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                         case false:
                             _fileDialog.ShowMessage("DigitalSignature invalid", "Result Signature");
                             break;
+
                     }
                 }
                 else
                 {
+                    TextBlockCloseKey = $"Close key: {result.CloseKeyD},{result.ModulusN}";
+                    TextBlockOpenKey = $"Open key: {result.PrimeE},{result.ModulusN}";
+                    TextBlockValue4 = result.ModulusN;
                     _dataStorage.PushUpdatedText(result.FileText);
                 }
                 break;
@@ -649,6 +834,18 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     PrimeE = SelectedMode, //Mode
                 };
                 result = _g28147Service.Decryption(model);
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
+            case EncryptionMethod.AES:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //password
+                    PrimeQ = TextBoxValue2, //name-base
+                    PrimeE = TextBoxValue3, //path
+                    Metadata = _aESService.LoadEncryptedBundle(pathMetaData),
+                };
+                result = _aESService.Decryption(model, pathPrivateKeyEnRSA, pathPublicKeySigRSA);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:
