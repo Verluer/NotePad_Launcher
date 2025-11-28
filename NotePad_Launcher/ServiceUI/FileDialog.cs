@@ -35,6 +35,10 @@ public class FileDialog : IFileDialog
         {
             openFileDialog.Filter = $"PemFile:(*.pem)|*.pem";
         }
+        if (extension == "pfx")
+        {
+            openFileDialog.Filter = $"CertFile:(*.pfx)|*.pfx";
+        }
         if (extension == "json")
         {
             openFileDialog.Filter = $"JsonFile:(*.json)|*.json";

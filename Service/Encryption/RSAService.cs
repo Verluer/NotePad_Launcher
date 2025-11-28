@@ -257,13 +257,24 @@ public class RSAService : IRSAService
 
         return rsa;
     }
-    public X509Certificate2 CreateSelfSignedCertificate(RSA rsa, string subjectName)
+    public X509Certificate2 CreateSelfSignedCertificate(string subjectName, string savePath, string password, int keySize = 2048, int validYears = 5)
     {
-        var req = new CertificateRequest(subjectName, rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        using var rsa = RSA.Create(keySize);
+
+        var req = new CertificateRequest(
+            subjectName,
+            rsa,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
+
         var notBefore = DateTimeOffset.UtcNow.AddDays(-1);
-        var notAfter = notBefore.AddYears(5);
+        var notAfter = notBefore.AddYears(validYears);
+
         var cert = req.CreateSelfSigned(notBefore, notAfter);
-        return cert.CopyWithPrivateKey(rsa);
+
+        File.WriteAllBytes(savePath, cert.Export(X509ContentType.Pkcs12, password));
+
+        return cert; 
     }
     private static IEnumerable<string> SplitBase64(string base64)
     {

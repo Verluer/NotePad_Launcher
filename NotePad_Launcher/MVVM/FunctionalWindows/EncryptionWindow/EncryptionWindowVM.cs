@@ -14,6 +14,7 @@ using Service;
 using NotePad_Launcher.ViewModels;
 using Domain.IService.ISystemApp;
 using Domain.Attributes;
+using System.IO;
 
 namespace NotePad_Launcher.MVVM.FunctionalWindows.EncryptionWindow;
 
@@ -71,7 +72,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _g28147Service = new G28147Service();
         _aESService = new AESService();
         _kEK_SSKService = new KEK_SSK();
-      
+
         _fileDialog = fileDialog;
         TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
@@ -381,7 +382,32 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     public string SelectedMode
     {
         get => _selectedMode;
-        set => SetField(ref _selectedMode, value);
+        set
+        {
+            if (SetField(ref _selectedMode, value))
+            {
+                switch (SelectedMode)
+                {
+                    case "Pem Key":
+
+                        TextBlockValue4 = "Select a private key (rec) for decryption (.pem)";
+                        TextBlockValue5 = "Select a public key (sig) for decryption (.pem)";
+                        TextBlockValue7 = "Select a public key (rec) for encryption (.pem)";
+                        TextBlockValue8 = "Select a private key (sig) for encryption (.pem)";
+
+                        break;
+
+                    case "Cert":
+
+                        TextBlockValue4 = "Select a certificate (rec) for decryption (.pfx)";
+                        TextBlockValue5 = "Select a certificate (sig) for decryption (.pfx)";
+                        TextBlockValue7 = "Select a certificate (rec) for encryption (.pfx)";
+                        TextBlockValue8 = "Select a certificate (sig) for encryption (.pfx)";
+
+                        break;
+                }
+            }
+        }
     }
 
     public List<string> Mode { get; set; }
@@ -477,8 +503,12 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         IsTextBoxValue5Visible = false;
         IsTextBlockCloseKeyVisible = false;
         IsTextBoxCloseKey1Visible = false;
-        IsTextBoxCloseKey2Visible= false;
+        IsTextBoxCloseKey2Visible = false;
         IsTextBoxCloseKey3Visible = false;
+
+        Mode = new List<string> { "Pem Key", "Cert" };
+        IsComboBoxVisible = true;
+        SelectedMode = Mode[0];
     }
     private void KEK_SSK()
     {
@@ -537,19 +567,43 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private void ExecuteGetPath2Command(object? parameter)
     {
         var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-        pathPrivateKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
-        if (pathPrivateKeyEnRSA != null)
+
+        if (SelectedMode == "Pem Key")
         {
-            TextBlockValue4 = "Private key (rec) selected";
+            pathPrivateKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+            if (pathPrivateKeyEnRSA != null)
+            {
+                TextBlockValue4 = "Private key (rec) selected";
+            }
+        }
+        else if (SelectedMode == "Cert")
+        {
+            pathPrivateKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pfx");
+            if (pathPrivateKeyEnRSA != null)
+            {
+                TextBlockValue4 = "Cert (rec) selected";
+            }
         }
     }
     private void ExecuteGetPath3Command(object? parameter)
     {
         var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-        pathPublicKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
-        if (pathPublicKeySigRSA != null)
+
+        if (SelectedMode == "Pem Key")
         {
-            TextBlockValue5 = "Publick key (sig) selected";
+            pathPublicKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+            if (pathPublicKeySigRSA != null)
+            {
+                TextBlockValue5 = "Publick key (sig) selected";
+            }
+        }
+        else if (SelectedMode == "Cert")
+        {
+            pathPublicKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pfx");
+            if (pathPublicKeySigRSA != null)
+            {
+                TextBlockValue5 = "Cert (sig) selected";
+            }
         }
     }
     private void ExecuteGetPath4Command(object? parameter)
@@ -564,27 +618,64 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private void ExecuteGetPath5Command(object? parameter)
     {
         var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-        pathPublicKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
-        if (pathPublicKeyEnRSA != null)
+
+        if (SelectedMode == "Pem Key")
         {
-            TextBlockValue7 = "Publick key (rec) selected";
+            pathPublicKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+            if (pathPublicKeyEnRSA != null)
+            {
+                TextBlockValue7 = "Publick key (rec) selected";
+            }
+        }
+        else if (SelectedMode == "Cert")
+        {
+            pathPublicKeyEnRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pfx");
+            if (pathPublicKeyEnRSA != null)
+            {
+                TextBlockValue7 = "Cert (rec) selected";
+            }
         }
     }
     private void ExecuteGetPath6Command(object? parameter)
     {
         var owner = System.Windows.Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-        pathPrivateKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
-        if (pathPrivateKeySigRSA != null)
+
+        if (SelectedMode == "Pem Key")
         {
-            TextBlockValue8 = "Private key (sig) selected";
+            pathPrivateKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pem");
+            if (pathPrivateKeySigRSA != null)
+            {
+                TextBlockValue8 = "Private key (sig) selected";
+            }
+        }
+        else if (SelectedMode == "Cert")
+        {
+            pathPrivateKeySigRSA = _fileDialog.OpenTextFileDialog(App.Config.DocsPath, "pfx");
+            if (pathPrivateKeySigRSA != null)
+            {
+                TextBlockValue8 = "cert (sig) selected";
+            }
         }
     }
     private void ExecuteGenerateCommand(object? parameter)
     {
         if (TextBoxValue2 != null && TextBoxValue3 != null)
         {
-            using var recipientRsa = _rsaService.CreateRsaKeyPair(2048, TextBoxValue3, "rec", TextBoxValue2); // RSA отримувача
-            using var signerRsa = _rsaService.CreateRsaKeyPair(2048, TextBoxValue3, "sig", TextBoxValue2); // RSA підписанта
+            if (SelectedMode == "Pem Key")
+            {
+                using var recipientRsa = _rsaService.CreateRsaKeyPair(2048, TextBoxValue3, "rec", TextBoxValue2); // RSA отримувача
+                using var signerRsa = _rsaService.CreateRsaKeyPair(2048, TextBoxValue3, "sig", TextBoxValue2); // RSA підписанта
+            }
+            else if (SelectedMode == "Cert")
+            {
+                // Пути для сохранения сертификатов
+                string recipientCertPath = Path.Combine(TextBoxValue3, $"{TextBoxValue2}_rec_cert.pfx");
+                string signerCertPath = Path.Combine(TextBoxValue3, $"{TextBoxValue2}_sig_cert.pfx");
+
+                // Генерация сертификатов
+                var recipientCert = _rsaService.CreateSelfSignedCertificate($"CN={TextBoxValue2}_Recipient", recipientCertPath, TextBoxValue1, 2048, 5);
+                var signerCert = _rsaService.CreateSelfSignedCertificate($"CN={TextBoxValue2}_Signer", signerCertPath, TextBoxValue1, 2048, 5);
+            }
         }
         else _fileDialog.ShowMessage("Enter name and where save", "Error");
     }
@@ -594,6 +685,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         var FileText = _dataStorage.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
+        RSAModel rsaKey;
         switch (SelectedMethod)
         {
             case EncryptionMethod.RSA:
@@ -701,7 +793,26 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     PrimeQ = TextBoxValue2, //name-base
                     PrimeE = TextBoxValue3, //path
                 };
-                result = _aESService.Encryption(model, pathPublicKeyEnRSA, pathPrivateKeySigRSA);
+                rsaKey = new RSAModel();
+                if (SelectedMode == "Pem Key")
+                {
+                    rsaKey = new RSAModel
+                    {
+                        ModeRSA = SelectedMode,
+                        recipientPublicPemPath = pathPublicKeyEnRSA,
+                        signerPrivatePemPath = pathPrivateKeySigRSA,
+                    };
+                }
+                else if(SelectedMode == "Cert")
+                {
+                    rsaKey = new RSAModel
+                    {
+                        ModeRSA = SelectedMode,
+                        recipientCertPath = pathPublicKeyEnRSA,
+                        signerCertPath = pathPrivateKeySigRSA,
+                    };
+                }
+                result = _aESService.Encryption(model, rsaKey);
                 _aESService.SaveEncryptedBundle(TextBoxValue3, TextBoxValue2, result);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
@@ -796,6 +907,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         var FileText = _dataStorage.GetTextCallback();
         EncryptionModel model;
         EncryptionModel result;
+        RSAModel rsaKey;
         switch (SelectedMethod)
         {
             case EncryptionMethod.RSA:
@@ -873,7 +985,26 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     PrimeE = TextBoxValue3, //path
                     Metadata = _aESService.LoadEncryptedBundle(pathMetaData),
                 };
-                result = _aESService.Decryption(model, pathPrivateKeyEnRSA, pathPublicKeySigRSA);
+                rsaKey = new RSAModel();
+                if (SelectedMode == "Pem Key")
+                {
+                    rsaKey = new RSAModel
+                    {
+                        ModeRSA = SelectedMode,
+                        recipientPrivatePemPath = pathPrivateKeyEnRSA,
+                        signerPublicPemPath = pathPublicKeySigRSA,
+                    };
+                }
+                else if (SelectedMode == "Cert")
+                {
+                    rsaKey = new RSAModel
+                    {
+                        ModeRSA = SelectedMode,
+                        recipientCertPath = pathPrivateKeyEnRSA,
+                        signerCertPath = pathPublicKeySigRSA,
+                    };
+                }
+                result = _aESService.Decryption(model, rsaKey);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             case EncryptionMethod.KEK_SSK:

@@ -25,7 +25,25 @@ namespace Service.Encryption
             rsa.ImportFromPem(pem.ToCharArray());
             return rsa;
         }
+        public static (RSA publicKey, RSA privateKey) LoadRsaFromCertificate(string certPath, string password = null)
+        {
+            if (string.IsNullOrEmpty(certPath))
+                throw new ArgumentNullException(nameof(certPath));
+            if (!File.Exists(certPath))
+                throw new FileNotFoundException("Certificate file not found", certPath);
 
+            var cert = new X509Certificate2(certPath, password, X509KeyStorageFlags.Exportable);
+
+            var publicKey = cert.GetRSAPublicKey();
+            var privateKey = cert.GetRSAPrivateKey();
+
+            if (publicKey == null)
+                throw new CryptographicException("Certificate does not contain a public RSA key.");
+            if (privateKey == null)
+                throw new CryptographicException("Certificate does not contain a private RSA key.");
+
+            return (publicKey, privateKey);
+        }
         public static byte[] WrapKeyOAEP(RSA recipientPublicKey, byte[] key)
         {
             return recipientPublicKey.Encrypt(key, RSAEncryptionPadding.OaepSHA256);
@@ -51,15 +69,31 @@ namespace Service.Encryption
     public class AESService : IAESService, IDisposable 
     { 
         private readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
-        public EncryptionModel Encryption(EncryptionModel model, string recipientPublicPemPath, string signerPrivatePemPath)
+        public EncryptionModel Encryption(EncryptionModel model, RSAModel rsaKey)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
             if (model.FileText == null) throw new ArgumentNullException(nameof(model.FileText));
-            if (string.IsNullOrEmpty(recipientPublicPemPath)) throw new ArgumentNullException(nameof(recipientPublicPemPath));
-            if (string.IsNullOrEmpty(signerPrivatePemPath)) throw new ArgumentNullException(nameof(signerPrivatePemPath));
 
-            using var recipientPublic = RSAHelper.LoadRsaFromPem(recipientPublicPemPath);
-            using var signerPrivate = RSAHelper.LoadRsaFromPem(signerPrivatePemPath);
+            RSA recipientPublic = null;
+            RSA signerPrivate = null;
+
+
+                if (rsaKey.ModeRSA == "Pem Key")
+                {
+                    if (string.IsNullOrEmpty(rsaKey.recipientPublicPemPath)) throw new ArgumentNullException(nameof(rsaKey.recipientPublicPemPath));
+                    if (string.IsNullOrEmpty(rsaKey.signerPrivatePemPath)) throw new ArgumentNullException(nameof(rsaKey.signerPrivatePemPath));
+
+                    recipientPublic = RSAHelper.LoadRsaFromPem(rsaKey.recipientPublicPemPath);
+                    signerPrivate = RSAHelper.LoadRsaFromPem(rsaKey.signerPrivatePemPath);
+                }
+                else if (rsaKey.ModeRSA == "Cert")
+                {
+                X509Certificate2 recipientCert = new X509Certificate2(rsaKey.recipientCertPath, model.PrimeP, X509KeyStorageFlags.Exportable);
+                X509Certificate2 signerCert = new X509Certificate2(rsaKey.signerCertPath, model.PrimeP, X509KeyStorageFlags.Exportable);
+
+                recipientPublic = recipientCert.GetRSAPublicKey();
+                signerPrivate = signerCert.GetRSAPrivateKey();
+            }
 
             var plainBytes = Encoding.UTF8.GetBytes(model.FileText);
 
@@ -161,16 +195,33 @@ namespace Service.Encryption
             return result;
         }
 
-        public EncryptionModel Decryption(EncryptionModel model, string recipientPrivatePemPath, string signerPublicPemPath)
+        public EncryptionModel Decryption(EncryptionModel model, RSAModel rsaKey)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            if (string.IsNullOrEmpty(recipientPrivatePemPath)) throw new ArgumentNullException(nameof(recipientPrivatePemPath));
-            if (string.IsNullOrEmpty(signerPublicPemPath)) throw new ArgumentNullException(nameof(signerPublicPemPath));
             if (string.IsNullOrEmpty(model.FileText)) throw new ArgumentNullException(nameof(model.FileText));
             if (model.Metadata == null) throw new ArgumentException("Missing metadata");
 
-            using var recipientPrivate = RSAHelper.LoadRsaFromPem(recipientPrivatePemPath);
-            using var signerPublic = RSAHelper.LoadRsaFromPem(signerPublicPemPath);
+            RSA recipientPrivate = null;
+            RSA signerPublic= null;
+
+
+            if (rsaKey.ModeRSA == "Pem Key")
+            {
+                if (string.IsNullOrEmpty(rsaKey.recipientPublicPemPath)) throw new ArgumentNullException(nameof(rsaKey.recipientPublicPemPath));
+                if (string.IsNullOrEmpty(rsaKey.signerPrivatePemPath)) throw new ArgumentNullException(nameof(rsaKey.signerPrivatePemPath));
+
+                recipientPrivate = RSAHelper.LoadRsaFromPem(rsaKey.recipientPrivatePemPath);
+                signerPublic = RSAHelper.LoadRsaFromPem(rsaKey.signerPublicPemPath);
+
+            }
+            else if (rsaKey.ModeRSA == "Cert")
+            {
+                X509Certificate2 recipientCert = new X509Certificate2(rsaKey.recipientCertPath, model.PrimeP, X509KeyStorageFlags.Exportable);
+                recipientPrivate = recipientCert.GetRSAPrivateKey();
+
+                X509Certificate2 signerCert = new X509Certificate2(rsaKey.signerCertPath, model.PrimeP, X509KeyStorageFlags.Exportable);
+                signerPublic = signerCert.GetRSAPublicKey();
+            }
 
             var meta = model.Metadata;
             byte[] cipherBytes = HexToBytes(model.FileText);

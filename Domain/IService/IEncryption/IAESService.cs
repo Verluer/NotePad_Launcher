@@ -10,8 +10,8 @@ namespace Domain.IService.IEncryption
 {
     public interface IAESService
     {
-        public EncryptionModel Encryption(EncryptionModel model, string recipientPublicPemPath, string signerPrivatePemPath);
-        public EncryptionModel Decryption(EncryptionModel model, string pathPrivateKey, string pathPublicKey);
+        public EncryptionModel Encryption(EncryptionModel model, RSAModel rsaKey);
+        public EncryptionModel Decryption(EncryptionModel model, RSAModel rsaKey);
         public void SaveEncryptedBundle(string path, string nameBase, EncryptionModel result);
         public EncryptionMetadata LoadEncryptedBundle(string path);
     }

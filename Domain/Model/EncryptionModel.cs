@@ -14,6 +14,16 @@ public class EncryptionModel
     public byte[] bytes { get; set; }
     public EncryptionMetadata Metadata { get; set; }
 }
+public class RSAModel
+{
+    public string ModeRSA { get; set; }
+    public string recipientPublicPemPath { get; set; }
+    public string recipientPrivatePemPath { get; set; }
+    public string signerPublicPemPath { get; set; }
+    public string signerPrivatePemPath { get; set; }
+    public string recipientCertPath { get; set; }
+    public string signerCertPath {get; set; }
+}
 public class EncryptionMetadata 
 {
     public string Algorithm { get; set; } 
