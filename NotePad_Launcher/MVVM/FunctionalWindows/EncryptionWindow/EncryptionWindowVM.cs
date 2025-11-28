@@ -27,6 +27,7 @@ public class EncryptionWindowVM : INotifyPropertyChanged
     private readonly ILFSRService _lFSRService;
     private readonly IG28147Service _g28147Service;
     private readonly IAESService _aESService;
+    private readonly IKEK_SSK _kEK_SSKService;
     private readonly IFileDialog _fileDialog;
     private readonly IServiceFunctions _serviceFunctions;
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -69,6 +70,8 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         _lFSRService = new LFSRService();
         _g28147Service = new G28147Service();
         _aESService = new AESService();
+        _kEK_SSKService = new KEK_SSK();
+      
         _fileDialog = fileDialog;
         TextBlockCloseKey1 = "Enter Close key";
         switch (SelectedMethod)
@@ -93,6 +96,9 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 break;
             case EncryptionMethod.AES:
                 AESUI();
+                break;
+            case EncryptionMethod.KEK_SSK:
+                KEK_SSK();
                 break;
             default:
                 break;
@@ -474,6 +480,18 @@ public class EncryptionWindowVM : INotifyPropertyChanged
         IsTextBoxCloseKey2Visible= false;
         IsTextBoxCloseKey3Visible = false;
     }
+    private void KEK_SSK()
+    {
+        MethodName = "KEK-SSK Encryption";
+        TextBlockValue1 = "Enter master Key (HEX):";
+        IsElement2Visible = false;
+        IsTextBlock3Visible = false;
+        IsTextBoxValue3Visible = false;
+        IsTextBoxValue4Visible = false;
+        IsTextBoxCloseKey3Visible = false;
+        IsTextBoxCloseKey2Visible = false;
+        IsTextBoxValue5Visible = false;
+    }
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -687,6 +705,16 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                 _aESService.SaveEncryptedBundle(TextBoxValue3, TextBoxValue2, result);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
+            case EncryptionMethod.KEK_SSK:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    PrimeP = TextBoxValue1, //Master Key
+                };
+                result = _kEK_SSKService.Encryption(model);
+                TextBoxCloseKey1 = result.CloseKeyD;
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
             default:
                 break;
         }
@@ -846,6 +874,16 @@ public class EncryptionWindowVM : INotifyPropertyChanged
                     Metadata = _aESService.LoadEncryptedBundle(pathMetaData),
                 };
                 result = _aESService.Decryption(model, pathPrivateKeyEnRSA, pathPublicKeySigRSA);
+                _dataStorage.PushUpdatedText(result.FileText);
+                break;
+            case EncryptionMethod.KEK_SSK:
+                model = new EncryptionModel
+                {
+                    FileText = FileText,
+                    CloseKeyD = TextBoxCloseKey1, //SSK
+                    PrimeP = TextBoxValue1,
+                };
+                result = _kEK_SSKService.Decryption(model);
                 _dataStorage.PushUpdatedText(result.FileText);
                 break;
             default:

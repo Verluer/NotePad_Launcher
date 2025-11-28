@@ -10,4 +10,5 @@ public enum EncryptionMethod
     LFSR = 5,
     G28147 = 6,
     AES = 7,
+    KEK_SSK = 8,
 }

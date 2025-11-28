@@ -16,33 +16,32 @@ namespace Service.Encryption
 
     public static class RSAHelper 
     {
-        public static RSACng LoadRsaFromPemCng(string pemPath)
+        public static RSA LoadRsaFromPem(string pemPath)
         {
             if (string.IsNullOrEmpty(pemPath)) throw new ArgumentNullException(nameof(pemPath));
             string pem = File.ReadAllText(pemPath);
 
-            // Создаем объект RSACng (CNG)
-            RSACng rsa = new RSACng();
+            RSA rsa = RSA.Create();
             rsa.ImportFromPem(pem.ToCharArray());
             return rsa;
         }
 
-        public static byte[] WrapKeyOAEP(RSACng recipientPublicKey, byte[] key)
+        public static byte[] WrapKeyOAEP(RSA recipientPublicKey, byte[] key)
         {
             return recipientPublicKey.Encrypt(key, RSAEncryptionPadding.OaepSHA256);
         }
 
-        public static byte[] UnwrapKeyOAEP(RSACng recipientPrivateKey, byte[] wrapped)
+        public static byte[] UnwrapKeyOAEP(RSA recipientPrivateKey, byte[] wrapped)
         {
             return recipientPrivateKey.Decrypt(wrapped, RSAEncryptionPadding.OaepSHA256);
         }
 
-        public static byte[] SignRsaPss(RSACng privateKey, byte[] data)
+        public static byte[] SignRsaPss(RSA privateKey, byte[] data)
         {
             return privateKey.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
         }
 
-        public static bool VerifyRsaPss(RSACng publicKey, byte[] data, byte[] signature)
+        public static bool VerifyRsaPss(RSA publicKey, byte[] data, byte[] signature)
         {
             return publicKey.VerifyData(data, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
         }
@@ -59,8 +58,8 @@ namespace Service.Encryption
             if (string.IsNullOrEmpty(recipientPublicPemPath)) throw new ArgumentNullException(nameof(recipientPublicPemPath));
             if (string.IsNullOrEmpty(signerPrivatePemPath)) throw new ArgumentNullException(nameof(signerPrivatePemPath));
 
-            using var recipientPublic = RSAHelper.LoadRsaFromPemCng(recipientPublicPemPath);
-            using var signerPrivate = RSAHelper.LoadRsaFromPemCng(signerPrivatePemPath);
+            using var recipientPublic = RSAHelper.LoadRsaFromPem(recipientPublicPemPath);
+            using var signerPrivate = RSAHelper.LoadRsaFromPem(signerPrivatePemPath);
 
             var plainBytes = Encoding.UTF8.GetBytes(model.FileText);
 
@@ -87,7 +86,7 @@ namespace Service.Encryption
             }
 
             byte[] cipherBytes = new byte[plainBytes.Length];
-            using (var aes = new AesCng())
+            using (var aes = Aes.Create())
             {
                 aes.KeySize = aesKeyBits;
                 aes.Mode = CipherMode.ECB; 
@@ -170,8 +169,8 @@ namespace Service.Encryption
             if (string.IsNullOrEmpty(model.FileText)) throw new ArgumentNullException(nameof(model.FileText));
             if (model.Metadata == null) throw new ArgumentException("Missing metadata");
 
-            using var recipientPrivate = RSAHelper.LoadRsaFromPemCng(recipientPrivatePemPath);
-            using var signerPublic = RSAHelper.LoadRsaFromPemCng(signerPublicPemPath);
+            using var recipientPrivate = RSAHelper.LoadRsaFromPem(recipientPrivatePemPath);
+            using var signerPublic = RSAHelper.LoadRsaFromPem(signerPublicPemPath);
 
             var meta = model.Metadata;
             byte[] cipherBytes = HexToBytes(model.FileText);
@@ -221,7 +220,7 @@ namespace Service.Encryption
             }
 
             byte[] plainBytes = new byte[cipherBytes.Length];
-            using (var aes = new AesCng())
+            using (var aes = Aes.Create())
             {
                 aes.KeySize = meta.KeySize;
                 aes.Mode = CipherMode.ECB;
